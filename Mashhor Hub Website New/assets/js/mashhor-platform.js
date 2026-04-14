@@ -1,0 +1,1317 @@
+(() => {
+  const html = document.documentElement;
+  const isArabic = html.lang && html.lang.toLowerCase().startsWith("ar");
+  const isRTL = html.dir === "rtl";
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ═══════════════════════════════════════════════════
+     THEME SYSTEM (Light / Dark)
+     ═══════════════════════════════════════════════════ */
+  const initTheme = () => {
+    const saved = localStorage.getItem('mashhor-theme');
+    if (saved) {
+      html.setAttribute('data-theme', saved);
+    }
+    // If no saved preference, default is dark (no attribute needed)
+  };
+  initTheme();
+
+  const mojibakePattern = /(?:â€¦|â€”|â€“|â€|â€¢|â†’|â†|âœ|â–¾|â”‚|ï¸|ðŸ|Ã|Ø|Ù|ط|ظ|€|™|œ|¢|£|¤|¥)/;
+  const repairMojibake = (value) => {
+    if (typeof value !== "string" || !value || !mojibakePattern.test(value)) return value;
+
+    let output = value;
+    for (let i = 0; i < 2; i += 1) {
+      try {
+        const decoded = decodeURIComponent(escape(output));
+        if (!decoded || decoded === output || decoded.includes("�")) break;
+        output = decoded;
+      } catch (error) {
+        break;
+      }
+    }
+
+    return output
+      .replace(/â€“/g, "–")
+      .replace(/â€”/g, "—")
+      .replace(/â€¦/g, "…")
+      .replace(/â€¢/g, "•")
+      .replace(/â†’/g, "→")
+      .replace(/âœ…/g, "✅")
+      .replace(/â–¾/g, "▾")
+      .replace(/â”‚/g, "│");
+  };
+
+  const normalizeDocumentText = (root = document.body) => {
+    if (!root) return;
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        if (["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        if (!node.nodeValue || !mojibakePattern.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    textNodes.forEach((node) => {
+      node.nodeValue = repairMojibake(node.nodeValue);
+    });
+
+    root.querySelectorAll("*").forEach((el) => {
+      ["placeholder", "title", "aria-label", "alt", "value"].forEach((attr) => {
+        const current = el.getAttribute(attr);
+        if (current && mojibakePattern.test(current)) {
+          el.setAttribute(attr, repairMojibake(current));
+        }
+      });
+    });
+  };
+
+  const normalizeMetadata = () => {
+    document.title = repairMojibake(document.title);
+    document.querySelectorAll('meta[name], meta[property]').forEach((meta) => {
+      const content = meta.getAttribute("content");
+      if (content && mojibakePattern.test(content)) {
+        meta.setAttribute("content", repairMojibake(content));
+      }
+    });
+  };
+
+  /* ═══════════════════════════════════════════════════
+     PATH PREFIX DETECTION
+     ═══════════════════════════════════════════════════ */
+  const getPrefix = () => {
+    try {
+      const script = document.currentScript || document.querySelector('script[src*="mashhor-platform.js"]');
+      if (script && script.getAttribute("src")) {
+        const src = script.getAttribute("src");
+        const idx = src.indexOf("assets/js/mashhor-platform.js");
+        if (idx !== -1) return src.substring(0, idx);
+      }
+    } catch (e) {}
+    const path = window.location.pathname.replace(/\\/g, "/");
+    const parts = path.split("/").filter(Boolean);
+    if (parts.length === 0) return "./";
+    if (window.location.protocol === 'file:') {
+      const idx = parts.findIndex(p => p === 'ar' || p === 'services' || p === 'academy' || p === 'pricing' || p === 'blog' || p === 'book-call' || p === 'case-studies' || p === 'legal' || p === 'prompts' || p === 'search' || p === 'portfolio' || Boolean(p.match(/\.html$/)));
+      if (idx !== -1) {
+        const remaining = parts.length - idx;
+        return remaining <= 1 ? "./" : "../".repeat(remaining - 1);
+      }
+      return "./";
+    }
+    const fileLike = parts[parts.length - 1].includes(".");
+    const depth = fileLike ? parts.length - 1 : parts.length;
+    return depth === 0 ? "./" : "../".repeat(depth);
+  };
+
+  const prefix = getPrefix();
+  const brandSrc = `${prefix}logo-flat.png`;
+  const currentPath = window.location.pathname.replace(/\\/g, "/");
+
+  /* ═══════════════════════════════════════════════════
+     ACTIVE LINK DETECTION
+     ═══════════════════════════════════════════════════ */
+  const isActive = (href) => {
+    const norm = (p) => p.replace(/\\/g, "/").replace(/\/index\.html$/, "/").replace(/\/$/, "").toLowerCase();
+    return norm(currentPath).endsWith(norm(href).replace(/^\.\/|^\.\.\//g, ""));
+  };
+
+  /* ═══════════════════════════════════════════════════
+     HEADER INJECTION
+     ═══════════════════════════════════════════════════ */
+  const headerEl = document.querySelector("[data-platform-header]");
+  if (headerEl) {
+    const p = prefix;
+    // arBase: prefix always resolves to the SITE root, so Arabic links always need ar/ appended
+    const arBase = `${p}ar/`;
+    // enP: use prefix directly — it correctly resolves to site root from any depth
+    const enP = p;
+    const nav = isArabic ? {
+      home: { text: "الرئيسية", href: `${arBase}index.html` },
+      about: { text: "من نحن", href: `${arBase}about.html` },
+      services: { text: "الخدمات", children: [
+        { text: "التسويق المؤثر", href: `${arBase}services/influencer-marketing.html` },
+        { text: "الهوية البصرية", href: `${arBase}services/graphic-design.html` },
+        { text: "الإعلانات الرقمية", href: `${arBase}services/e-marketing.html` },
+        { text: "الإنتاج المرئي", href: `${arBase}services/video-production.html` },
+        { text: "كتابة المحتوى", href: `${arBase}services/content-writing.html` },
+        { text: "تحسين محركات البحث", href: `${arBase}services/seo.html` },
+        { text: "الأتمتة والذكاء", href: `${arBase}services/smart-automation.html` },
+        { text: "الاستشارات", href: `${arBase}services/consultation.html` }
+      ]},
+      explore: { text: "استكشف", children: [
+        { text: "الأعمال", href: `${arBase}portfolio/index.html` },
+        { text: "المؤثرون", href: `${arBase}influencers/index.html` },
+        { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
+        { text: "الباقات", href: `${arBase}pricing/index.html` },
+        { text: "الأكاديمية", href: `${arBase}academy/index.html` }
+      ]},
+      blog: { text: "المدونة", href: `${arBase}blog/index.html` },
+      contact: { text: "تواصل", href: `${arBase}contact.html` },
+      langText: "English",
+      langHref: `${arBase}../index.html`,
+      ctaText: "ابدأ مشروعك",
+      ctaHref: `${arBase}contact.html`,
+      brandName: "مشهور هب",
+      brandSub: "MARKETING • AI • GROWTH"
+    } : {
+      home: { text: "Home", href: `${enP}index.html` },
+      about: { text: "About", href: `${enP}about.html` },
+      services: { text: "Services", children: [
+        { text: "Influencer Marketing", href: `${enP}services/influencer-marketing.html` },
+        { text: "Brand Identity & Design", href: `${enP}services/graphic-design.html` },
+        { text: "Digital Advertising", href: `${enP}services/e-marketing.html` },
+        { text: "Video Production", href: `${enP}services/video-production.html` },
+        { text: "Content Writing", href: `${enP}services/content-writing.html` },
+        { text: "SEO", href: `${enP}services/seo.html` },
+        { text: "AI & Automation", href: `${enP}services/smart-automation.html` },
+        { text: "Consultation", href: `${enP}services/consultation.html` }
+      ]},
+      explore: { text: "Explore", children: [
+        { text: "Portfolio", href: `${enP}portfolio/index.html` },
+        { text: "Influencers", href: `${enP}influencers/index.html` },
+        { text: "Mashhor AI", href: `${enP}services/mashhor-ai.html` },
+        { text: "Pricing", href: `${enP}pricing/index.html` },
+        { text: "Academy", href: `${enP}academy/index.html` }
+      ]},
+      blog: { text: "Blog", href: `${enP}blog/index.html` },
+      contact: { text: "Contact", href: `${enP}contact.html` },
+      langText: "العربية",
+      langHref: `${p}ar/index.html`,
+      ctaText: "Start Project",
+      ctaHref: `${p}contact.html`,
+      brandName: "Mashhor Hub",
+      brandSub: "MARKETING • AI • GROWTH"
+    };
+
+    // Fix lang href based on alternate hreflang
+    // Only use the hreflang URL override on the real production domain.
+    // On localhost / file:// the hreflang tags point to https://mashhor-hub.com/…
+    // which would extract an absolute path like /ar/ and cause "Cannot GET /ar/" errors.
+    const altLink = document.querySelector('link[rel="alternate"][hreflang="' + (isArabic ? 'en' : 'ar') + '"]');
+    if (altLink) {
+      try {
+        const u = new URL(altLink.href);
+        const isProduction = window.location.hostname === u.hostname && u.hostname !== '' && u.hostname !== 'localhost' && u.hostname !== '127.0.0.1';
+        if (isProduction) {
+          // On production the hreflang href is a reliable absolute URL — use its pathname directly
+          nav.langHref = u.pathname;
+        }
+        // On local dev / file:// we keep the relative-path langHref already computed above
+      } catch (e) {}
+    }
+
+    const activeClass = (href) => isActive(href) ? ' is-active' : '';
+
+    const servicesDropdown = nav.services.children.map(c =>
+      `<a class="global-dropdown-link${activeClass(c.href)}" href="${c.href}">${c.text}</a>`
+    ).join("");
+
+    const exploreDropdown = nav.explore.children.map(c =>
+      `<a class="global-dropdown-link${activeClass(c.href)}" href="${c.href}">${c.text}</a>`
+    ).join("");
+
+    headerEl.innerHTML = `
+    <header class="global-header" id="global-header">
+      <div class="global-header-inner">
+        <a class="global-brand" href="${nav.home.href}">
+          <img src="${brandSrc}" alt="${nav.brandName}" width="54" height="54">
+          <div class="global-brand-copy">
+            <strong>${nav.brandName}</strong>
+            <small>${nav.brandSub}</small>
+          </div>
+        </a>
+        <nav class="global-nav" aria-label="Main Navigation">
+          <a class="global-nav-link${activeClass(nav.home.href)}" href="${nav.home.href}">${nav.home.text}</a>
+          <a class="global-nav-link${activeClass(nav.about.href)}" href="${nav.about.href}">${nav.about.text}</a>
+          <div class="global-nav-item">
+            <button class="global-nav-trigger">${nav.services.text} ▾</button>
+            <div class="global-dropdown">${servicesDropdown}</div>
+          </div>
+          <div class="global-nav-item">
+            <button class="global-nav-trigger">${nav.explore.text} ▾</button>
+            <div class="global-dropdown">${exploreDropdown}</div>
+          </div>
+          <a class="global-nav-link${activeClass(nav.blog.href)}" href="${nav.blog.href}">${nav.blog.text}</a>
+        </nav>
+        <div class="global-actions">
+          <button class="theme-toggle" id="theme-toggle" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <a class="global-lang" href="${nav.langHref}">${nav.langText}</a>
+          <a class="global-cta" href="${nav.ctaHref}">${nav.ctaText}</a>
+          <button class="global-burger" id="global-burger" aria-label="${isArabic ? 'القائمة' : 'Menu'}" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+      <div class="global-mobile-panel" id="global-mobile-panel">
+        <a class="global-mobile-link${activeClass(nav.home.href)}" href="${nav.home.href}">${nav.home.text}</a>
+        <a class="global-mobile-link${activeClass(nav.about.href)}" href="${nav.about.href}">${nav.about.text}</a>
+        <details class="global-mobile-group">
+          <summary>${nav.services.text}</summary>
+          ${nav.services.children.map(c => `<a class="global-mobile-link${activeClass(c.href)}" href="${c.href}">${c.text}</a>`).join("")}
+        </details>
+        <details class="global-mobile-group">
+          <summary>${nav.explore.text}</summary>
+          ${nav.explore.children.map(c => `<a class="global-mobile-link${activeClass(c.href)}" href="${c.href}">${c.text}</a>`).join("")}
+        </details>
+        <a class="global-mobile-link${activeClass(nav.blog.href)}" href="${nav.blog.href}">${nav.blog.text}</a>
+        <a class="global-mobile-link${activeClass(nav.contact.href)}" href="${nav.contact.href}">${nav.contact.text}</a>
+        <div class="mobile-actions">
+          <button class="theme-toggle" id="theme-toggle-mobile" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <a class="mobile-lang" href="${nav.langHref}">${nav.langText}</a>
+          <a class="mobile-cta" href="${nav.ctaHref}">${nav.ctaText}</a>
+        </div>
+      </div>
+    </header>`;
+
+    // Mobile burger toggle
+    const burger = document.getElementById("global-burger");
+    const mobilePanel = document.getElementById("global-mobile-panel");
+    if (burger && mobilePanel) {
+      let mobileBackdrop = document.getElementById("global-mobile-backdrop");
+      if (!mobileBackdrop) {
+        mobileBackdrop = document.createElement("button");
+        mobileBackdrop.type = "button";
+        mobileBackdrop.id = "global-mobile-backdrop";
+        mobileBackdrop.className = "global-mobile-backdrop";
+        mobileBackdrop.setAttribute("aria-label", isArabic ? "إغلاق القائمة" : "Close menu");
+        document.body.appendChild(mobileBackdrop);
+      }
+
+      const mobileFocusableSelector = 'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+      const closeMobileNav = () => {
+        mobilePanel.classList.remove("open");
+        burger.classList.remove("open");
+        burger.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+        document.body.classList.remove("mobile-nav-open");
+      };
+
+      const openMobileNav = () => {
+        mobilePanel.classList.add("open");
+        burger.classList.add("open");
+        burger.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("mobile-nav-open");
+        mobilePanel.querySelector(mobileFocusableSelector)?.focus();
+      };
+
+      burger.addEventListener("click", () => {
+        if (mobilePanel.classList.contains("open")) {
+          closeMobileNav();
+        } else {
+          openMobileNav();
+        }
+      });
+
+      mobileBackdrop.addEventListener("click", closeMobileNav);
+
+      document.addEventListener("keydown", (event) => {
+        if (!mobilePanel.classList.contains("open")) return;
+        if (event.key === "Escape") {
+          closeMobileNav();
+          burger.focus();
+        }
+
+        if (event.key === "Tab") {
+          const focusables = Array.from(mobilePanel.querySelectorAll(mobileFocusableSelector))
+            .filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+          if (!focusables.length) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 960 && mobilePanel.classList.contains("open")) {
+          closeMobileNav();
+        }
+      });
+
+      // Close on link click
+      mobilePanel.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => {
+          closeMobileNav();
+        });
+      });
+    }
+
+    // Theme toggle handler
+    const toggleTheme = () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      if (next === 'dark') {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('mashhor-theme', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('mashhor-theme', 'light');
+      }
+    };
+
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+      btn.addEventListener('click', toggleTheme);
+    });
+
+    // Header scroll behavior
+    const globalHeader = document.getElementById("global-header");
+    if (globalHeader) {
+      let lastScroll = 0;
+      let headerHidden = false;
+      window.addEventListener("scroll", () => {
+        const scrollY = window.scrollY;
+        globalHeader.classList.toggle("scrolled", scrollY > 60);
+        if (scrollY > 300 && scrollY > lastScroll && !headerHidden) {
+          globalHeader.classList.add("hidden");
+          headerHidden = true;
+        } else if (scrollY < lastScroll && headerHidden) {
+          globalHeader.classList.remove("hidden");
+          headerHidden = false;
+        }
+        lastScroll = scrollY;
+      }, { passive: true });
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     FOOTER INJECTION
+     ═══════════════════════════════════════════════════ */
+  const footerEl = document.querySelector("[data-platform-footer]");
+  if (footerEl) {
+    const p = prefix;
+    const year = new Date().getFullYear();
+
+    if (isArabic) {
+      const arFp = `${p}ar/`;
+      footerEl.innerHTML = `
+      <footer class="global-footer">
+        <div class="global-footer-grid">
+          <div class="global-footer-brand">
+            <img src="${brandSrc}" alt="مشهور هب" width="86">
+            <h3>مشهور هب</h3>
+            <p>منصة كويتية متكاملة تخدم الخليج والوطن العربي — وتجمع بين الحملات الإعلانية، والإبداع، والذكاء الاصطناعي في واجهة تشغيل واحدة.</p>
+            <div class="global-footer-social" style="display: flex; gap: 12px; margin: 16px 0;">
+              <a href="#" aria-label="Facebook"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.203 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+              <a href="#" aria-label="X (Twitter)"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              <a href="#" aria-label="LinkedIn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+              <a href="https://wa.me/96565099769" aria-label="WhatsApp"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.857 5.857 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.476 0 1.461 1.066 2.873 1.213 3.072.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+            </div>
+            <a class="global-footer-cta" href="${arFp}contact.html">ابدأ مشروعك</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>الخدمات</h4>
+            <a href="${arFp}services/influencer-marketing.html">التسويق المؤثر</a>
+            <a href="${arFp}services/graphic-design.html">الهوية البصرية</a>
+            <a href="${arFp}services/e-marketing.html">الإعلانات الرقمية</a>
+            <a href="${arFp}services/video-production.html">الإنتاج المرئي</a>
+            <a href="${arFp}services/smart-automation.html">الذكاء الاصطناعي</a>
+            <a href="${arFp}services/consultation.html">الاستشارات</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>المنصة</h4>
+            <a href="${arFp}about.html">من نحن</a>
+            <a href="${arFp}portfolio/index.html">الأعمال</a>
+            <a href="${arFp}case-studies/index.html">دراسات الحالة</a>
+            <a href="${arFp}pricing/index.html">الباقات</a>
+            <a href="${arFp}blog/index.html">المدونة</a>
+            <a href="${arFp}academy/index.html">الأكاديمية</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>تواصل</h4>
+            <a href="https://wa.me/96565099769" target="_blank" rel="noopener">واتساب</a>
+            <a href="mailto:info@mashhor-hub.com">البريد الإلكتروني</a>
+            <a href="tel:+96565099769">هاتف: +965 6509 9769</a>
+            <a href="${arFp}book-call/index.html">حجز مكالمة</a>
+            <a href="${arFp}faqs.html">الأسئلة الشائعة</a>
+          </div>
+        </div>
+        <div class="global-footer-legal">
+          <a href="${arFp}legal/privacy.html">سياسة الخصوصية</a>
+          <a href="${arFp}legal/terms.html">الشروط والأحكام</a>
+          <a href="${arFp}sitemap.html">خريطة الموقع</a>
+        </div>
+        <div class="global-footer-bottom">© ${year} مشهور هب. جميع الحقوق محفوظة. الكويت</div>
+      </footer>
+      <div class="sticky-mobile-cta" id="sticky-cta">
+        <div class="sticky-cta-text">
+          <strong>مستعد للنمو؟</strong>
+          <span>احجز جلستك الآن</span>
+        </div>
+        <a href="${arFp}contact.html" class="button button-gold" style="padding: 10px 16px; font-size: 0.9rem; white-space: nowrap;">احجز الآن</a>
+      </div>`;
+    } else {
+      footerEl.innerHTML = `
+      <footer class="global-footer">
+        <div class="global-footer-grid">
+          <div class="global-footer-brand">
+            <img src="${brandSrc}" alt="Mashhor Hub" width="86">
+            <h3>Mashhor Hub</h3>
+            <p>A premium Kuwaiti marketing platform for the GCC and Arab world — unifying campaigns, creativity, and AI.</p>
+            <div class="global-footer-social" style="display: flex; gap: 12px; margin: 16px 0;">
+              <a href="#" aria-label="Facebook"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.203 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+              <a href="#" aria-label="X (Twitter)"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+              <a href="#" aria-label="LinkedIn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+              <a href="https://wa.me/96565099769" aria-label="WhatsApp"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.857 5.857 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.476 0 1.461 1.066 2.873 1.213 3.072.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+            </div>
+            <a class="global-footer-cta" href="${p}contact.html">Start Your Project</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>Services</h4>
+            <a href="${p}services/influencer-marketing.html">Influencer Marketing</a>
+            <a href="${p}services/graphic-design.html">Brand Identity & Design</a>
+            <a href="${p}services/e-marketing.html">Digital Advertising</a>
+            <a href="${p}services/video-production.html">Video Production</a>
+            <a href="${p}services/smart-automation.html">AI & Automation</a>
+            <a href="${p}services/consultation.html">Consultation</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>Platform</h4>
+            <a href="${p}about.html">About</a>
+            <a href="${p}portfolio/index.html">Portfolio</a>
+            <a href="${p}case-studies/index.html">Case Studies</a>
+            <a href="${p}pricing/index.html">Pricing</a>
+            <a href="${p}blog/index.html">Blog</a>
+            <a href="${p}academy/index.html">Academy</a>
+          </div>
+          <div class="global-footer-col">
+            <h4>Connect</h4>
+            <a href="https://wa.me/96565099769" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="mailto:info@mashhor-hub.com">Email</a>
+            <a href="tel:+96565099769">Phone: +965 6509 9769</a>
+            <a href="${p}book-call/index.html">Book a Call</a>
+            <a href="${p}faqs.html">FAQs</a>
+          </div>
+        </div>
+        <div class="global-footer-legal">
+          <a href="${p}legal/privacy.html">Privacy Policy</a>
+          <a href="${p}legal/terms.html">Terms & Conditions</a>
+          <a href="${p}sitemap.html">Sitemap</a>
+        </div>
+        <div class="global-footer-bottom">© ${year} Mashhor Hub. All rights reserved. Kuwait</div>
+      </footer>
+      <div class="sticky-mobile-cta" id="sticky-cta">
+        <div class="sticky-cta-text">
+          <strong>Ready to scale?</strong>
+          <span>Book your session today</span>
+        </div>
+        <a href="${p}contact.html" class="button button-gold" style="padding: 10px 16px; font-size: 0.9rem; white-space: nowrap;">Book a Call</a>
+      </div>`;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     MASHHOR ANIMATED BACKGROUND TEXT
+     ═══════════════════════════════════════════════════ */
+  const bgText = document.createElement("div");
+  bgText.id = "mashhor-bg-text";
+  bgText.innerHTML = isArabic ? "مشهور<br>هب" : "Mashhor<br>Hub";
+  document.body.appendChild(bgText);
+
+  /* ═══════════════════════════════════════════════════
+     SCROLL PROGRESS BAR
+     ═══════════════════════════════════════════════════ */
+  const progressBar = document.createElement("div");
+  progressBar.className = "scroll-progress";
+  document.body.appendChild(progressBar);
+
+  /* ═══════════════════════════════════════════════════
+     BACK TO TOP BUTTON
+     ═══════════════════════════════════════════════════ */
+  const backToTop = document.createElement("button");
+  backToTop.className = "back-to-top";
+  backToTop.setAttribute("aria-label", isArabic ? "العودة للأعلى" : "Back to top");
+  backToTop.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+  document.body.appendChild(backToTop);
+
+  backToTop.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  });
+
+  // Scroll handler for progress + back-to-top
+  let scrollTicking = false;
+  window.addEventListener("scroll", () => {
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+        progressBar.style.width = pct + "%";
+        backToTop.classList.toggle("visible", scrollY > 400);
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  /* ═══════════════════════════════════════════════════
+     WHATSAPP FLOATING WIDGET
+     ═══════════════════════════════════════════════════ */
+  const waWidget = document.createElement("div");
+  waWidget.className = "wa-float";
+  waWidget.innerHTML = `
+    <div class="wa-float-msg">${isArabic ? "مرحباً! كيف يمكننا مساعدتك؟" : "Hi! How can we help you?"}</div>
+    <a class="wa-float-btn" href="https://wa.me/96565099769" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>`;
+  document.body.appendChild(waWidget);
+
+  // Show WA message after 3 seconds
+  setTimeout(() => {
+    const msg = waWidget.querySelector(".wa-float-msg");
+    if (msg) { msg.classList.add("show"); setTimeout(() => msg.classList.remove("show"), 5000); }
+  }, 3000);
+
+  /* ═══════════════════════════════════════════════════
+     ANNOUNCEMENT CLOSE BUTTON
+     ═══════════════════════════════════════════════════ */
+  document.querySelectorAll(".announcement").forEach(ann => {
+    if (ann.querySelector(".announcement-close")) return;
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "announcement-close";
+    closeBtn.innerHTML = "✕";
+    closeBtn.setAttribute("aria-label", isArabic ? "إغلاق" : "Close");
+    ann.style.position = "relative";
+    ann.appendChild(closeBtn);
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      ann.classList.add("dismissed");
+    });
+  });
+
+
+  /* ═══════════════════════════════════════════════════
+     ANIMATED COUNTERS (IntersectionObserver)
+     ═══════════════════════════════════════════════════ */
+  const counterEls = document.querySelectorAll(".stat-number[data-count]");
+  if (counterEls.length && "IntersectionObserver" in window) {
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.getAttribute("data-count"), 10);
+        if (isNaN(target)) return;
+
+        // Preserve suffix spans
+        const suffixEl = el.querySelector(".stat-suffix");
+        const suffixHTML = suffixEl ? suffixEl.outerHTML : "";
+
+        const duration = prefersReducedMotion ? 0 : 1800;
+        const start = performance.now();
+        const update = (now) => {
+          const elapsed = now - start;
+          const progress = duration === 0 ? 1 : Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(target * eased);
+          el.innerHTML = current + suffixHTML;
+          if (progress < 1) requestAnimationFrame(update);
+          else el.innerHTML = target + suffixHTML;
+        };
+        requestAnimationFrame(update);
+        counterObs.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+
+    counterEls.forEach(el => counterObs.observe(el));
+  }
+
+  /* ═══════════════════════════════════════════════════
+     TESTIMONIALS SLIDER
+     ═══════════════════════════════════════════════════ */
+  document.querySelectorAll("[data-testimonials]").forEach(slider => {
+    const slides = slider.querySelectorAll(".testimonial-slide");
+    const dots = slider.querySelectorAll(".testimonial-dot");
+    if (!slides.length) return;
+
+    let current = 0;
+    let autoPlay;
+
+    const goTo = (idx) => {
+      slides.forEach(s => s.classList.remove("active"));
+      dots.forEach(d => d.classList.remove("active"));
+      current = idx;
+      slides[current].classList.add("active");
+      if (dots[current]) dots[current].classList.add("active");
+    };
+
+    dots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        goTo(parseInt(dot.getAttribute("data-slide"), 10));
+        resetAutoPlay();
+      });
+    });
+
+    const next = () => goTo((current + 1) % slides.length);
+    const resetAutoPlay = () => {
+      clearInterval(autoPlay);
+      autoPlay = setInterval(next, 5000);
+    };
+
+    // Touch swipe support
+    let touchStartX = 0;
+    slider.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    slider.addEventListener("touchend", (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) goTo((current + 1) % slides.length);
+        else goTo((current - 1 + slides.length) % slides.length);
+        resetAutoPlay();
+      }
+    }, { passive: true });
+
+    resetAutoPlay();
+  });
+
+  /* ═══════════════════════════════════════════════════
+     REVEAL ANIMATIONS (IntersectionObserver)
+     ═══════════════════════════════════════════════════ */
+  if (!prefersReducedMotion && "IntersectionObserver" in window) {
+    const revealEls = document.querySelectorAll(
+      ".reveal, .service-icon-card, .why-card, .stat-item, .process-step, .geo-point, .geo-stat-card, .project-card, .statement-card, .insight-card, .pillar-card, .pricing-card, .contact-route-card, .detail-slab, .matrix-card, .call-step, .faq-item, .proof-chip, .subhero-metric, .archive-link, .tag-link"
+    );
+
+    if (revealEls.length) {
+      const revealObs = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            entry.target.style.transitionDelay = (i * 0.04) + "s";
+            entry.target.classList.add("in-view");
+            revealObs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
+
+      revealEls.forEach(el => {
+        if (!el.classList.contains("reveal")) {
+          el.classList.add("reveal");
+        }
+        revealObs.observe(el);
+      });
+    }
+  } else {
+    // No animation: make all visible
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("in-view"));
+  }
+
+  /* ═══════════════════════════════════════════════════
+     PARTICLE CANVAS
+     ═══════════════════════════════════════════════════ */
+  const canvas = document.getElementById("particles-canvas");
+  if (canvas && !prefersReducedMotion && window.innerWidth > 768) {
+    const ctx = canvas.getContext("2d");
+    let w, h, particles = [];
+    const PARTICLE_COUNT = 40;
+
+    const resize = () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 0.5,
+        o: Math.random() * 0.3 + 0.1
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(54, 218, 245, ${p.o})`;
+        ctx.fill();
+      });
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(54, 218, 245, ${0.06 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  /* ═══════════════════════════════════════════════════
+     FLOATING BRAND ICONS
+     ═══════════════════════════════════════════════════ */
+  const brandsContainer = document.createElement("div");
+  brandsContainer.className = "floating-brands-container";
+  document.body.prepend(brandsContainer);
+
+  const brandIcons = [
+    "facebook.png", "google.png", "linkedin.png", "twitter.png", 
+    "messenger.png", "skype.png", "slack.png", "telegram.png", 
+    "app-store.png", "behance.png", "dribbble.png", "envato.png", "printerest.png"
+  ];
+  
+  // Create 15 floating icons scattered randomly
+  for (let i = 0; i < 15; i++) {
+    const icon = document.createElement("img");
+    const randomIcon = brandIcons[Math.floor(Math.random() * brandIcons.length)];
+    icon.src = `${prefix}assets/images/${randomIcon}`;
+    icon.className = "floating-brand-icon";
+    
+    // Random CSS positioning & animation delay
+    icon.style.left = `${Math.random() * 90}vw`;
+    icon.style.animationDelay = `${Math.random() * 20}s`;
+    icon.style.animationDuration = `${15 + Math.random() * 15}s`;
+    
+    brandsContainer.appendChild(icon);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     LUXURY CUSTOM CURSOR
+     ═══════════════════════════════════════════════════ */
+  if (window.matchMedia("(pointer: fine)").matches && window.innerWidth > 768) {
+    document.documentElement.classList.add("has-luxury-cursor");
+    const cursor = document.createElement("div");
+    cursor.className = "cursor-luxury";
+    document.body.appendChild(cursor);
+    cursor.innerHTML = `
+      <svg viewBox="0 0 100 100" class="cursor-text-svg">
+        <defs>
+          <path id="cursor-circle" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
+        </defs>
+        <text font-size="12" fill="var(--gold)" font-weight="600" letter-spacing="2">
+          <textPath href="#cursor-circle">MASHHOR HUB • MARKETING & AI • </textPath>
+        </text>
+      </svg>
+      <div class="cursor-dot-inner"></div>
+    `;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX;
+    let cursorY = mouseY;
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      document.body.style.setProperty("--spotlight-x", `${mouseX}px`);
+      document.body.style.setProperty("--spotlight-y", `${mouseY}px`);
+    }, { passive: true });
+
+    const animateLuxuryCursor = () => {
+      cursorX += (mouseX - cursorX) * 0.25;
+      cursorY += (mouseY - cursorY) * 0.25;
+      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+      requestAnimationFrame(animateLuxuryCursor);
+    };
+    requestAnimationFrame(animateLuxuryCursor);
+
+    document.addEventListener("mouseover", (e) => {
+      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
+        cursor.classList.add("hover");
+      }
+    });
+    document.addEventListener("mouseout", (e) => {
+      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
+        cursor.classList.remove("hover");
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     HERO CAROUSEL
+     ═══════════════════════════════════════════════════ */
+  document.querySelectorAll(".hero-carousel").forEach(carousel => {
+    const track = carousel.querySelector(".hero-carousel-track");
+    const slides = carousel.querySelectorAll(".hero-slide");
+    if (!track || slides.length === 0) return;
+
+    let currentIdx = 0;
+    
+    // Create UI
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "hero-carousel-prev";
+    prevBtn.setAttribute("aria-label", isArabic ? "السابق" : "Previous");
+    prevBtn.innerHTML = isArabic ? "➔" : "←"; // Simple arrows for now
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "hero-carousel-next";
+    nextBtn.setAttribute("aria-label", isArabic ? "التالي" : "Next");
+    nextBtn.innerHTML = isArabic ? "←" : "➔";
+
+    const dotsContainer = document.createElement("div");
+    dotsContainer.className = "hero-carousel-dots";
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+      dot.addEventListener("click", () => goToSlide(i));
+      dotsContainer.appendChild(dot);
+    });
+
+    carousel.appendChild(prevBtn);
+    carousel.appendChild(nextBtn);
+    carousel.appendChild(dotsContainer);
+
+    const updateDots = () => {
+      dotsContainer.querySelectorAll(".carousel-dot").forEach((dot, i) => {
+        dot.classList.toggle("active", i === currentIdx);
+      });
+    };
+
+    const goToSlide = (idx) => {
+      if (idx < 0) idx = slides.length - 1;
+      if (idx >= slides.length) idx = 0;
+      currentIdx = idx;
+      
+      const offset = isRTL ? (currentIdx * 100) : -(currentIdx * 100);
+      track.style.transform = `translateX(${offset}%)`;
+      updateDots();
+    };
+
+    prevBtn.addEventListener("click", () => goToSlide(currentIdx - 1));
+    nextBtn.addEventListener("click", () => goToSlide(currentIdx + 1));
+
+    // Auto Play
+    setInterval(() => {
+      goToSlide(currentIdx + 1);
+    }, 6000);
+  });
+
+  /* ═══════════════════════════════════════════════════
+     CONTACT FORM — TYPE TOGGLE
+     ═══════════════════════════════════════════════════ */
+  const typeBtns = document.querySelectorAll(".contact-type-btn[data-type]");
+  if (typeBtns.length) {
+    const companyFields = document.getElementById("company-fields");
+    const individualFields = document.getElementById("individual-fields");
+    const hiddenType = document.getElementById("hidden-client-type");
+
+    typeBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        typeBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const type = btn.getAttribute("data-type");
+        if (hiddenType) hiddenType.value = type;
+        if (companyFields) companyFields.style.display = type === "company" ? "" : "none";
+        if (individualFields) individualFields.style.display = type === "individual" ? "" : "none";
+      });
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     FAQ ACCORDION ACCESSIBILITY
+     ═══════════════════════════════════════════════════ */
+  document.querySelectorAll(".faq-item").forEach(item => {
+    const summary = item.querySelector("summary");
+    if (summary) {
+      summary.setAttribute("role", "button");
+      summary.setAttribute("tabindex", "0");
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════
+     LAZY IMAGE FADE
+     ═══════════════════════════════════════════════════ */
+  document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+    if (img.complete) {
+      img.style.opacity = "1";
+    } else {
+      img.style.opacity = "0";
+      img.style.transition = "opacity .5s ease";
+      img.addEventListener("load", () => { img.style.opacity = "1"; }, { once: true });
+      img.addEventListener("error", () => { img.style.opacity = "1"; }, { once: true });
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════
+     COPYRIGHT YEAR
+     ═══════════════════════════════════════════════════ */
+  const yearEl = document.getElementById("copyright-year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ═══════════════════════════════════════════════════
+     ANIMATED SEARCH PLACEHOLDER
+     ═══════════════════════════════════════════════════ */
+  const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms]');
+  searchInputs.forEach(input => {
+    const terms = JSON.parse(input.getAttribute('data-placeholder-terms') || '[]');
+    if (!terms.length) return;
+
+    const baseText = input.getAttribute('data-placeholder-base') || '';
+    let termIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    let pauseTimer = 0;
+    const TYPING_SPEED = 80;
+    const DELETING_SPEED = 40;
+    const PAUSE_AFTER_TYPE = 2000;
+    const PAUSE_AFTER_DELETE = 400;
+
+    const animate = () => {
+      const currentTerm = terms[termIdx];
+
+      if (!isDeleting) {
+        charIdx++;
+        if (charIdx > currentTerm.length) {
+          // Finished typing, pause before deleting
+          pauseTimer = PAUSE_AFTER_TYPE;
+          isDeleting = true;
+        }
+      } else {
+        charIdx--;
+        if (charIdx < 0) {
+          charIdx = 0;
+          isDeleting = false;
+          termIdx = (termIdx + 1) % terms.length;
+          pauseTimer = PAUSE_AFTER_DELETE;
+        }
+      }
+
+      const display = baseText + currentTerm.substring(0, charIdx) + (charIdx < currentTerm.length || isDeleting ? '|' : '');
+      input.setAttribute('placeholder', display);
+
+      const speed = isDeleting ? DELETING_SPEED : TYPING_SPEED;
+      setTimeout(animate, pauseTimer > 0 ? (pauseTimer, pauseTimer = 0, pauseTimer || speed) : speed);
+    };
+
+    // Fix the setTimeout logic
+    const runAnimation = () => {
+      const currentTerm = terms[termIdx];
+
+      if (!isDeleting) {
+        charIdx++;
+        if (charIdx > currentTerm.length) {
+          isDeleting = true;
+          setTimeout(runAnimation, PAUSE_AFTER_TYPE);
+          return;
+        }
+      } else {
+        charIdx--;
+        if (charIdx < 0) {
+          charIdx = 0;
+          isDeleting = false;
+          termIdx = (termIdx + 1) % terms.length;
+          setTimeout(runAnimation, PAUSE_AFTER_DELETE);
+          return;
+        }
+      }
+
+      const typed = terms[termIdx].substring(0, charIdx);
+      const cursor = '|';
+      input.setAttribute('placeholder', baseText + typed + cursor);
+
+      setTimeout(runAnimation, isDeleting ? DELETING_SPEED : TYPING_SPEED);
+    };
+
+    // Only animate when input is empty
+    let animationRunning = true;
+    input.addEventListener('focus', () => { animationRunning = false; });
+    input.addEventListener('blur', () => {
+      if (!input.value.trim()) {
+        animationRunning = true;
+      }
+    });
+
+    // Start with a delay
+    setTimeout(() => {
+      const tick = () => {
+        if (!animationRunning || input.value.trim()) {
+          input.setAttribute('placeholder', baseText.replace(/\|$/, ''));
+          setTimeout(tick, 500);
+          return;
+        }
+        const currentTerm = terms[termIdx];
+
+        if (!isDeleting) {
+          charIdx++;
+          if (charIdx > currentTerm.length) {
+            isDeleting = true;
+            setTimeout(tick, PAUSE_AFTER_TYPE);
+            return;
+          }
+        } else {
+          charIdx--;
+          if (charIdx < 0) {
+            charIdx = 0;
+            isDeleting = false;
+            termIdx = (termIdx + 1) % terms.length;
+            setTimeout(tick, PAUSE_AFTER_DELETE);
+            return;
+          }
+        }
+
+        const typed = terms[termIdx].substring(0, charIdx);
+        input.setAttribute('placeholder', baseText + typed + '│');
+        setTimeout(tick, isDeleting ? DELETING_SPEED : TYPING_SPEED);
+      };
+      tick();
+    }, 1200);
+  });
+
+  /* ═══════════════════════════════════════════════════
+     FORM INTELLIGENCE & VALIDATION
+     ═══════════════════════════════════════════════════ */
+  class MashhorFormValidator {
+    constructor() {
+      // Regex for validating actual functional domains, not just a@b
+      this.emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      // Regex for phone numbers allowing international formats easily + and numbers
+      this.phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+      // Basic check for cyrillic or excessive URLs
+      this.spamRegex = /([\u0400-\u04FF]|http:\/\/[^ ]+|https:\/\/[^ ]+)/i;
+      
+      this.init();
+    }
+
+    init() {
+      // Find all forms that we want to validate (Contact forms and Newsletters)
+      const forms = document.querySelectorAll('form[action*="formsubmit.co"], .contact-form, .newsletter-form');
+      
+      forms.forEach(form => {
+        form.setAttribute('novalidate', 'true');
+        form.addEventListener('submit', (e) => this.handleSubmit(e, form));
+        
+        // Add real-time validation to inputs
+        const inputs = form.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+          // Add error container if it doesn't exist
+          if (!input.nextElementSibling || !input.nextElementSibling.hasAttribute('data-form-error')) {
+            const errorMsg = document.createElement('div');
+            errorMsg.setAttribute('data-form-error', '');
+            input.parentNode.appendChild(errorMsg);
+          }
+          
+          input.addEventListener('blur', () => this.validateField(input));
+          input.addEventListener('input', () => {
+            if (input.classList.contains('input-invalid')) {
+              this.validateField(input); // re-validate immediately if currently invalid
+            }
+          });
+        });
+      });
+    }
+
+    validateField(input) {
+      let isValid = true;
+      let errorText = "";
+      const val = input.value.trim();
+      const type = input.getAttribute('type') || input.tagName.toLowerCase();
+      const isRequired = input.hasAttribute('required');
+
+      if (isRequired && val === "") {
+        isValid = false;
+        errorText = isArabic ? "هذا الحقل مطلوب" : "This field is required";
+      } else if (val !== "") {
+        if (type === "email" || input.name === "email" || input.id.includes('email')) {
+          if (!this.emailRegex.test(val)) {
+            isValid = false;
+            errorText = isArabic ? "صيغة البريد الإلكتروني غير صحيحة" : "Please enter a valid email format";
+          }
+        } 
+        else if (type === "tel" || input.name === "phone" || input.id.includes('phone')) {
+          // Remove spaces for checking
+          const cleanPhone = val.replace(/\s/g, '');
+          // Basic length check for phone
+          if (cleanPhone.length < 8 || !this.phoneRegex.test(val)) {
+             isValid = false;
+             errorText = isArabic ? "رقم الهاتف غير صحيح" : "Please enter a valid phone number";
+          }
+        }
+        else if (type === "textarea" || input.tagName.toLowerCase() === "textarea") {
+          if (val.length < 15) {
+            isValid = false;
+            errorText = isArabic ? "الرسالة قصيرة جداً (الحد الأدنى 15 حرف)" : "Message is too short (minimum 15 characters)";
+          } else if (this.spamRegex.test(val)) {
+            isValid = false;
+            errorText = isArabic ? "عذراً، الروابط والرموز غير مقبولة للحماية من البريد العشوائي" : "Sorry, URLs/links are not allowed in the message body";
+          }
+        }
+      }
+
+      const errorEl = input.parentNode.querySelector('[data-form-error]');
+      if (!isValid) {
+        input.classList.remove('input-valid');
+        input.classList.add('input-invalid');
+        if (errorEl) errorEl.textContent = errorText;
+      } else {
+        input.classList.remove('input-invalid');
+        input.classList.add('input-valid');
+        if (errorEl) errorEl.textContent = "";
+      }
+      return isValid;
+    }
+
+    handleSubmit(e, form) {
+      let isFormValid = true;
+      const inputs = form.querySelectorAll('input, textarea');
+      
+      inputs.forEach(input => {
+        if (!this.validateField(input)) {
+          isFormValid = false;
+        }
+      });
+
+      if (!isFormValid) {
+        e.preventDefault();
+        // Scroll to first error smoothly
+        const firstError = form.querySelector('.input-invalid');
+        if (firstError) {
+          firstError.focus();
+        }
+      } else {
+        // Prevent double submission UI state
+        form.classList.add('form-validating');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.innerHTML = isArabic ? '<span class="spinner"></span> جاري الإرسال...' : '<span class="spinner"></span> Sending...';
+        }
+      }
+    }
+  }
+
+  const initAnnouncementBar = () => {
+    const announcement = document.querySelector(".announcement");
+    if (!announcement) return;
+
+    const storageKey = "mashhor-announcement-dismissed";
+    if (localStorage.getItem(storageKey) === "true") {
+      announcement.classList.add("dismissed");
+      return;
+    }
+
+    announcement.textContent = isArabic
+      ? "أول منصة تسويق وذكاء اصطناعي متكاملة من الكويت تخدم الخليج ومصر والعالم العربي."
+      : "Kuwait's first integrated marketing + AI platform, now serving the GCC, Egypt, and the wider Arab world.";
+
+    if (!announcement.querySelector(".announcement-close")) {
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "announcement-close";
+      closeBtn.setAttribute("aria-label", isArabic ? "إغلاق التنبيه" : "Dismiss announcement");
+      closeBtn.textContent = "×";
+      closeBtn.addEventListener("click", () => {
+        announcement.classList.add("dismissed");
+        localStorage.setItem(storageKey, "true");
+      });
+      announcement.appendChild(closeBtn);
+    }
+  };
+
+  const initScrollProgress = () => {
+    let progress = document.querySelector(".scroll-progress");
+    if (!progress) {
+      progress = document.createElement("div");
+      progress.className = "scroll-progress";
+      document.body.appendChild(progress);
+    }
+
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const amount = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      progress.style.width = `${Math.max(0, Math.min(100, amount))}%`;
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+  };
+
+  const initStickyMobileCta = () => {
+    if (window.innerWidth > 760 || document.querySelector(".sticky-mobile-cta")) return;
+
+    const isContactPage = /\/contact(?:\.html)?$/i.test(currentPath);
+    const isBookCallPage = /\/book-call\/?/i.test(currentPath);
+    const bar = document.createElement("div");
+    bar.className = "sticky-mobile-cta";
+
+    const primaryLabel = isArabic
+      ? (isContactPage ? "واتساب مباشر" : "ابدأ مشروعك")
+      : (isContactPage ? "WhatsApp Now" : "Start Your Project");
+    const primaryHref = isContactPage ? "https://wa.me/96565099769" : `${prefix}contact.html`;
+
+    const secondaryLabel = isArabic
+      ? (isBookCallPage ? "تواصل الآن" : "احجز مكالمة")
+      : (isBookCallPage ? "Contact Us" : "Book a Call");
+    const secondaryHref = isBookCallPage ? `${prefix}contact.html` : `${prefix}book-call/index.html`;
+
+    bar.innerHTML = `
+      <div class="sticky-cta-text">
+        <strong>${isArabic ? "جاهز نبدأ؟" : "Ready to move fast?"}</strong>
+        <span>${isArabic ? "وصول أسرع لأفضل خطوة تالية من الجوال." : "Quick access to the next best action on mobile."}</span>
+      </div>
+      <div class="sticky-cta-actions">
+        <a class="sticky-cta-primary" href="${primaryHref}" ${primaryHref.startsWith("https://wa.me") ? 'target="_blank" rel="noopener noreferrer"' : ""}>${primaryLabel}</a>
+        <a class="sticky-cta-secondary" href="${secondaryHref}">${secondaryLabel}</a>
+      </div>
+    `;
+
+    document.body.appendChild(bar);
+    document.body.classList.add("has-sticky-mobile-cta");
+  };
+
+  // Initialize after a slight delay to ensure DOM is fully ready
+  setTimeout(() => {
+    new MashhorFormValidator();
+  }, 500);
+
+  normalizeMetadata();
+  initAnnouncementBar();
+  normalizeDocumentText();
+  initScrollProgress();
+  initStickyMobileCta();
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE && node.nodeValue) {
+          node.nodeValue = repairMojibake(node.nodeValue);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          normalizeDocumentText(node);
+        }
+      });
+    });
+  });
+
+  if (document.body) {
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+})();

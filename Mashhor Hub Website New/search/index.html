@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Search | Mashhor Hub</title>
+<meta name="description" content="Search key pages across Mashhor Hub services, case studies, academy, resources, pricing, and contact routes.">
+<link rel="canonical" href="https://mashhor-hub.com/search/">
+<link rel="alternate" hreflang="en" href="https://mashhor-hub.com/search/">
+<link rel="alternate" hreflang="ar" href="https://mashhor-hub.com/ar/search/">
+<link rel="icon" type="image/jpeg" href="../favicon.jpg">
+<link rel="apple-touch-icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+<meta property="og:title" content="Search | Mashhor Hub">
+<meta property="og:description" content="Search key pages across Mashhor Hub services, case studies, academy, resources, pricing, and contact routes.">
+<meta property="og:image" content="../assets/images/og-image.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  /* ── Search Page Exclusive Styles ── */
+  .search-page-hero {
+    position: relative;
+    padding: 140px 5% 70px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .search-page-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 30%, rgba(54,218,245,0.12), transparent 45%),
+      radial-gradient(circle at 75% 70%, rgba(244,205,85,0.08), transparent 40%);
+    pointer-events: none;
+  }
+
+  .search-page-hero::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, var(--bg), transparent);
+    pointer-events: none;
+  }
+
+  .search-page-hero > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .search-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    background: rgba(54,218,245,0.06);
+    border: 1px solid rgba(54,218,245,0.12);
+    color: var(--cyan);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: var(--font-code);
+    margin-bottom: 28px;
+  }
+
+  .search-hero-eyebrow::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: searchPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes searchPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .search-page-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, var(--text) 60%, var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .search-page-hero .lead {
+    max-width: 640px;
+    margin: 0 auto 42px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  /* ── Enhanced Search Bar ── */
+  .search-bar-container {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .search-bar-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    padding: 4px;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+    overflow: hidden;
+  }
+
+  .search-bar-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(54,218,245,0.2), transparent 40%, transparent 60%, rgba(244,205,85,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .search-bar-wrap:focus-within::before {
+    opacity: 1;
+  }
+
+  .search-bar-wrap:focus-within {
+    border-color: rgba(54,218,245,0.25);
+    box-shadow: 0 0 0 4px rgba(54,218,245,0.06), 0 12px 40px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.05);
+  }
+
+  [data-theme="light"] .search-bar-wrap {
+    background: rgba(255,255,255,0.65);
+    border-color: rgba(0,30,80,0.1);
+  }
+
+  [data-theme="light"] .search-bar-wrap:focus-within {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(37,99,235,0.2);
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.06), 0 12px 40px rgba(0,0,0,0.06);
+  }
+
+  .search-bar-icon {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+    color: var(--muted);
+    transition: color 0.3s ease;
+  }
+
+  .search-bar-wrap:focus-within .search-bar-icon {
+    color: var(--cyan);
+  }
+
+  [data-theme="light"] .search-bar-wrap:focus-within .search-bar-icon {
+    color: var(--blue);
+  }
+
+  .search-bar-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .search-bar-input {
+    width: 100%;
+    padding: 18px 120px 18px 56px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-family: inherit;
+    line-height: 1.4;
+  }
+
+  .search-bar-input::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .search-bar-input:focus::placeholder {
+    opacity: 0.3;
+  }
+
+  .search-bar-shortcut {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-family: var(--font-code);
+    opacity: 0.6;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  [data-theme="light"] .search-bar-shortcut {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,30,80,0.08);
+  }
+
+  html[dir="rtl"] .search-bar-icon { left: auto; right: 22px; }
+  html[dir="rtl"] .search-bar-input { padding: 18px 56px 18px 120px; }
+  html[dir="rtl"] .search-bar-shortcut { right: auto; left: 18px; }
+
+  /* ── Stats Row ── */
+  .search-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .search-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .search-stat-icon {
+    font-size: 1.1rem;
+  }
+
+  .search-stat b {
+    color: var(--text);
+    font-family: var(--font-code);
+  }
+
+  /* ── Category filter chips ── */
+  .search-filters {
+    max-width: 720px;
+    margin: 0 auto 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .filter-chip:hover {
+    background: rgba(54,218,245,0.06);
+    border-color: rgba(54,218,245,0.15);
+    color: var(--cyan);
+    transform: translateY(-1px);
+  }
+
+  .filter-chip.active {
+    background: rgba(244,205,85,0.08);
+    border-color: rgba(244,205,85,0.2);
+    color: var(--gold-soft);
+  }
+
+  [data-theme="light"] .filter-chip {
+    background: rgba(255,255,255,0.5);
+    border-color: rgba(0,30,80,0.06);
+  }
+
+  [data-theme="light"] .filter-chip:hover {
+    background: rgba(37,99,235,0.06);
+    border-color: rgba(37,99,235,0.12);
+    color: var(--blue);
+  }
+
+  [data-theme="light"] .filter-chip.active {
+    background: rgba(184,134,11,0.08);
+    border-color: rgba(184,134,11,0.2);
+    color: var(--gold);
+  }
+
+  /* ── Search Results Section ── */
+  .search-results-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 5% 80px;
+  }
+
+  .search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .results-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .results-count b {
+    color: var(--gold-soft);
+    font-size: 1.1rem;
+  }
+
+  .results-view-toggle {
+    display: flex;
+    gap: 4px;
+  }
+
+  .view-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.25s ease;
+  }
+
+  .view-btn.active {
+    background: rgba(54,218,245,0.08);
+    border-color: rgba(54,218,245,0.15);
+    color: var(--cyan);
+  }
+
+  .view-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* ── Search Grid ── */
+  .search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .search-results-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .search-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.35s ease;
+    overflow: hidden;
+  }
+
+  .search-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, rgba(54,218,245,0.25), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .search-card:hover::before {
+    opacity: 1;
+  }
+
+  .search-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(54,218,245,0.15);
+    box-shadow: 0 16px 42px rgba(0,0,0,0.2);
+    background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  }
+
+  [data-theme="light"] .search-card {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(0,30,80,0.06);
+  }
+
+  [data-theme="light"] .search-card:hover {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(37,99,235,0.15);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+  }
+
+  .search-results-grid.list-view .search-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 24px;
+    border-radius: 16px;
+  }
+
+  .card-icon-wrap {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .search-card:hover .card-icon-wrap {
+    transform: scale(1.08) rotate(-3deg);
+  }
+
+  .search-results-grid.list-view .card-icon-wrap {
+    margin-bottom: 0;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+  }
+
+  .icon-services { background: rgba(54,218,245,0.08); border: 1px solid rgba(54,218,245,0.15); }
+  .icon-ai { background: rgba(147,51,234,0.08); border: 1px solid rgba(147,51,234,0.15); }
+  .icon-pricing { background: rgba(244,205,85,0.08); border: 1px solid rgba(244,205,85,0.15); }
+  .icon-marketing { background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.15); }
+  .icon-growth { background: rgba(93,230,177,0.08); border: 1px solid rgba(93,230,177,0.15); }
+  .icon-learning { background: rgba(42,127,231,0.08); border: 1px solid rgba(42,127,231,0.15); }
+  .icon-contact { background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.15); }
+
+  .card-route {
+    font-family: var(--font-code);
+    font-size: 0.7rem;
+    color: var(--muted);
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0 0 14px;
+    flex-grow: 1;
+  }
+
+  .search-results-grid.list-view .card-desc {
+    margin-bottom: 0;
+    flex-grow: 0;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .search-results-grid.list-view .card-tags {
+    display: none;
+  }
+
+  .card-tag {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--muted);
+    transition: all 0.25s ease;
+  }
+
+  [data-theme="light"] .card-tag {
+    background: rgba(0,30,80,0.03);
+    border-color: rgba(0,30,80,0.06);
+  }
+
+  .card-content {
+    flex: 1;
+  }
+
+  .card-arrow {
+    display: none;
+    color: var(--muted);
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .search-results-grid.list-view .card-arrow {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-card:hover .card-arrow {
+    color: var(--cyan);
+    transform: translateX(4px);
+  }
+
+  html[dir="rtl"] .search-card:hover .card-arrow {
+    transform: translateX(-4px);
+  }
+
+  /* ── Empty State ── */
+  .search-empty {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .search-empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    background: rgba(54,218,245,0.06);
+    border: 1px solid rgba(54,218,245,0.1);
+    font-size: 2.2rem;
+  }
+
+  .search-empty h3 {
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .search-empty p {
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Quick Suggestion Cards ── */
+  .quick-suggestions {
+    max-width: 720px;
+    margin: 0 auto 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .quick-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .quick-card:hover {
+    background: rgba(54,218,245,0.06);
+    border-color: rgba(54,218,245,0.15);
+    transform: translateY(-2px);
+  }
+
+  .quick-card-icon {
+    font-size: 1.2rem;
+  }
+
+  .quick-card span {
+    font-weight: 600;
+  }
+
+  [data-theme="light"] .quick-card {
+    background: rgba(255,255,255,0.5);
+    border-color: rgba(0,30,80,0.06);
+  }
+
+  [data-theme="light"] .quick-card:hover {
+    background: rgba(37,99,235,0.06);
+    border-color: rgba(37,99,235,0.12);
+  }
+
+  @media (max-width: 768px) {
+    .search-page-hero { padding: 120px 5% 50px; }
+    .quick-suggestions { grid-template-columns: 1fr; }
+    .search-results-grid { grid-template-columns: 1fr; }
+    .search-bar-shortcut { display: none; }
+    .search-bar-input { padding-right: 20px; }
+    html[dir="rtl"] .search-bar-input { padding-left: 20px; }
+    .search-stats { gap: 20px; }
+    .results-view-toggle { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page-shell platform-page">
+  <div class="announcement">🔍 Search our platform for services, insights, capabilities, and resources.</div>
+  <div data-platform-header></div>
+  <main>
+    <!-- ═════ Search Hero ═════ -->
+    <section class="search-page-hero">
+      <div class="search-hero-eyebrow">Search Hub</div>
+      <h1>Find anything inside<br>Mashhor Hub.</h1>
+      <p class="lead">Jump across services, pricing, case studies, academy tracks, prompts, portfolio pages, and the most useful resources — all in one place.</p>
+
+      <!-- ═════ Enhanced Search Bar ═════ -->
+      <div class="search-bar-container">
+        <div class="search-bar-wrap">
+          <div class="search-bar-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <input
+            id="platform-search-input"
+            class="search-input search-bar-input"
+            type="search"
+            placeholder=""
+            aria-label="Search the platform"
+            data-placeholder-base="Search for "
+            data-placeholder-terms='["services","pricing","academy","AI tools","portfolio","case studies","influencer marketing","consultation","SEO","content writing","automation","prompts"]'
+          >
+          <span class="search-bar-shortcut">⌘ K</span>
+        </div>
+      </div>
+
+      <!-- ═════ Quick Suggestion Cards ═════ -->
+      <div class="quick-suggestions reveal">
+        <button class="quick-card" onclick="quickSearch('services')">
+          <span class="quick-card-icon">⚙️</span>
+          <span>Services</span>
+        </button>
+        <button class="quick-card" onclick="quickSearch('AI')">
+          <span class="quick-card-icon">🤖</span>
+          <span>Mashhor AI</span>
+        </button>
+        <button class="quick-card" onclick="quickSearch('pricing')">
+          <span class="quick-card-icon">💰</span>
+          <span>Pricing</span>
+        </button>
+      </div>
+
+      <!-- ═════ Stats ═════ -->
+      <div class="search-stats reveal">
+        <div class="search-stat">
+          <span class="search-stat-icon">📄</span>
+          <b>18</b> pages indexed
+        </div>
+        <div class="search-stat">
+          <span class="search-stat-icon">🏷️</span>
+          <b>50+</b> tags searchable
+        </div>
+        <div class="search-stat">
+          <span class="search-stat-icon">⚡</span>
+          Instant results
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════ Category Filters ═════ -->
+    <div class="search-filters reveal">
+      <button class="filter-chip active" data-category="all">All</button>
+      <button class="filter-chip" data-category="services">⚙️ Services</button>
+      <button class="filter-chip" data-category="ai">🤖 AI</button>
+      <button class="filter-chip" data-category="marketing">🌟 Marketing</button>
+      <button class="filter-chip" data-category="growth">📈 Growth</button>
+      <button class="filter-chip" data-category="learning">🎓 Learning</button>
+      <button class="filter-chip" data-category="contact">📬 Connect</button>
+    </div>
+
+    <!-- ═════ Results Section ═════ -->
+    <section class="search-results-section">
+      <div class="search-results-header reveal">
+        <div class="results-count">
+          <b id="result-count-num">18</b> <span id="result-count-text">results found</span>
+        </div>
+        <div class="results-view-toggle">
+          <button class="view-btn active" id="grid-view-btn" aria-label="Grid view" onclick="setView('grid')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+          </button>
+          <button class="view-btn" id="list-view-btn" aria-label="List view" onclick="setView('list')">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="search-results" class="search-results-grid"></div>
+
+      <div id="search-empty" class="search-empty" hidden>
+        <div class="search-empty-icon">🔍</div>
+        <h3>No results found</h3>
+        <p>We couldn't find any matches. Try different keywords like <b style="color:var(--gold-soft)">pricing</b>, <b style="color:var(--gold-soft)">AI</b>, or <b style="color:var(--gold-soft)">academy</b>.</p>
+      </div>
+    </section>
+  </main>
+  <div data-platform-footer></div>
+</div>
+<script src="../assets/js/mashhor-platform.js"></script>
+<script>
+function quickSearch(term) {
+  const input = document.getElementById("platform-search-input");
+  input.value = term;
+  input.dispatchEvent(new Event('input'));
+  input.focus();
+}
+
+function setView(mode) {
+  const grid = document.getElementById("search-results");
+  const gridBtn = document.getElementById("grid-view-btn");
+  const listBtn = document.getElementById("list-view-btn");
+  if (mode === 'list') {
+    grid.classList.add('list-view');
+    listBtn.classList.add('active');
+    gridBtn.classList.remove('active');
+  } else {
+    grid.classList.remove('list-view');
+    gridBtn.classList.add('active');
+    listBtn.classList.remove('active');
+  }
+}
+
+// Keyboard shortcut: Cmd/Ctrl + K to focus search
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById("platform-search-input").focus();
+  }
+});
+
+(() => {
+  const items = [
+    { title: "Services Hub", desc: "Overview of the full Mashhor Hub delivery stack across marketing, design, and AI.", href: "../services/index.html", tags: ["services", "marketing", "design", "growth"], cat: "services", icon: "⚙️", iconClass: "icon-services" },
+    { title: "Mashhor AI", desc: "The ultimate Artificial Intelligence hub for integrated marketing and automation.", href: "../services/mashhor-ai.html", tags: ["ai", "artificial intelligence", "tech", "bots"], cat: "ai", icon: "🤖", iconClass: "icon-ai" },
+    { title: "AI Agents & Chatbots", desc: "Autonomous language learning bots for customer support and engagement.", href: "../services/mashhor-ai/ai-chatbots.html", tags: ["bot", "agents", "support", "ai"], cat: "ai", icon: "💬", iconClass: "icon-ai" },
+    { title: "Virtual Influencers", desc: "Creation and management of synthetic brand avatars for campaigns.", href: "../services/mashhor-ai/virtual-influencers.html", tags: ["avatar", "virtual", "influencer", "ai"], cat: "ai", icon: "👤", iconClass: "icon-ai" },
+    { title: "Content Writing", desc: "Copywriting, brand tone, SEO articles, and creative storytelling.", href: "../services/content-writing.html", tags: ["copywriting", "writing", "content", "creative"], cat: "services", icon: "✍️", iconClass: "icon-services" },
+    { title: "Consultation & Strategy", desc: "Brand positioning, systems design, and creative reviews.", href: "../services/consultation.html", tags: ["consulting", "strategy", "review", "brand"], cat: "services", icon: "💡", iconClass: "icon-services" },
+    { title: "Search Engine Optimization", desc: "Technical SEO, local mapping, and search ranking strategies.", href: "../services/seo.html", tags: ["seo", "optimization", "ranking", "google"], cat: "growth", icon: "📊", iconClass: "icon-growth" },
+    { title: "Pricing", desc: "Packages, retainers, and commercial routes tailored to your scale.", href: "../pricing/index.html", tags: ["pricing", "packages", "cost", "budget"], cat: "pricing", icon: "💰", iconClass: "icon-pricing" },
+    { title: "Book a Call", desc: "Start the right strategic conversation with our team.", href: "../book-call/index.html", tags: ["call", "book", "contact", "strategy"], cat: "contact", icon: "📞", iconClass: "icon-contact" },
+    { title: "Portfolio", desc: "Explore connected execution across brand, web, and campaigns.", href: "../portfolio/index.html", tags: ["portfolio", "work", "projects", "showcase"], cat: "marketing", icon: "🎨", iconClass: "icon-marketing" },
+    { title: "Case Studies", desc: "See the strategic logic and results behind our key projects.", href: "../case-studies/index.html", tags: ["case study", "cases", "proof", "results"], cat: "growth", icon: "📈", iconClass: "icon-growth" },
+    { title: "Academy", desc: "Tracks and courses for AI, creative, automation, and growth.", href: "../academy/index.html", tags: ["academy", "courses", "training", "learning"], cat: "learning", icon: "🎓", iconClass: "icon-learning" },
+    { title: "Prompt Vault", desc: "Prompt systems for operators and modern marketing teams.", href: "../prompts/index.html", tags: ["prompts", "ai", "automation", "templates"], cat: "learning", icon: "🧠", iconClass: "icon-learning" },
+    { title: "Library", desc: "Curated resource hub across articles, prompts, and learning.", href: "../library.html", tags: ["library", "resources", "guides", "articles"], cat: "learning", icon: "📚", iconClass: "icon-learning" },
+    { title: "FAQ", desc: "Common questions about services, projects, and delivery.", href: "../faqs.html", tags: ["faq", "questions", "help", "support"], cat: "contact", icon: "❓", iconClass: "icon-contact" },
+    { title: "Influencer Marketing", desc: "Creator and celebrity campaign routes for maximum impact.", href: "../services/influencer-marketing.html", tags: ["influencer", "creator", "campaigns", "celebrity"], cat: "marketing", icon: "🌟", iconClass: "icon-marketing" },
+    { title: "AI & Automation", desc: "Smart workflows, AI systems, and process acceleration.", href: "../services/smart-automation.html", tags: ["ai", "automation", "systems", "workflow"], cat: "ai", icon: "⚡", iconClass: "icon-ai" },
+    { title: "Contact", desc: "Reach Mashhor Hub directly for the next step.", href: "../contact.html", tags: ["contact", "whatsapp", "team", "email"], cat: "contact", icon: "📬", iconClass: "icon-contact" }
+  ];
+
+  const input = document.getElementById("platform-search-input");
+  const results = document.getElementById("search-results");
+  const countNum = document.getElementById("result-count-num");
+  const countText = document.getElementById("result-count-text");
+  const empty = document.getElementById("search-empty");
+  const filterChips = document.querySelectorAll(".filter-chip[data-category]");
+  let activeCategory = "all";
+
+  const render = () => {
+    const term = (input.value || "").trim().toLowerCase();
+    const filtered = items.filter((item) => {
+      const matchesCategory = activeCategory === "all" || item.cat === activeCategory;
+      const matchesSearch = !term || [item.title, item.desc, ...item.tags].join(" ").toLowerCase().includes(term);
+      return matchesCategory && matchesSearch;
+    });
+
+    results.innerHTML = filtered.map((item) => `
+      <a class="search-card" href="${item.href}">
+        <div class="card-icon-wrap ${item.iconClass}">${item.icon}</div>
+        <div class="card-content">
+          <div class="card-route">${item.href.replace('../', '/')}</div>
+          <div class="card-title">${item.title}</div>
+          <p class="card-desc">${item.desc}</p>
+          <div class="card-tags">${item.tags.map((tag) => `<span class="card-tag">${tag}</span>`).join("")}</div>
+        </div>
+        <div class="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+      </a>
+    `).join("");
+
+    countNum.textContent = filtered.length;
+    countText.textContent = filtered.length === 1 ? "result found" : "results found";
+    empty.hidden = filtered.length !== 0;
+    results.style.display = filtered.length === 0 ? "none" : "";
+  };
+
+  input.addEventListener("input", render);
+
+  filterChips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      filterChips.forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeCategory = chip.getAttribute("data-category");
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

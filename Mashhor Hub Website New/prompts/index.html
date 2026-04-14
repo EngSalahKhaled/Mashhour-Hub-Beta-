@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Prompt Vault | Mashhor Hub</title>
+<meta name="description" content="An organized prompt library by Mashhor Hub for modern marketing teams, creators, and operators.">
+<link rel="canonical" href="https://mashhor-hub.com/prompts/index.html">
+<link rel="alternate" hreflang="en" href="https://mashhor-hub.com/prompts/index.html">
+<link rel="alternate" hreflang="ar" href="https://mashhor-hub.com/ar/prompts/index.html">
+<link rel="icon" type="image/jpeg" href="../favicon.jpg">
+<link rel="apple-touch-icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+
+<meta property="og:title" content="Prompt Vault | Mashhor Hub">
+<meta property="og:description" content="An organized prompt library by Mashhor Hub for modern marketing teams, creators, and operators.">
+<meta property="og:image" content="../assets/images/og-image.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="page-shell platform-page">
+  <div class="announcement">⚡ Get exclusive access to the AI prompt library designed for modern marketing teams.</div>
+  <div data-platform-header></div>
+  <main>
+    <section class="section subhero">
+      <div class="subhero-panel reveal">
+        <p class="eyebrow">Prompt Vault</p>
+        <h1>Prompt systems for teams that want <span>better output, faster.</span></h1>
+        <p class="lead">This vault is positioned as an execution resource, not a gimmick. It organizes prompt thinking around practical workflows for content, design, strategy, AI operations, and performance marketing.</p>
+        <div class="hero-actions">
+          <a class="button" href="#vault-app">Unlock The Vault</a>
+          <a class="ghost-button" href="../book-call/index.html">Book a Strategy Call</a>
+        </div>
+        <div class="subhero-metrics">
+          <div class="subhero-metric"><b>Operators</b><span>Prompts for teams who need repeatable execution quality</span></div>
+          <div class="subhero-metric"><b>Systems</b><span>Built around workflows, not one-line novelty prompts</span></div>
+          <div class="subhero-metric"><b>Leverage</b><span>Designed to reduce friction in content and production loops</span></div>
+        </div>
+      </div>
+      <div class="subhero-side reveal">
+        <article class="insight-card">
+          <span class="mini-label">Use Case</span>
+          <p>The vault supports creators, marketers, founders, and operators who want AI to behave like a useful production layer.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="vault-section">
+      <div class="section-header">
+        <p class="eyebrow">The Complete Vault</p>
+        <h2>300+ prompts for <span>execution, strategy, and operations.</span></h2>
+      </div>
+      
+      <!-- Vault Application UI -->
+      <div class="viewer-controls" id="vault-app" role="search" style="border-radius:12px; margin-top:20px; background: rgba(7,7,10,.94); padding: 14px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div class="vc-search" style="flex: 1; min-width: 200px; position: relative;">
+          <span class="vc-search-icon" aria-hidden="true" style="position: absolute; top: 50%; left: 14px; transform: translateY(-50%); color: var(--muted); pointer-events: none; display: flex; align-items: center;">
+            <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input type="text" id="vSearch" class="vc-input" placeholder="Search prompts, tools, categories…" aria-label="Search prompts" style="width: 100%; padding: 10px 14px 10px 40px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-family: var(--fm); font-size: .85rem; outline: none; box-sizing: border-box;">
+        </div>
+        <div class="vc-filters" id="vFilters" role="group" aria-label="Filter by category" style="display: flex; gap: 7px; flex-wrap: wrap;">
+          <button class="vcf-btn active" data-cat="all">All</button>
+          <button class="vcf-btn" data-cat="Ads">Ads</button>
+          <button class="vcf-btn" data-cat="Text">Text</button>
+          <button class="vcf-btn" data-cat="Strategy">Strategy</button>
+          <button class="vcf-btn" data-cat="Image">Image</button>
+          <button class="vcf-btn" data-cat="Video">Video</button>
+          <button class="vcf-btn" data-cat="Automation">Automation</button>
+          <button class="vcf-btn" data-cat="Tech">Tech</button>
+          <button class="vcf-btn" data-cat="Design">Design</button>
+        </div>
+        <div class="vc-count" id="vCount" aria-live="polite" style="font-family: var(--fm); font-size: .7rem; color: var(--muted); letter-spacing: .08em; white-space: nowrap;">Loading...</div>
+      </div>
+
+      <!-- Prompt grid -->
+      <div class="viewer-grid-wrap" style="padding: 40px 0;">
+        <div class="viewer-grid" id="vGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+          <div class="viewer-empty" id="vEmpty" style="display: none; grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); font-family: var(--fm); font-size: .85rem;">No prompts match your search. Try a different keyword.</div>
+        </div>
+      </div>
+
+      <!-- Toast notification -->
+      <div class="viewer-toast" id="vToast" role="status" aria-live="polite" style="position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surf); border: 1px solid rgba(196,255,71,.3); border-radius: 100px; padding: 13px 24px; font-family: var(--fm); font-size: .85rem; color: var(--lime); z-index: 9999; opacity: 0; transition: transform .35s ease, opacity .35s; pointer-events: none; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">✓ Copied to clipboard</div>
+    </section>
+
+    <!-- Viewer Inline Styles -->
+    <style>
+      .vcf-btn { padding: 7px 14px; border-radius: 100px; border: 1px solid var(--border); background: transparent; font-family: var(--fm); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all .2s; }
+      .vcf-btn:hover, .vcf-btn.active { background: rgba(196,255,71,.08); border-color: rgba(196,255,71,.3); color: var(--lime); }
+      .vcard { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 14px; transition: transform .3s ease, border-color .3s; }
+      .vcard:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.1); }
+      .vcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+      .vcard-tags { display: flex; gap: 7px; flex-wrap: wrap; }
+      .vtag { font-family: var(--fm); font-size: .6rem; letter-spacing: .05em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
+      .vtag-cat { background: rgba(196,255,71,.1); color: var(--lime); }
+      .vtag-cat.Video { background: rgba(255,79,30,.1); color: var(--orange); }
+      .vtag-cat.Image { background: rgba(233,201,123,.1); color: #E9C97B; }
+      .vtag-cat.Ads { background: rgba(255,180,30,.1); color: #FFB41E; }
+      .vtag-cat.Tech { background: rgba(79,142,255,.1); color: #4F8EFF; }
+      .vtag-cat.Strategy { background: rgba(200,180,255,.1); color: #c8b4ff; }
+      .vtag-cat.Automation { background: rgba(30,220,200,.1); color: #1EDCC8; }
+      .vtag-cat.Design { background: rgba(255,79,130,.1); color: #FF4F82; }
+      .vtag-cat.Text { background: rgba(196,255,71,.1); color: var(--lime); }
+      .vtag-tool { background: rgba(255,255,255,.04); color: var(--muted); border: 1px solid transparent; }
+      .vcard-copy-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color .2s, border-color .2s, background .2s; }
+      .vcard-copy-btn:hover { color: var(--lime); border-color: var(--lime); }
+      .vcard-copy-btn.copied { background: var(--lime); color: #000; border-color: var(--lime); }
+      .vcard-title { font-family: var(--fh); font-weight: 700; font-size: 1.15rem; color: var(--white); line-height: 1.3; }
+      .vcard-body { background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: var(--fm); font-size: .85rem; color: var(--muted); line-height: 1.65; white-space: pre-wrap; flex: 1; max-height: 200px; overflow-y: auto; }
+      .vcard-body::-webkit-scrollbar { width: 4px; }
+      .vcard-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+      .viewer-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+
+    <!-- Viewer Logic -->
+    <script src="../assets/js/vault-data-en.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof MR_PROMPTS_EN === 'undefined') {
+        document.getElementById('vCount').textContent = "Failed to load prompts.";
+        return;
+      }
+      
+      const prompts = MR_PROMPTS_EN;
+      const grid = document.getElementById('vGrid');
+      const empty = document.getElementById('vEmpty');
+      const counter = document.getElementById('vCount');
+      const toast = document.getElementById('vToast');
+
+      function catClass(cat) { return 'vtag vtag-cat ' + (cat || ''); }
+
+      // Performance optimization: Render only a subset if list is large, but 300 is fine for modern browsers.
+      function render(list) {
+        const existing = grid.querySelectorAll('.vcard');
+        existing.forEach(el => el.remove());
+
+        if (list.length === 0) {
+          empty.style.display = 'block';
+          counter.textContent = '0 prompts';
+          return;
+        }
+        empty.style.display = 'none';
+        counter.textContent = list.length + ' prompt' + (list.length === 1 ? '' : 's');
+
+        const frag = document.createDocumentFragment();
+        // Limit initial render to 100 to prevent layout locking, load rest on scroll if needed.
+        // For 300 items, we can just render them all.
+        list.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'vcard';
+          card.innerHTML = `
+            <div class="vcard-head">
+              <div class="vcard-tags">
+                <span class="${catClass(p.cat)}">${p.cat}</span>
+                <span class="vtag vtag-tool">${p.tool}</span>
+              </div>
+              <button class="vcard-copy-btn" title="Copy prompt">
+                <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+            <h3 class="vcard-title">${p.title}</h3>
+            <div class="vcard-body">${p.text}</div>
+          `;
+          card.querySelector('.vcard-copy-btn').addEventListener('click', function() {
+            const text = card.querySelector('.vcard-body').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+              this.classList.add('copied');
+              this.innerHTML = '<svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+              showToast();
+              setTimeout(() => {
+                this.classList.remove('copied');
+                this.innerHTML = '<svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+              }, 2000);
+            }).catch(() => {});
+          });
+          frag.appendChild(card);
+        });
+        grid.appendChild(frag);
+      }
+
+      let toastTimer;
+      function showToast() {
+        clearTimeout(toastTimer);
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+
+      let activeCat = 'all';
+      let searchQ = '';
+
+      function applyFilters() {
+        const q = searchQ.toLowerCase();
+        const filtered = prompts.filter(p => {
+          const matchCat = activeCat === 'all' || p.cat === activeCat;
+          const matchText = !q || p.title.toLowerCase().includes(q)
+                               || p.text.toLowerCase().includes(q)
+                               || p.tool.toLowerCase().includes(q)
+                               || p.cat.toLowerCase().includes(q);
+          return matchCat && matchText;
+        });
+        render(filtered);
+      }
+
+      document.getElementById('vSearch').addEventListener('input', function() {
+        searchQ = this.value; applyFilters();
+      });
+
+      document.getElementById('vFilters').addEventListener('click', function(e) {
+        const btn = e.target.closest('.vcf-btn');
+        if (!btn) return;
+        document.querySelectorAll('.vcf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCat = btn.dataset.cat;
+        applyFilters();
+      });
+
+      render(prompts);
+    });
+    </script>
+    
+    <section class="section split-feature">
+      <div class="showcase-banner reveal">
+        <p class="eyebrow">Why This Matters</p>
+        <h3>Good prompts are not about magic. They are about structure.</h3>
+        <p>The real value of prompt systems is consistency. When framed correctly, prompts become reusable operating assets that improve thinking quality, speed up execution, and support teams across creative and commercial work.</p>
+      </div>
+      <div class="showcase-aside reveal">
+        <div class="call-steps">
+          <article class="call-step">
+            <strong>Define the task clearly</strong>
+            <p>Strong prompt systems start from a real business job, not vague curiosity.</p>
+          </article>
+          <article class="call-step">
+            <strong>Build structure and tone</strong>
+            <p>Context, criteria, and output framing make the difference between noise and usable work.</p>
+          </article>
+          <article class="call-step">
+            <strong>Operationalize it</strong>
+            <p>The strongest prompts are the ones your team can use again inside repeatable workflows.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <p class="eyebrow">Connect The Vault</p>
+        <h2>Use prompts as one layer inside a <span>larger execution system.</span></h2>
+      </div>
+      <div class="badge-row">
+        <a class="tag-link reveal" href="../library.html">Open Library</a>
+        <a class="tag-link reveal" href="../academy/index.html">Visit Academy</a>
+        <a class="tag-link reveal" href="../blog/ai-content-workflow.html">Read AI Workflow</a>
+        <a class="tag-link reveal" href="../services/smart-automation.html">AI and Automation</a>
+        <a class="tag-link reveal" href="../search/index.html">Search Resources</a>
+        <a class="tag-link reveal" href="../contact.html">Talk to Mashhor Hub</a>
+      </div>
+    </section>
+  </main>
+  <div data-platform-footer></div>
+</div>
+<script src="../assets/js/mashhor-platform.js"></script>
+</body>
+</html>
