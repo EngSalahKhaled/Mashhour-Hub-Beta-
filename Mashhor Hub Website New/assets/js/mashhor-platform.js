@@ -5,14 +5,19 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ═══════════════════════════════════════════════════
-     THEME SYSTEM (Light / Dark)
+     THEME SYSTEM (Color Selection)
      ═══════════════════════════════════════════════════ */
+  // Clear old light/dark preference if it exists
+  if (localStorage.getItem('mashhor-theme')) {
+    localStorage.removeItem('mashhor-theme');
+    html.removeAttribute('data-theme');
+  }
+
   const initTheme = () => {
-    const saved = localStorage.getItem('mashhor-theme');
-    if (saved) {
-      html.setAttribute('data-theme', saved);
+    const savedColor = localStorage.getItem('mashhor-color-theme');
+    if (savedColor && savedColor !== 'default') {
+      html.setAttribute('data-color', savedColor);
     }
-    // If no saved preference, default is dark (no attribute needed)
   };
   initTheme();
 
@@ -240,10 +245,21 @@
           <a class="global-nav-link${activeClass(nav.blog.href)}" href="${nav.blog.href}">${nav.blog.text}</a>
         </nav>
         <div class="global-actions">
-          <button class="theme-toggle" id="theme-toggle" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
-            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          </button>
+          <div class="theme-color-picker" id="theme-color-picker">
+            <button class="color-picker-toggle" aria-label="${isArabic ? 'اختر لون الواجهة' : 'Select Theme Color'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22a10 10 0 0 0 10-10H22A10 10 0 0 0 12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10z"></path>
+                <path d="M12 6v2m0 8v2M6 12h2m8 0h2"></path>
+              </svg>
+            </button>
+            <div class="color-picker-menu">
+              <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+              <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
+              <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
+              <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
+              <button class="color-dot" data-color="rose" aria-label="وردي" style="background: linear-gradient(135deg, #f43f5e, #be123c);"></button>
+            </div>
+          </div>
           <a class="global-lang" href="${nav.langHref}">${nav.langText}</a>
           <a class="global-cta" href="${nav.ctaHref}">${nav.ctaText}</a>
           <button class="global-burger" id="global-burger" aria-label="${isArabic ? 'القائمة' : 'Menu'}" aria-expanded="false">
@@ -258,10 +274,21 @@
             <strong>${nav.brandName}</strong>
           </div>
           <div class="global-mobile-header-actions">
-            <button class="theme-toggle" id="theme-toggle-mobile" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
-              <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-              <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
+            <div class="theme-color-picker" id="theme-color-picker-mobile">
+              <button class="color-picker-toggle" aria-label="${isArabic ? 'اختر لون الواجهة' : 'Select Theme Color'}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22a10 10 0 0 0 10-10H22A10 10 0 0 0 12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10z"></path>
+                  <path d="M12 6v2m0 8v2M6 12h2m8 0h2"></path>
+                </svg>
+              </button>
+              <div class="color-picker-menu">
+                <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+                <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
+                <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
+                <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
+                <button class="color-dot" data-color="rose" aria-label="وردي" style="background: linear-gradient(135deg, #f43f5e, #be123c);"></button>
+              </div>
+            </div>
             <button type="button" class="global-mobile-close" id="global-mobile-close" aria-label="${isArabic ? 'إغلاق' : 'Close'}">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -384,21 +411,46 @@
       });
     }
 
-    // Theme toggle handler
-    const toggleTheme = () => {
-      const current = html.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      if (next === 'dark') {
-        html.removeAttribute('data-theme');
-        localStorage.setItem('mashhor-theme', 'dark');
-      } else {
-        html.setAttribute('data-theme', 'light');
-        localStorage.setItem('mashhor-theme', 'light');
+    // Theme color picker handler
+    const colorDots = document.querySelectorAll('.color-dot');
+    colorDots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const selectedColor = e.currentTarget.getAttribute('data-color');
+        if (selectedColor === 'default') {
+          html.removeAttribute('data-color');
+          localStorage.removeItem('mashhor-color-theme');
+        } else {
+          html.setAttribute('data-color', selectedColor);
+          localStorage.setItem('mashhor-color-theme', selectedColor);
+        }
+        
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll(`.color-dot[data-color="${selectedColor}"]`).forEach(d => d.classList.add('active'));
+        
+        // Close menu after selection
+        document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
+      });
+      
+      const currentTheme = html.getAttribute('data-color') || 'default';
+      if (currentTheme === dot.getAttribute('data-color')) {
+        dot.classList.add('active');
       }
-    };
+    });
 
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-      btn.addEventListener('click', toggleTheme);
+    const pickerToggles = document.querySelectorAll('.color-picker-toggle');
+    pickerToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const menu = toggle.nextElementSibling;
+        const isShowing = menu.classList.contains('show');
+        document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
+        if (!isShowing) menu.classList.add('show');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
     });
 
     // Header scroll behavior
