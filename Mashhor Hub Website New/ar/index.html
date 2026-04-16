@@ -153,6 +153,59 @@
       </div>
     </section>
 
+    <!-- ═══ مساعد تحديد نطاق المشروع ═══ -->
+    <section class="wizard-section section" id="project-wizard">
+      <div class="wizard-container">
+        <div class="wizard-header">
+          <h2>مساعد تحديد نطاق المشروع</h2>
+          <p>اكتشف باقة النمو المناسبة لعلامتك التجارية في 3 خطوات سريعة.</p>
+        </div>
+
+        <div class="wizard-card">
+          <div class="wizard-progress">
+            <div class="progress-bar" id="wizard-progress-bar" style="width: 33%;"></div>
+          </div>
+
+          <!-- الخطوة 1: الهدف -->
+          <div class="wizard-step active" id="step-1">
+            <h3>الخطوة 1: ما هو هدفك الأساسي؟</h3>
+            <div class="wizard-options">
+              <button class="wizard-option" data-goal="sales">المبيعات وجذب العملاء المحتملين</button>
+              <button class="wizard-option" data-goal="awareness">الوعي بالعلامة التجارية والانتشار</button>
+              <button class="wizard-option" data-goal="content">صناعة المحتوى والإنتاج الإبداعي</button>
+            </div>
+          </div>
+
+          <!-- الخطوة 2: الميزانية -->
+          <div class="wizard-step" id="step-2">
+            <h3>الخطوة 2: ما هي ميزانيتك الشهرية؟</h3>
+            <div class="wizard-options">
+              <button class="wizard-option" data-budget="low">أقل من 1,000 دولار</button>
+              <button class="wizard-option" data-budget="medium">1,000 - 5,000 دولار</button>
+              <button class="wizard-option" data-budget="high">أكثر من 5,000 دولار</button>
+            </div>
+            <div style="text-align: center;">
+              <button class="wizard-back ghost-button" id="back-to-1">← رجوع</button>
+            </div>
+          </div>
+
+          <!-- الخطوة 3: التوصية -->
+          <div class="wizard-step" id="step-3">
+            <h3>الاستراتيجية الموصى بها لك</h3>
+            <div class="wizard-result" id="wizard-result-box">
+              <h4 id="result-title">باقة نمو مخصصة</h4>
+              <p id="result-desc">بناءً على أهدافك، لدينا حل مصمم خصيصاً لعلامتك التجارية.</p>
+            </div>
+            <div class="wizard-actions">
+              <a href="https://wa.me/96565099769" target="_blank" class="button button-gold">ناقش مشروعك عبر واتساب</a>
+              <button class="wizard-restart ghost-button" id="wizard-restart">إعادة البدء</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- ═══ شريط لوجوهات العملاء ═══ -->
     <section class="section clients-section">
       <div class="section-header">

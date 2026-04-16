@@ -258,7 +258,6 @@
               <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
               <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
               <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
-              <button class="color-dot" data-color="rose" aria-label="وردي" style="background: linear-gradient(135deg, #f43f5e, #be123c);"></button>
             </div>
           </div>
           <a class="global-lang" href="${nav.langHref}">${nav.langText}</a>
@@ -288,7 +287,6 @@
                 <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
                 <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
                 <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
-                <button class="color-dot" data-color="rose" aria-label="وردي" style="background: linear-gradient(135deg, #f43f5e, #be123c);"></button>
               </div>
             </div>
             <button type="button" class="global-mobile-close" id="global-mobile-close" aria-label="${isArabic ? 'إغلاق' : 'Close'}">
@@ -1398,6 +1396,102 @@
 
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+
+  /* ═══════════════════════════════════════════════════
+     PROJECT SCOPE WIZARD LOGIC
+     ═══════════════════════════════════════════════════ */
+  const initProjectWizard = () => {
+    const wizardCard = document.querySelector('.wizard-card');
+    if (!wizardCard) return;
+
+    let userGoal = '';
+    let userBudget = '';
+
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
+    const progressBar = document.getElementById('wizard-progress-bar');
+    
+    const resultTitle = document.getElementById('result-title');
+    const resultDesc = document.getElementById('result-desc');
+
+    const goToStep = (step) => {
+      // Hide all steps
+      [step1, step2, step3].forEach(s => s && s.classList.remove('active'));
+
+      // Show current step & update progress bar
+      if (step === 1 && step1) {
+        step1.classList.add('active');
+        progressBar.style.width = '33%';
+      } else if (step === 2 && step2) {
+        step2.classList.add('active');
+        progressBar.style.width = '66%';
+      } else if (step === 3 && step3) {
+        step3.classList.add('active');
+        progressBar.style.width = '100%';
+      }
+    };
+
+    const generateRecommendation = () => {
+      let title = isArabic ? "استراتيجية نمو مخصصة" : "Custom Growth Strategy";
+      let desc = isArabic ? "لدينا حل مصمم خصيصاً لعلامتك التجارية. دعنا نناقش التفاصيل." : "We have a tailored solution for your brand. Let's discuss the details.";
+
+      if (userGoal === 'sales') {
+        if (userBudget === 'low') {
+          title = isArabic ? "باقة المبتدئين للأداء" : "Performance Starter Pack";
+          desc = isArabic ? "نركز على إعلانات Meta عالية التحويل لاستهداف النتائج السريعة وزيادة العائد على الإنفاق الإعلاني." : "Focus on high-converting Meta Ads targeting low-hanging fruit to maximize your return on ad spend.";
+        } else {
+          title = isArabic ? "باقة التوسع الشاملة" : "Omnichannel Scaling Package";
+          desc = isArabic ? "مزيج قوي من إعلانات Google Search و TikTok/Snapchat مع إعادة استهداف قوية لدفع المبيعات على نطاق واسع." : "A powerful mix of Google Search Intent Ads, TikTok/Snapchat awareness, and aggressive Meta retargeting to drive sales at scale.";
+        }
+      } else if (userGoal === 'awareness') {
+        title = isArabic ? "مصفوفة الحضور والانتشار" : "Brand Presence & Influencer Matrix";
+        desc = isArabic ? "نوصي بحملة مؤثرين محلية مدمجة مع إعلانات Snapchat و TikTok ذات التأثير العالي للسيطرة على حصة السوق." : "We recommend a localized influencer campaign combined with high-impact Snapchat and TikTok branding ads to dominate market share.";
+      } else if (userGoal === 'content') {
+        title = isArabic ? "محرك المحتوى المتميز" : "Premium Content & UI Engine";
+        desc = isArabic ? "ارتقِ بعلامتك التجارية مع إنتاج فيديو عالي الجودة وكتابة محتوى ثنائية اللغة وتطوير واجهة المستخدم لبناء الثقة." : "Elevate your brand with high-end video production, bilingual copywriting, and a luxury UI/UX overhaul to build long-term trust.";
+      }
+
+      if (resultTitle) resultTitle.textContent = title;
+      if (resultDesc) resultDesc.textContent = desc;
+    };
+
+    // Handle Step 1 Selections
+    document.querySelectorAll('#step-1 .wizard-option').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        userGoal = e.currentTarget.getAttribute('data-goal');
+        goToStep(2);
+      });
+    });
+
+    // Handle Step 2 Selections
+    document.querySelectorAll('#step-2 .wizard-option').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        userBudget = e.currentTarget.getAttribute('data-budget');
+        generateRecommendation();
+        goToStep(3);
+      });
+    });
+
+    // Handle Navigation
+    const backBtn = document.getElementById('back-to-1');
+    if (backBtn) backBtn.addEventListener('click', () => goToStep(1));
+
+    const restartBtn = document.getElementById('wizard-restart');
+    if (restartBtn) restartBtn.addEventListener('click', () => {
+      userGoal = '';
+      userBudget = '';
+      goToStep(1);
+    });
+  };
+
+  // Initialize wizard if element exists
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectWizard);
+  } else {
+    initProjectWizard();
   }
 
 })();
