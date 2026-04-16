@@ -254,6 +254,7 @@
             </button>
             <div class="color-picker-menu">
               <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+              <button class="color-dot" data-color="light" aria-label="أبيض" style="background: linear-gradient(135deg, #ffffff, #e2e8f0); border: 1px solid #cbd5e1;"></button>
               <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
               <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
               <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
@@ -283,6 +284,7 @@
               </button>
               <div class="color-picker-menu">
                 <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+                <button class="color-dot" data-color="light" aria-label="أبيض" style="background: linear-gradient(135deg, #ffffff, #e2e8f0); border: 1px solid #cbd5e1;"></button>
                 <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
                 <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
                 <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
