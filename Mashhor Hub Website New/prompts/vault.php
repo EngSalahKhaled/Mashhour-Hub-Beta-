@@ -686,7 +686,7 @@ body {
 <!-- Footer note -->
 <footer class="vault-footer" aria-label="Footer">
   Need access? Contact Mashhor via
-  <a href="https://wa.me/96565099769?text=Hi%20Mashhor!%20I%20want%20access%20to%20the%20full%20Prompt%20Vault." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  <a href="https://wa.me/96555377309?text=Hi%20Mashhor!%20I%20want%20access%20to%20the%20full%20Prompt%20Vault." target="_blank" rel="noopener noreferrer">WhatsApp</a>
   or
   <a href="mailto:info@mashhor-hub.com?subject=Prompt%20Vault%20Access">Email</a>
   ·

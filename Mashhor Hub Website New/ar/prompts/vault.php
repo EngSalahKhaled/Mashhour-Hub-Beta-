@@ -540,7 +540,7 @@ body {
 
 <footer class="vault-footer" aria-label="تذييل الصفحة">
   تحتاج وصولاً؟ تواصل مع محمد عبر
-  <a href="https://wa.me/96565099769?text=مرحباً%20محمد!%20أريد%20الوصول%20إلى%20مكتبة%20البرومبتات%20الكاملة." target="_blank" rel="noopener noreferrer">واتساب</a>
+  <a href="https://wa.me/96555377309?text=مرحباً%20محمد!%20أريد%20الوصول%20إلى%20مكتبة%20البرومبتات%20الكاملة." target="_blank" rel="noopener noreferrer">واتساب</a>
   أو
   <a href="mailto:info@mashhor-hub.com?subject=Prompt%20Vault%20Access">البريد الإلكتروني</a>
   ·

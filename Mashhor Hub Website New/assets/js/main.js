@@ -464,7 +464,7 @@ const text = `Hi Mohamed! 👋
 *Budget:* ${budget || 'N/A'}
 *Message:*
 ${message}`;
-const waURL = `https://wa.me/96565099769?text=${encodeURIComponent(text)}`;
+const waURL = `https://wa.me/96555377309?text=${encodeURIComponent(text)}`;
 const toast = document.getElementById('toast');
 if (toast) {
 toast.classList.add('show');
@@ -510,7 +510,7 @@ const wasted = safeVal * 0.20;
 const saved = safeVal * 0.35;spendValue.innerText = `$${safeVal.toLocaleString()}`;
 wastedSpend.innerText = `$${wasted.toLocaleString()}`;
 aiSavings.innerText = `$${saved.toLocaleString()}`;const msg = encodeURIComponent(`Hello Mohamed, my current monthly ad spend is $${safeVal.toLocaleString()} and I want to recover my wasted spend and automate using AI.`);
-roiClaimBtn.href = `https://wa.me/96565099769?text=${msg}`;
+roiClaimBtn.href = `https://wa.me/96555377309?text=${msg}`;
 };adSpendInput.addEventListener('input', updateCalculator);
 updateCalculator();
 }
@@ -937,7 +937,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     consultingLink: "/services/consultation.html"
                 },
                 fallback: "I am not sure I understand your question. Let me connect you with Mohamed directly for a quick chat!",
-                fallbackLink: "https://wa.me/96565099769",
+                fallbackLink: "https://wa.me/96555377309",
                 fallbackText: "Chat on WhatsApp"
             },
             ar: {
@@ -979,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     consultingLink: "/ar/services/consultation.html"
                 },
                 fallback: "لم أتمكن من فهم سؤالك بدقة. دعني أوصلك مع محمد مباشرة للمساعدة!",
-                fallbackLink: "https://wa.me/96565099769",
+                fallbackLink: "https://wa.me/96555377309",
                 fallbackText: "تواصل عبر واتساب"
             }
         };
