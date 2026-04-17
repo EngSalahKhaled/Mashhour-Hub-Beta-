@@ -1269,11 +1269,11 @@
 .global-mobile-header-actions .color-picker-menu {
   right: 0;
   left: auto;
-  transform: translateX(0) translateY(10px);
+  transform: translateY(10px);
 }
 
 .global-mobile-header-actions .color-picker-menu.show {
-  transform: translateX(0) translateY(0);
+  transform: translateY(0);
 }
 
 *,
@@ -1305,6 +1305,7 @@ html {
 
 ::-webkit-scrollbar-track {
   background: var(--bg);
+  
 }
 
 ::-webkit-scrollbar-thumb {
@@ -3996,7 +3997,7 @@ html[lang^="en"] .search-input {
 /* ── MOBILE ─ max-width: 760px ───────────────────────── */
 @media (max-width: 760px) {
   :root {
-    --container: calc(100vw - 24px);
+    --container: calc(100% - 24px);
   }
 
   body {
@@ -4082,8 +4083,9 @@ html[lang^="en"] .search-input {
   .global-header {
     position: sticky;
     top: 10px;
-    width: calc(100vw - 24px);
+    width: calc(100% - 24px);
   }
+
 
   .global-header-inner {
     grid-template-columns: 1fr auto;
@@ -6329,11 +6331,112 @@ html[dir="rtl"] .message-steps {
    PREMIUM OVERHAUL (AOS + CURSOR)
    ═══════════════════════════════════════════════════ */
 
-/* ── Prevent Mobile Horizontal Overflow ── */
-html,
+/* ── Prevent Mobile Horizontal Overflow (Root Level) ── */
+html, 
 body {
-  overflow-x: clip;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip !important; /* High-performance clipping */
+  position: relative;
+  touch-action: manipulation;
+}
+
+@supports not (overflow-x: clip) {
+  html, body { overflow-x: hidden !important; }
+}
+
+/* ── Smart Mobile Panel (RTL/LTR Isolated) ── */
+.global-mobile-panel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 100vw;
+  height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  background: var(--panel-2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 2000;
+  visibility: hidden;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.4s;
+  padding: 100px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* LTR Specific Positioning */
+[dir="ltr"] .global-mobile-panel {
+  left: 0;
+  right: auto;
+  transform: translateX(100%);
+}
+
+/* RTL Specific Positioning */
+[dir="rtl"] .global-mobile-panel {
+  right: 0;
+  left: auto;
+  transform: translateX(-100%);
+}
+
+/* Universal Open State (Shared) */
+.global-mobile-panel.open {
+  transform: translateX(0) !important;
+  visibility: visible;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+}
+
+/* ── Smart Color Picker Menu (RTL/LTR Isolated) ── */
+.color-picker-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--panel-2);
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 10px;
+}
+
+/* LTR Color Picker - Align to right of button */
+[dir="ltr"] .color-picker-menu {
+  right: 0;
+  left: auto;
+}
+
+/* RTL Color Picker - Align to left of button */
+[dir="rtl"] .color-picker-menu {
+  left: 0;
+  right: auto;
+}
+
+.color-picker-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ── Global Header Container Safeguards ── */
+.global-header {
+  width: var(--container);
+  margin-left: auto;
+  margin-right: auto;
+  position: sticky;
+  top: 18px;
+  z-index: 1300;
+  left: 0;
+  right: 0;
+}
+
+@media (max-width: 760px) {
+  .global-header {
+    width: calc(100% - 24px); /* Prevent 100vw scroll issues */
+  }
 }
 
 /* ── Luxury Cursor ── */
