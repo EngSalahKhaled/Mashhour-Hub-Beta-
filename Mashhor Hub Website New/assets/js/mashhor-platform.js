@@ -424,6 +424,12 @@
           html.setAttribute('data-color', selectedColor);
           localStorage.setItem('mashhor-color-theme', selectedColor);
         }
+
+        // ── iOS WebKit Repaint Hack ──
+        // Toggle display to force Safari to flush its render queue
+        html.style.display = 'none';
+        html.offsetHeight; // Force reflow
+        html.style.display = '';
         
         document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
         document.querySelectorAll(`.color-dot[data-color="${selectedColor}"]`).forEach(d => d.classList.add('active'));

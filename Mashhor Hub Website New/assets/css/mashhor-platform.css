@@ -20,6 +20,41 @@
   --font-code:
     "JetBrains Mono", "IBM Plex Mono", "Azeret Mono", "Cascadia Code", Consolas,
     monospace;
+
+  /* ── 
+   WebKit Rendering Fixes ── */
+  color-scheme: light dark;
+  forced-color-adjust: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Disable Native iOS UI Overrides */
+button, input, select, textarea, .clickable {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--fm);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── Color Variations ── */
