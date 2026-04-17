@@ -115,7 +115,7 @@
   };
 
   const prefix = getPrefix();
-  const brandSrc = `${prefix}logo-flat.png`;
+  const brandSrc = `${prefix}assets/images/icons/logo-flat.png`;
   const currentPath = window.location.pathname.replace(/\\/g, "/");
 
   /* ═══════════════════════════════════════════════════

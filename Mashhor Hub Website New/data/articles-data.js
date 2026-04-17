@@ -11,7 +11,7 @@ module.exports = [
       "desc": "Discover why Mashhor is the leading platform connecting brands with authentic influencers in Saudi Arabia, Kuwait, and the UAE, ensuring measurable ROI.",
       "cat": "Brand Updates",
       "date": "March 26, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_mashhor_platform.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_mashhor_platform.webp"
     },
     "ar": {
       "slug": "mashhor-platform-ar.html",
@@ -19,7 +19,7 @@ module.exports = [
       "desc": "تعرف على دور Mashhor.cloud في ربط العلامات التجارية بأبرز المؤثرين وضمان عائد استثماري حقيقي لحملاتك الإعلانية.",
       "cat": "مشاريعي",
       "date": "٢٦ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_mashhor_platform.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_mashhor_platform.webp"
     }
   },
   {
@@ -31,7 +31,7 @@ module.exports = [
       "desc": "How Munjiz (munjiz-eg.com) is empowering Egyptian freelancers and connecting businesses with top-tier tech, design, and marketing talent.",
       "cat": "Brand Updates",
       "date": "March 25, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_munjiz_freelance.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_munjiz_freelance.webp"
     },
     "ar": {
       "slug": "munjiz-freelance-ar.html",
@@ -39,7 +39,7 @@ module.exports = [
       "desc": "كيف تربط منصة Munjiz الشركات الخليجية والمحلية بأفضل الكفاءات والمواهب المصرية في مجالات التسويق والتطوير.",
       "cat": "مشاريعي",
       "date": "٢٥ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_munjiz_freelance.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_munjiz_freelance.webp"
     }
   },
   {
@@ -51,7 +51,7 @@ module.exports = [
       "desc": "Explore how Mohamed Reda's unique blend of performance marketing, creative direction, and AI automation can transform your business trajectory.",
       "cat": "Consulting",
       "date": "March 24, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_strategic_consulting.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_strategic_consulting.webp"
     },
     "ar": {
       "slug": "mohamed-reda-consultant-ar.html",
@@ -59,7 +59,7 @@ module.exports = [
       "desc": "كيف يمكن لخبرة محمد رضا أن تعيد رسم مسار نمو علامتك التجارية في السوق الكويتي والخليجي.",
       "cat": "استشارات",
       "date": "٢٤ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_strategic_consulting.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_strategic_consulting.webp"
     }
   },
   {
@@ -71,7 +71,7 @@ module.exports = [
       "desc": "Elevate your skills with real-world digital marketing courses, AI automation guides, and media buying strategies at Mashhor Academy.",
       "cat": "Academy",
       "date": "March 23, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_mashhor_academy.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_mashhor_academy.webp"
     },
     "ar": {
       "slug": "mashhor-academy-ar.html",
@@ -79,7 +79,7 @@ module.exports = [
       "desc": "ارتق بمهاراتك واحترافك من خلال دورات وتدريبات عملية في أكاديمية مشاهير هب (Mashhor Academy).",
       "cat": "الأكاديمية",
       "date": "٢٣ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_mashhor_academy.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_mashhor_academy.webp"
     }
   },
   {
@@ -91,7 +91,7 @@ module.exports = [
       "desc": "How Mohamed Reda's video production services utilize cutting-edge AI for faster editing, spectacular visuals, and higher ROAS on social platforms.",
       "cat": "Services",
       "date": "March 22, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_video_production.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_video_production.webp"
     },
     "ar": {
       "slug": "video-production-kuwait-ar.html",
@@ -99,7 +99,7 @@ module.exports = [
       "desc": "كيف تصنع فيديوهات إعلانية مبهرة ومربحة باستخدام تقنيات الذكاء الاصطناعي والمونتاج المتطور.",
       "cat": "الخدمات",
       "date": "٢٢ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_video_production.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_video_production.webp"
     }
   },
   {
@@ -111,7 +111,7 @@ module.exports = [
       "desc": "First impressions matter. Learn how premium graphic design and cohesive brand identity turn casual browsers into loyal customers in the GCC market.",
       "cat": "Services",
       "date": "March 21, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_graphic_brand.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_graphic_brand.webp"
     },
     "ar": {
       "slug": "graphic-design-branding-ar.html",
@@ -119,7 +119,7 @@ module.exports = [
       "desc": "لماذا يفشل التصميم الجميل أحياناً في البيع؟ وكيف نبني هويات وتصاميم تحقق الأهداف التجارية.",
       "cat": "الخدمات",
       "date": "٢١ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_graphic_brand.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_graphic_brand.webp"
     }
   },
   {
@@ -131,7 +131,7 @@ module.exports = [
       "desc": "Words sell. Discover how the MR GFX copywriting framework creates landing pages, emails, and ads that drive direct response and revenue.",
       "cat": "Services",
       "date": "March 20, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_writing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_writing.webp"
     },
     "ar": {
       "slug": "strategic-content-writing-ar.html",
@@ -139,7 +139,7 @@ module.exports = [
       "desc": "الكلمات هي أداة البيع الخفية. كيفية صياغة نصوص وصفحات مبيعات تجبر العميل على الشراء.",
       "cat": "الخدمات",
       "date": "٢٠ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_writing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_writing.webp"
     }
   },
   {
@@ -151,7 +151,7 @@ module.exports = [
       "desc": "How to eliminate human error, reduce overhead costs, and build a 24/7 digital workforce using modern automation platforms.",
       "cat": "Services",
       "date": "March 19, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_smart_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_smart_automation.webp"
     },
     "ar": {
       "slug": "smart-automation-business-ar.html",
@@ -159,7 +159,7 @@ module.exports = [
       "desc": "تخلص من المهام الروتينية لتبني سيستم يقوم بالعمل تلقائياً. الأتمتة وفرت التكاليف بشكل مهول.",
       "cat": "الخدمات",
       "date": "١٩ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_smart_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_smart_automation.webp"
     }
   },
   {
@@ -171,7 +171,7 @@ module.exports = [
       "desc": "A transparent guide to selecting an e-marketing agency that cares about CPA and ROAS, rather than vanity metrics and fluff.",
       "cat": "Consulting",
       "date": "March 18, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_performance_marketing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_performance_marketing.webp"
     },
     "ar": {
       "slug": "e-marketing-expert-ar.html",
@@ -179,7 +179,7 @@ module.exports = [
       "desc": "احصل على شريك استراتيجي يحلل الأرقام بدقة ويقلل تكلفة الاستحواذ على العميل بدلاً من الوعود الوهمية.",
       "cat": "التسويق",
       "date": "١٨ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_performance_marketing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_performance_marketing.webp"
     }
   },
   {
@@ -191,7 +191,7 @@ module.exports = [
       "desc": "Unlock the true power of AI. Discover how the MR Prompts Library provides highly engineered prompts for copywriting, strategy, and design.",
       "cat": "Resources",
       "date": "March 17, 2026",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_chatgpt_prompts.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_chatgpt_prompts.webp"
     },
     "ar": {
       "slug": "prompts-library-ar.html",
@@ -199,7 +199,7 @@ module.exports = [
       "desc": "ضخِّم قدراتك مع الذكاء الاصطناعي من خلال هندسة الأوامر الجاهزة المُعدة للمسوقين وصنّاع المحتوى المحترفين.",
       "cat": "الموارد",
       "date": "١٧ مارس ٢٠٢٦",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_chatgpt_prompts.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_chatgpt_prompts.webp"
     }
   },
   {
@@ -212,7 +212,7 @@ module.exports = [
       "cat": "Applied AI",
       "date": "February 10, 2026",
       "dateISO": "2026-02-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ab_testing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ab_testing.webp"
     },
     "ar": {
       "slug": "ai-marketing-automation-ar.html",
@@ -221,7 +221,7 @@ module.exports = [
       "cat": "الذكاء الاصطناعي",
       "date": "٢٥ يناير ٢٠٢٦",
       "dateISO": "2026-01-25",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ab_testing.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ab_testing.webp"
     }
   },
   {
@@ -234,7 +234,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "January 28, 2026",
       "dateISO": "2026-01-28",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_tiktok_ads.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_tiktok_ads.webp"
     },
     "ar": {
       "slug": "tiktok-marketing-gcc-ar.html",
@@ -243,7 +243,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "٢٨ يناير ٢٠٢٦",
       "dateISO": "2026-01-28",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_tiktok_ads.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_tiktok_ads.webp"
     }
   },
   {
@@ -256,7 +256,7 @@ module.exports = [
       "cat": "Smart Automation",
       "date": "January 15, 2026",
       "dateISO": "2026-01-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_email_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_email_automation.webp"
     },
     "ar": {
       "slug": "smart-automation-marketing-ar.html",
@@ -265,7 +265,7 @@ module.exports = [
       "cat": "الذكاء الاصطناعي التطبيقي",
       "date": "١٥ أغسطس ٢٠٢٥",
       "dateISO": "2025-08-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_email_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_email_automation.webp"
     }
   },
   {
@@ -278,7 +278,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "December 05, 2025",
       "dateISO": "2025-12-05",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_landing_page.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_landing_page.webp"
     },
     "ar": {
       "slug": "landing-page-optimization-ar.html",
@@ -287,7 +287,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "١٥ ديسمبر ٢٠٢٥",
       "dateISO": "2025-12-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_landing_page.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_landing_page.webp"
     }
   },
   {
@@ -300,7 +300,7 @@ module.exports = [
       "cat": "Media Buying",
       "date": "November 20, 2025",
       "dateISO": "2025-11-20",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_google_ads_gcc.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_google_ads_gcc.webp"
     },
     "ar": {
       "slug": "google-ads-strategy-ar.html",
@@ -309,7 +309,7 @@ module.exports = [
       "cat": "شراء الإعلانات",
       "date": "١٠ فبراير ٢٠٢٦",
       "dateISO": "2026-02-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_google_ads_gcc.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_google_ads_gcc.webp"
     }
   },
   {
@@ -322,7 +322,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "November 02, 2025",
       "dateISO": "2025-11-02",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_calendar.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_calendar.webp"
     },
     "ar": {
       "slug": "social-media-management-ar.html",
@@ -331,7 +331,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "٣٠ نوفمبر ٢٠٢٥",
       "dateISO": "2025-11-30",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_calendar.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_calendar.webp"
     }
   },
   {
@@ -344,7 +344,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "October 15, 2025",
       "dateISO": "2025-10-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_cro.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_cro.webp"
     },
     "ar": {
       "slug": "ad-analytics-ar.html",
@@ -353,7 +353,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "٢٤ أكتوبر ٢٠٢٥",
       "dateISO": "2025-10-24",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_cro.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_cro.webp"
     }
   },
   {
@@ -366,7 +366,7 @@ module.exports = [
       "cat": "Applied AI",
       "date": "September 28, 2025",
       "dateISO": "2025-09-28",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ai_creative_assets.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ai_creative_assets.webp"
     },
     "ar": {
       "slug": "ai-creative-asset-generation-ar.html",
@@ -375,7 +375,7 @@ module.exports = [
       "cat": "الذكاء الاصطناعي التطبيقي",
       "date": "٢٨ سبتمبر ٢٠٢٥",
       "dateISO": "2025-09-28",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ai_creative_assets.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ai_creative_assets.webp"
     }
   },
   {
@@ -388,7 +388,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "September 10, 2025",
       "dateISO": "2025-09-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_retargeting.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_retargeting.webp"
     },
     "ar": {
       "slug": "retargeting-strategy-guide-ar.html",
@@ -397,7 +397,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "١٠ سبتمبر ٢٠٢٥",
       "dateISO": "2025-09-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_retargeting.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_retargeting.webp"
     }
   },
   {
@@ -410,7 +410,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "August 22, 2025",
       "dateISO": "2025-08-22",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_personal_brand.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_personal_brand.webp"
     },
     "ar": {
       "slug": "brand-building-ar.html",
@@ -419,7 +419,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "٠٥ أكتوبر ٢٠٢٥",
       "dateISO": "2025-10-05",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_personal_brand.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_personal_brand.webp"
     }
   },
   {
@@ -432,7 +432,7 @@ module.exports = [
       "cat": "Applied AI",
       "date": "September 18, 2025",
       "dateISO": "2025-09-18",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ai_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ai_automation.webp"
     },
     "ar": {
       "slug": "ai-content-workflow-ar.html",
@@ -441,7 +441,7 @@ module.exports = [
       "cat": "الذكاء الاصطناعي التطبيقي",
       "date": "١٨ سبتمبر ٢٠٢٥",
       "dateISO": "2025-09-18",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_ai_automation.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_ai_automation.webp"
     }
   },
   {
@@ -454,7 +454,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "January 15, 2026",
       "dateISO": "2026-01-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_brand_audit.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_brand_audit.webp"
     },
     "ar": {
       "slug": "brand-identity-audit-ar.html",
@@ -463,7 +463,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "١٥ يناير ٢٠٢٦",
       "dateISO": "2026-01-15",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_brand_audit.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_brand_audit.webp"
     }
   },
   {
@@ -476,7 +476,7 @@ module.exports = [
       "cat": "Influencer Marketing",
       "date": "March 01, 2026",
       "dateISO": "2026-03-01",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_influencer_future.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_influencer_future.webp"
     },
     "ar": {
       "slug": "future-of-gcc-influencer-marketing-ar.html",
@@ -485,7 +485,7 @@ module.exports = [
       "cat": "التسويق بالمؤثرين",
       "date": "١ مارس ٢٠٢٦",
       "dateISO": "2026-03-01",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_influencer_future.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_influencer_future.webp"
     }
   },
   {
@@ -498,7 +498,7 @@ module.exports = [
       "cat": "Influencer Marketing",
       "date": "February 10, 2026",
       "dateISO": "2026-02-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_influencer_roi.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_influencer_roi.webp"
     },
     "ar": {
       "slug": "influencer-roi-formula-ar.html",
@@ -507,7 +507,7 @@ module.exports = [
       "cat": "التسويق بالمؤثرين",
       "date": "١٠ فبراير ٢٠٢٦",
       "dateISO": "2026-02-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_influencer_roi.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_influencer_roi.webp"
     }
   },
   {
@@ -520,7 +520,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "October 03, 2025",
       "dateISO": "2025-10-03",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_meta_capi.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_meta_capi.webp"
     },
     "ar": {
       "slug": "meta-capi-guide-ar.html",
@@ -529,7 +529,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "٣ أكتوبر ٢٠٢٥",
       "dateISO": "2025-10-03",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_meta_capi.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_meta_capi.webp"
     }
   },
   {
@@ -542,7 +542,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "November 20, 2025",
       "dateISO": "2025-11-20",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_snapchat_kuwait.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_snapchat_kuwait.webp"
     },
     "ar": {
       "slug": "snapchat-ads-kuwait-ar.html",
@@ -551,7 +551,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "٢٠ نوفمبر ٢٠٢٥",
       "dateISO": "2025-11-20",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_snapchat_kuwait.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_snapchat_kuwait.webp"
     }
   },
   {
@@ -564,7 +564,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "January 05, 2026",
       "dateISO": "2026-01-05",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_sell_transformations.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_sell_transformations.webp"
     },
     "ar": {
       "slug": "stop-selling-features-ar.html",
@@ -573,7 +573,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "٥ يناير ٢٠٢٦",
       "dateISO": "2026-01-05",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_sell_transformations.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_sell_transformations.webp"
     }
   },
   {
@@ -586,7 +586,7 @@ module.exports = [
       "cat": "Performance Marketing",
       "date": "September 18, 2025",
       "dateISO": "2025-09-18",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_snapchat_ksa.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_snapchat_ksa.webp"
     },
     "ar": {
       "slug": "snapchat-ads-strategy-ar.html",
@@ -595,7 +595,7 @@ module.exports = [
       "cat": "التسويق بالأداء",
       "date": "١٨ سبتمبر ٢٠٢٥",
       "dateISO": "2025-09-18",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_snapchat_ksa.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_snapchat_ksa.webp"
     }
   },
   {
@@ -608,7 +608,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "November 10, 2025",
       "dateISO": "2025-11-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_gcc.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_gcc.webp"
     },
     "ar": {
       "slug": "content-marketing-ar.html",
@@ -617,7 +617,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "١٠ نوفمبر ٢٠٢٥",
       "dateISO": "2025-11-10",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_content_gcc.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_content_gcc.webp"
     }
   },
   {
@@ -630,7 +630,7 @@ module.exports = [
       "cat": "Creative Direction",
       "date": "September 02, 2025",
       "dateISO": "2025-09-02",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_graphic_sales.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_graphic_sales.webp"
     },
     "ar": {
       "slug": "graphic-design-ads-ar.html",
@@ -639,7 +639,7 @@ module.exports = [
       "cat": "التوجيه الإبداعي",
       "date": "٠٢ سبتمبر ٢٠٢٥",
       "dateISO": "2025-09-02",
-      "img": "https://mr-gfx.com/assets/images/uns/uns_img_graphic_sales.webp"
+      "img": "https://mr-gfx.com/assets/images/raw/uns_img_graphic_sales.webp"
     }
   }
 ];
