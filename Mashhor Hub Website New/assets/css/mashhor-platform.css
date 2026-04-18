@@ -8994,3 +8994,188 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
   transform: translateY(-5px);
 }
 
+/* ═══════════════════════════════════════════════════
+   PORTFOLIO VISUAL GALLERY & CAROUSEL
+   ═══════════════════════════════════════════════════ */
+.portfolio-gallery-section {
+  padding: 80px 0;
+  overflow: hidden;
+}
+
+.portfolio-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 24px;
+  padding: 20px 5%;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.portfolio-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-slide {
+  scroll-snap-align: center;
+  flex: 0 0 85%;
+  max-width: 900px;
+  height: 500px;
+  border-radius: 24px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease;
+}
+
+@media (min-width: 1024px) {
+  .carousel-slide { flex: 0 0 70%; height: 600px; }
+}
+
+.carousel-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(3, 10, 21, 0.95) 0%, rgba(3, 10, 21, 0.4) 40%, rgba(3, 10, 21, 0) 100%);
+}
+
+.carousel-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px;
+  z-index: 2;
+  color: #ffffff;    /* Force white text to contrast overlay */
+  text-align: left;
+}
+
+[dir="rtl"] .carousel-content {
+  text-align: right;
+}
+
+.carousel-tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #b8860b; /* Force gold text */
+}
+
+.carousel-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #ffffff; /* Force white text */
+  line-height: 1.2;
+}
+
+.carousel-desc {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85); /* Force semi-transparent white */
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .carousel-slide { height: 400px; flex: 0 0 90%; }
+  .carousel-title { font-size: 1.5rem; }
+  .carousel-content { padding: 24px; }
+}
+
+/* ── Masonry Gallery ── */
+.portfolio-masonry {
+  columns: 1;
+  column-gap: 24px;
+  padding: 20px 5%;
+  margin-top: 40px;
+}
+
+@media (min-width: 768px) {
+  .portfolio-masonry { columns: 2; }
+}
+
+@media (min-width: 1024px) {
+  .portfolio-masonry { columns: 3; }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  background: #030a15;
+}
+
+.masonry-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(184, 134, 11, 0.15);
+}
+
+.masonry-item img {
+  width: 100%;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.masonry-item:hover img {
+  transform: scale(1.05);
+}
+
+.masonry-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 10, 21, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  text-align: center;
+  padding: 24px;
+}
+
+.masonry-item:hover .masonry-overlay {
+  opacity: 1;
+}
+
+.masonry-title {
+  color: #ffffff; /* Force white */
+  font-size: 1.25rem;
+  font-weight: 700;
+  transform: translateY(20px);
+  transition: transform 0.4s ease;
+  margin-bottom: 8px;
+}
+
+.masonry-item:hover .masonry-title {
+  transform: translateY(0);
+}
+
+.masonry-cat {
+  color: #b8860b; /* Force gold */
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transform: translateY(20px);
+  transition: transform 0.4s ease 0.1s;
+}
+
+.masonry-item:hover .masonry-cat {
+  transform: translateY(0);
+}
