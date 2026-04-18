@@ -9313,3 +9313,17 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
 .reveal {
   transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+
+/* ── 4-Col Grid for Featured Projects ── */
+@media (min-width: 1200px) {
+  .grid-4-desktop {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .grid-4-desktop .project-image {
+    height: 180px; /* shorter to look nice as 4 columns */
+  }
+  .grid-4-desktop h3 {
+    font-size: 1.25rem !important;
+  }
+}
