@@ -9020,8 +9020,8 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
 .carousel-slide {
   scroll-snap-align: center;
   flex: 0 0 85%;
-  max-width: 900px;
-  height: 500px;
+  max-width: 800px;
+  height: 450px;
   border-radius: 24px;
   background-size: cover;
   background-position: center;
@@ -9032,7 +9032,8 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
 }
 
 @media (min-width: 1024px) {
-  .carousel-slide { flex: 0 0 70%; height: 600px; }
+  .carousel-slide { flex: 0 0 45%; height: 500px; scroll-snap-align: start; }
+  .portfolio-carousel { padding: 20px 5%; gap: 32px; }
 }
 
 .carousel-slide::after {
@@ -9088,7 +9089,7 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
 }
 
 @media (max-width: 768px) {
-  .carousel-slide { height: 400px; flex: 0 0 90%; }
+  .carousel-slide { height: 380px; flex: 0 0 85%; scroll-snap-align: center; }
   .carousel-title { font-size: 1.5rem; }
   .carousel-content { padding: 24px; }
 }
