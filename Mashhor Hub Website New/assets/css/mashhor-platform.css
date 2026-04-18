@@ -9207,3 +9207,109 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
 .project-card p {
   flex-grow: 1;
 }
+
+/* ═══════════════════════════════════════════════════
+   PORTFOLIO PREMIUM ANIMATIONS & GLASSMORPHISM (V2)
+   ═══════════════════════════════════════════════════ */
+
+/* 1. Masonry Upgrades: Immersive Hover & Glassmorphism */
+.masonry-item {
+  transform: scale(1);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
+  will-change: transform;
+}
+.masonry-item:hover {
+  transform: scale(1.02) translateY(-6px);
+  box-shadow: 0 20px 50px rgba(184, 134, 11, 0.2), 0 0 0 1px rgba(184, 134, 11, 0.1);
+  z-index: 10;
+}
+.masonry-overlay {
+  background: linear-gradient(to top, rgba(3, 10, 21, 0.95) 0%, rgba(3, 10, 21, 0.4) 50%, rgba(3, 10, 21, 0) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  justify-content: flex-end;
+  padding: 32px 24px;
+}
+.masonry-title {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+.masonry-cat {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s;
+  background: rgba(184, 134, 11, 0.15);
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-block;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.masonry-item:hover .masonry-title,
+.masonry-item:hover .masonry-cat {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* 2. Carousel Glow & Cinema Effect */
+.portfolio-carousel {
+  padding-bottom: 40px !important; /* Space for shadows */
+}
+.carousel-slide {
+  transform: scale(0.98);
+  opacity: 0.85;
+  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: grayscale(20%);
+}
+.carousel-slide.is-snapped,
+.carousel-slide:hover {
+  transform: scale(1);
+  opacity: 1;
+  filter: grayscale(0%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(184, 134, 11, 0.15);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.carousel-content {
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  padding-top: 100px; /* Fade smoothly */
+}
+.carousel-tag {
+  transition: all 0.3s ease;
+}
+.carousel-slide:hover .carousel-tag {
+  background: rgba(184, 134, 11, 0.2);
+  border-color: rgba(184, 134, 11, 0.5);
+  box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+}
+
+/* 3. Project Cards Hover Shine (Light sweep) */
+.project-card {
+  position: relative;
+}
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  transition: left 0.7s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+.project-card:hover::before {
+  left: 200%;
+}
+.project-image {
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* 4. Smooth Staggered Load for Reveal */
+.reveal {
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
