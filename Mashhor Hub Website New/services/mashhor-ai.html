@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -96,6 +96,12 @@
       margin-top: 80px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)" /></svg>');
+    }
+
+    /* Force light text on unconditionally dark panels regardless of website light mode */
+    .header-ai h1,
+    .cloud-panel h2 {
+      color: #ffffff !important;
     }
   </style>
 </head>

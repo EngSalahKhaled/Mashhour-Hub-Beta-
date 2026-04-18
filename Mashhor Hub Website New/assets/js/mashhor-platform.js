@@ -809,7 +809,7 @@
   if (canvas && !prefersReducedMotion && window.innerWidth > 768) {
     const ctx = canvas.getContext("2d");
     let w, h, particles = [];
-    const PARTICLE_COUNT = 40;
+    const PARTICLE_COUNT = 25;
 
     const resize = () => {
       w = canvas.width = window.innerWidth;
@@ -866,83 +866,48 @@
   }
 
   /* ═══════════════════════════════════════════════════
-     FLOATING BRAND ICONS
+     FLOATING BRAND ICONS — Reliable Lightweight Rebuild
      ═══════════════════════════════════════════════════ */
-  const brandsContainer = document.createElement("div");
-  brandsContainer.className = "floating-brands-container";
-  document.body.prepend(brandsContainer);
+  if (window.innerWidth > 768) {
+    const brandsContainer = document.createElement("div");
+    brandsContainer.className = "floating-brands-container";
+    document.body.prepend(brandsContainer);
 
-  const brandIcons = [
-    "facebook.png", "google.png", "linkedin.png", "twitter.png", 
-    "messenger.png", "skype.png", "slack.png", "telegram.png", 
-    "app-store.png", "behance.png", "dribbble.png", "envato.png", "printerest.png"
-  ];
-  
-  // Create 15 floating icons scattered randomly
-  for (let i = 0; i < 15; i++) {
-    const icon = document.createElement("img");
-    const randomIcon = brandIcons[Math.floor(Math.random() * brandIcons.length)];
-    icon.src = `${prefix}assets/images/${randomIcon}`;
-    icon.className = "floating-brand-icon";
-    
-    // Random CSS positioning & animation delay
-    icon.style.left = `${Math.random() * 90}vw`;
-    icon.style.animationDelay = `${Math.random() * 20}s`;
-    icon.style.animationDuration = `${15 + Math.random() * 15}s`;
-    
-    brandsContainer.appendChild(icon);
+    const brandIcons = [
+      "facebook.png", "google.png", "linkedin.png", "twitter.png",
+      "telegram.png", "behance.png", "dribbble.png", "slack.png"
+    ];
+
+    // Only 8 icons, spread evenly
+    brandIcons.forEach((iconName, i) => {
+      const icon = document.createElement("img");
+      icon.src = `${prefix}assets/images/icons/${iconName}`;
+      icon.className = "floating-brand-icon";
+      icon.alt = "";
+      icon.setAttribute("aria-hidden", "true");
+
+      const baseLeft = (i / brandIcons.length) * 90 + (Math.random() * 5);
+      icon.style.left = `${baseLeft}vw`;
+      
+      // Delay and duration
+      icon.style.animationDelay = `${i * 3.5}s`;
+      icon.style.animationDuration = `${25 + (i % 3) * 6}s`;
+      
+      const size = i % 2 === 0 ? 26 : 32;
+      icon.style.width = `${size}px`;
+      icon.style.height = `${size}px`;
+
+      brandsContainer.appendChild(icon);
+    });
   }
 
-  /* ═══════════════════════════════════════════════════
-     LUXURY CUSTOM CURSOR
-     ═══════════════════════════════════════════════════ */
+  /* Luxury cursor removed for performance — uses native cursor instead */
+  /* Spotlight effect preserved with lightweight mousemove */
   if (window.matchMedia("(pointer: fine)").matches && window.innerWidth > 768) {
-    document.documentElement.classList.add("has-luxury-cursor");
-    const cursor = document.createElement("div");
-    cursor.className = "cursor-luxury";
-    document.body.appendChild(cursor);
-    cursor.innerHTML = `
-      <svg viewBox="0 0 100 100" class="cursor-text-svg">
-        <defs>
-          <path id="cursor-circle" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
-        </defs>
-        <text font-size="12" fill="var(--gold)" font-weight="600" letter-spacing="2">
-          <textPath href="#cursor-circle">MASHHOR HUB • MARKETING & AI • </textPath>
-        </text>
-      </svg>
-      <div class="cursor-dot-inner"></div>
-    `;
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let cursorX = mouseX;
-    let cursorY = mouseY;
-
     window.addEventListener("mousemove", (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      document.body.style.setProperty("--spotlight-x", `${mouseX}px`);
-      document.body.style.setProperty("--spotlight-y", `${mouseY}px`);
+      document.body.style.setProperty("--spotlight-x", `${e.clientX}px`);
+      document.body.style.setProperty("--spotlight-y", `${e.clientY}px`);
     }, { passive: true });
-
-    const animateLuxuryCursor = () => {
-      cursorX += (mouseX - cursorX) * 0.25;
-      cursorY += (mouseY - cursorY) * 0.25;
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
-      requestAnimationFrame(animateLuxuryCursor);
-    };
-    requestAnimationFrame(animateLuxuryCursor);
-
-    document.addEventListener("mouseover", (e) => {
-      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
-        cursor.classList.add("hover");
-      }
-    });
-    document.addEventListener("mouseout", (e) => {
-      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
-        cursor.classList.remove("hover");
-      }
-    });
   }
 
   /* ═══════════════════════════════════════════════════
