@@ -5,7 +5,7 @@
  */
 
 // Global CRM Endpoint (Will be updated once WebApp URL is provided)
-const APPS_SCRIPT_URL = "INSERT_WEB_APP_URL_HERE"; 
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93D_vfs9mTRc8-BevsYhjRjnNFqHxcmq3tIfxfOMU6gLz5Jw9NkJTN0Q/exec"; 
 
 (function() {
     // 1. Capture UTM Parameters securely across sessions
