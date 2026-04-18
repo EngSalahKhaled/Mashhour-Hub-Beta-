@@ -17,6 +17,11 @@
     const savedColor = localStorage.getItem('mashhor-color-theme');
     if (savedColor && savedColor !== 'default') {
       html.setAttribute('data-color', savedColor);
+      
+      // ── iOS WebKit Repaint Hack (On Load) ──
+      html.style.display = 'none';
+      html.offsetHeight; // Force reflow
+      html.style.display = '';
     }
   };
   initTheme();

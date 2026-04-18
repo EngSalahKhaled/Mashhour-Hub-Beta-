@@ -23,14 +23,14 @@
 
   /* ── 
    WebKit Rendering Fixes ── */
-  color-scheme: light dark;
+  color-scheme: only light;
   forced-color-adjust: none;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Disable Native iOS UI Overrides */
-button, input, select, textarea, .clickable {
+button, input, select, textarea, a, .clickable {
   -webkit-appearance: none;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
