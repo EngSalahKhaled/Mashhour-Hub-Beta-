@@ -240,16 +240,26 @@
           <a class="global-nav-link${activeClass(nav.home.href)}" href="${nav.home.href}">${nav.home.text}</a>
           <a class="global-nav-link${activeClass(nav.about.href)}" href="${nav.about.href}">${nav.about.text}</a>
           <div class="global-nav-item">
-            <button class="global-nav-trigger">${nav.services.text} ▾</button>
+            <button class="global-nav-trigger">
+              <span>${nav.services.text}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
             <div class="global-dropdown">${servicesDropdown}</div>
           </div>
           <div class="global-nav-item">
-            <button class="global-nav-trigger">${nav.explore.text} ▾</button>
+            <button class="global-nav-trigger">
+              <span>${nav.explore.text}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
             <div class="global-dropdown">${exploreDropdown}</div>
           </div>
           <a class="global-nav-link${activeClass(nav.blog.href)}" href="${nav.blog.href}">${nav.blog.text}</a>
         </nav>
         <div class="global-actions">
+          <div class="bilingual-search-wrapper desktop-search">
+            <input type="search" class="bilingual-search-input" placeholder="${isArabic ? 'ابحث...' : 'Search...'}" autocomplete="off">
+            <ul class="bilingual-search-dropdown" hidden></ul>
+          </div>
           <div class="theme-color-picker" id="theme-color-picker">
             <button class="color-picker-toggle" aria-label="${isArabic ? 'اختر لون الواجهة' : 'Select Theme Color'}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -300,6 +310,10 @@
           </div>
         </div>
         <div class="global-mobile-nav-frame">
+          <div class="bilingual-search-wrapper mobile-search">
+            <input type="search" class="bilingual-search-input" placeholder="${isArabic ? 'ابحث عن خدمة...' : 'Search services...'}" autocomplete="off">
+            <ul class="bilingual-search-dropdown" hidden></ul>
+          </div>
           <a class="global-mobile-link${activeClass(nav.home.href)}" href="${nav.home.href}">${nav.home.text}</a>
           <a class="global-mobile-link${activeClass(nav.about.href)}" href="${nav.about.href}">${nav.about.text}</a>
           <details class="global-mobile-group">
@@ -462,6 +476,81 @@
 
     document.addEventListener('click', () => {
       document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
+    });
+
+    // Bilingual Search Integration
+    const servicesDB = [
+      { url: "${p}services/web-development.html", titleAr: "تطوير الويب", titleEn: "Web Development", keywords: ["برمجة", "مواقع", "منصات", "web", "coding", "development", "website"] },
+      { url: "${p}services/graphic-design.html", titleAr: "الهوية البصرية", titleEn: "Brand Identity & Design", keywords: ["تصميم", "واجهة", "تجربة", "design", "interface", "experience", "ui", "ux", "graphic"] },
+      { url: "${p}services/seo.html", titleAr: "تحسين محركات البحث", titleEn: "SEO", keywords: ["جوجل", "ارشفة", "محركات", "بحث", "google", "search", "ranking", "optimization"] },
+      { url: "${p}services/e-marketing.html", titleAr: "الإعلانات الرقمية", titleEn: "Digital Advertising", keywords: ["تسويق", "إعلانات", "مبيعات", "ads", "digital", "marketing", "sales", "meta", "tiktok"] },
+      { url: "${p}services/influencer-marketing.html", titleAr: "التسويق المؤثر", titleEn: "Influencer Marketing", keywords: ["مؤثرين", "مشاهير", "حملات", "creator", "campaigns", "influencer"] },
+      { url: "${p}services/video-production.html", titleAr: "الإنتاج المرئي", titleEn: "Video Production", keywords: ["فيديو", "تصوير", "انتاج", "video", "production", "shooting"] },
+      { url: "${p}services/smart-automation.html", titleAr: "الذكاء الاصطناعي والأتمتة", titleEn: "AI & Automation", keywords: ["ذكاء", "اصطناعي", "روبوت", "اتمتة", "ai", "automation", "systems", "bots"] }
+    ];
+
+    const normalizeText = (text) => {
+      if (!text) return "";
+      return text.toString().trim().toLowerCase()
+        .replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/ؤ/g, "و").replace(/ئ/g, "ي").replace(/ـ/g, "");
+    };
+
+    const debounce = (func, delay) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+      };
+    };
+
+    document.querySelectorAll(".bilingual-search-wrapper").forEach(wrapper => {
+      const input = wrapper.querySelector(".bilingual-search-input");
+      const dropdown = wrapper.querySelector(".bilingual-search-dropdown");
+      
+      const handleSearch = () => {
+        const normQuery = normalizeText(input.value);
+        if (!normQuery) {
+          dropdown.innerHTML = "";
+          dropdown.hidden = true;
+          return;
+        }
+
+        const matches = servicesDB.filter((item) => {
+          return normalizeText(item.titleAr).includes(normQuery) || 
+                 normalizeText(item.titleEn).includes(normQuery) || 
+                 item.keywords.some(kw => normalizeText(kw).includes(normQuery));
+        });
+
+        dropdown.innerHTML = "";
+        if (matches.length > 0) {
+          matches.forEach((item) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = item.url;
+            a.textContent = isArabic ? item.titleAr : item.titleEn;
+            li.appendChild(a);
+            dropdown.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.className = "no-results";
+          li.textContent = isArabic ? "لم يتم العثور على نتائج" : "No results found";
+          dropdown.appendChild(li);
+        }
+        dropdown.hidden = false;
+      };
+
+      input.addEventListener("input", debounce(handleSearch, 300));
+      input.addEventListener("focus", () => {
+        if (input.value.trim() !== "") dropdown.hidden = false;
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      document.querySelectorAll(".bilingual-search-wrapper").forEach(wrapper => {
+        const dropdown = wrapper.querySelector(".bilingual-search-dropdown");
+        if (dropdown && !wrapper.contains(e.target)) dropdown.hidden = true;
+      });
     });
 
     // Header scroll behavior
@@ -1468,6 +1557,73 @@
     document.addEventListener('DOMContentLoaded', initProjectWizard);
   } else {
     initProjectWizard();
+  }
+
+  // ═════ PREMIUM MICRO-INTERACTIONS (WOW FACTOR) ═════
+  const initWowFactors = () => {
+    // 1. SCROLL REVEALS
+    const initScrollReveals = () => {
+      const options = { threshold: 0.1, rootMargin: "0px 0px -40px 0px" };
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target); // Optimize memory
+          }
+        });
+      }, options);
+
+      const targets = document.querySelectorAll('h2, .portfolio-card, .service-box, .special-service-box');
+      targets.forEach(el => {
+        el.classList.add('mashhor-reveal');
+        revealObserver.observe(el);
+      });
+    };
+
+    // 2. 3D PHYSICAL TILT
+    const initTiltEffect = () => {
+      const isTouchDevice = window.matchMedia("(any-hover: none)").matches || window.innerWidth < 1024;
+      if (isTouchDevice) return; // Save mobile battery and usability
+
+      const isRTL = document.documentElement.dir === 'rtl';
+      const tiltCards = document.querySelectorAll('.portfolio-card, .service-box, .special-service-box');
+      
+      tiltCards.forEach(card => {
+        card.classList.add('mashhor-tilt');
+
+        card.addEventListener('mousemove', (e) => {
+          card.classList.add('is-tilting');
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          let rotateX = ((y - centerY) / centerY) * -12;
+          let rotateY = ((x - centerX) / centerX) * 12;
+
+          // Crucial RTL inversion for correct physical behavior
+          if (isRTL) rotateY = rotateY * -1;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.classList.remove('is-tilting');
+          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+      });
+    };
+
+    initScrollReveals();
+    initTiltEffect();
+  };
+
+  // Safe init for Wow Factors
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWowFactors);
+  } else {
+    setTimeout(initWowFactors, 100); // Slight delay to ensure DOM templates are fully injected
   }
 
 })();
