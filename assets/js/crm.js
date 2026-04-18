@@ -27,11 +27,6 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                if(APPS_SCRIPT_URL === "INSERT_WEB_APP_URL_HERE") {
-                   alert('هذا النموذج يعمل الآن ولكن بانتظار ربط نظام الـ CRM ليتم الإرسال.');
-                   return; // Prevent action if URL is missing
-                }
-
                 // Change button to loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalBtnText = submitBtn ? submitBtn.innerText : '';
