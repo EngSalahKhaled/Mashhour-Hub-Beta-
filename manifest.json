@@ -1,0 +1,49 @@
+{
+  "id": "/",
+  "name": "Mashhor Hub",
+  "short_name": "Mashhor",
+  "description": "Integrated advertising, marketing, influencer, and AI solutions by Mashhor Hub.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#041121",
+  "theme_color": "#07152b",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["business", "marketing", "productivity"],
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo-flat.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "مشهور هب",
+      "short_name": "Hub",
+      "description": "افتح الواجهة الرئيسية لمشهور هب",
+      "url": "/"
+    },
+    {
+      "name": "Mashhor Cloud",
+      "short_name": "Cloud",
+      "description": "Open Mashhor Cloud AI tools",
+      "url": "https://mashhor.cloud/"
+    }
+  ]
+}

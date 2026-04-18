@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="g7" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#120f10"/>
+      <stop offset="100%" stop-color="#2a2012"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g7)"/>
+  <path d="M120 550 340 180l220 190 210-150 220 330" fill="none" stroke="#e9c97b" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity=".18"/>
+  <rect x="92" y="92" width="1016" height="491" rx="28" fill="none" stroke="rgba(255,255,255,.1)"/>
+  <text x="96" y="244" fill="#e9c97b" font-size="30" font-family="Arial, sans-serif" font-weight="700">MR BLOG</text>
+  <text x="96" y="334" fill="#f2eee8" font-size="72" font-family="Arial, sans-serif" font-weight="800">Brand System</text>
+  <text x="96" y="396" fill="#b3b0bf" font-size="28" font-family="Arial, sans-serif">Fallback visual for brand and identity topics</text>
+</svg>

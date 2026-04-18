@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Mashhor Hub — Marketing Strategy &amp; AI Blog</title>
+    <link>https://mashhor-hub.com/blog/insights.html</link>
+    <description>Real marketing methodologies from 10+ years in Kuwait and the GCC — media buying, AI automation, creative direction, and influencer strategy.</description>
+    <language>en</language>
+    <copyright>© 2026 Mashhor Hub. All Rights Reserved.</copyright>
+    <managingEditor>info@mashhor-hub.com (Mashhor Hub)</managingEditor>
+    <webMaster>info@mashhor-hub.com (Mashhor Hub)</webMaster>
+    <lastBuildDate>Sat, 05 Apr 2026 21:00:00 +0300</lastBuildDate>
+    <atom:link href="https://mashhor-hub.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://mashhor-hub.com/assets/images/cropped-MR-LOGO-4.webp</url>
+      <title>Mashhor Hub Blog</title>
+      <link>https://mashhor-hub.com/blog/insights.html</link>
+    </image>
+
+    <item>
+      <title>The GCC Advertiser's Guide to TikTok Ads in 2026</title>
+      <link>https://mashhor-hub.com/blog/tiktok-marketing-gcc.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/tiktok-marketing-gcc.html</guid>
+      <description>TikTok Ads has matured significantly — new algorithm dynamics, different campaign structures, and massive opportunities for GCC brands.</description>
+      <category>Media Buying</category>
+      <pubDate>Fri, 20 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>How to Build a Powerful Personal Brand in the Arab Market — From Zero</title>
+      <link>https://mashhor-hub.com/blog/personal-brand-guide.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/personal-brand-guide.html</guid>
+      <description>Personal branding isn't about follower count. It's about mental positioning. Lessons from 10 years and building mashhor-hub.com.</description>
+      <category>Personal Branding</category>
+      <pubDate>Wed, 18 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>How I Replaced a 5-Person Agency Team With Claude &amp; n8n</title>
+      <link>https://mashhor-hub.com/blog/how-ai-replaced-my-agency-team.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/how-ai-replaced-my-agency-team.html</guid>
+      <description>A tactical deep-dive into the automation workflows and precise Anthropic prompt chains I use to produce 300+ ad creatives weekly.</description>
+      <category>AI &amp; Automation</category>
+      <pubDate>Sat, 14 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>7 Ad Budget Mistakes Destroying Your ROI in Kuwait &amp; the GCC</title>
+      <link>https://mashhor-hub.com/blog/media-buying-mistakes-gcc.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/media-buying-mistakes-gcc.html</guid>
+      <description>If you want one article that explains how I think about wasted spend, diagnostics, and media discipline in the GCC, start here.</description>
+      <category>Media Buying</category>
+      <pubDate>Tue, 10 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Why Your Page Gets Traffic But No Sales — And How to Fix It</title>
+      <link>https://mashhor-hub.com/blog/landing-page-optimization.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/landing-page-optimization.html</guid>
+      <description>Average GCC landing page conversion rate is 1-3%. These are the elements that push it above 8% — backed by real audit data.</description>
+      <category>Conversion Optimization</category>
+      <pubDate>Thu, 05 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>AI Tools That Changed How I Build Visual Identities in 2026</title>
+      <link>https://mashhor-hub.com/blog/ai-branding-tools-2026.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/ai-branding-tools-2026.html</guid>
+      <description>The tools I now rely on to build brand directions faster without giving up strategic judgment, originality, or taste.</description>
+      <category>AI &amp; Automation</category>
+      <pubDate>Mon, 02 Mar 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Freelancer vs. Agency — How to Choose the Right Marketing Partner in Kuwait</title>
+      <link>https://mashhor-hub.com/blog/freelance-vs-agency-en.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/freelance-vs-agency-en.html</guid>
+      <description>This decision costs businesses months and thousands of dinars when wrong. Here's the actual framework for choosing correctly.</description>
+      <category>Consulting</category>
+      <pubDate>Wed, 25 Feb 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>The End of Random Influencer Marketing in the GCC</title>
+      <link>https://mashhor-hub.com/blog/future-of-gcc-influencer-marketing.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/future-of-gcc-influencer-marketing.html</guid>
+      <description>How Mashhor Hub changed the rules — connecting brands with influencers for real ROAS instead of vanity metrics.</description>
+      <category>Influencer Strategy</category>
+      <pubDate>Fri, 20 Feb 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Meta Ads vs. Google Ads — Which Is Right for Your GCC Business?</title>
+      <link>https://mashhor-hub.com/blog/meta-vs-google-gcc.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/meta-vs-google-gcc.html</guid>
+      <description>The most-asked question from GCC clients. The honest answer depends on your business type, awareness stage, and budget.</description>
+      <category>Media Buying</category>
+      <pubDate>Thu, 12 Feb 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>WhatsApp as a Marketing Channel in the GCC — The 2026 Complete Guide</title>
+      <link>https://mashhor-hub.com/blog/whatsapp-marketing-gcc.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/whatsapp-marketing-gcc.html</guid>
+      <description>WhatsApp message open rates in Kuwait exceed 98%. Brands ignoring it as a sales channel are leaving serious money behind.</description>
+      <category>Marketing Strategy</category>
+      <pubDate>Sun, 08 Feb 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Ad Hook Formulas That Stop the Scroll in the GCC — With Real Examples</title>
+      <link>https://mashhor-hub.com/blog/content-hooks-gcc.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/content-hooks-gcc.html</guid>
+      <description>Tested across 800+ ads in Kuwait, Saudi Arabia, and the UAE — these are the formulas that consistently deliver highest CTR.</description>
+      <category>Creative Direction</category>
+      <pubDate>Wed, 28 Jan 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>The Complete Ramadan Marketing Playbook for GCC Brands</title>
+      <link>https://mashhor-hub.com/blog/ramadan-marketing-guide-en.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/ramadan-marketing-guide-en.html</guid>
+      <description>Ramadan isn't just another season. Consumer spending rises 3x. Here's how to build a complete strategy across all 30 days.</description>
+      <category>Marketing Strategy</category>
+      <pubDate>Thu, 15 Jan 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Stop Selling Features. Start Selling Transformations.</title>
+      <link>https://mashhor-hub.com/blog/stop-selling-features.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/stop-selling-features.html</guid>
+      <description>The biggest mistake in consumer tech campaigns in Egypt and Kuwait. People don't buy camera specs — they buy feeling like a professional photographer.</description>
+      <category>Creative Direction</category>
+      <pubDate>Mon, 05 Jan 2026 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>Mastering Snapchat Ads in Kuwait: Beyond the Basics</title>
+      <link>https://mashhor-hub.com/blog/snapchat-ads-kuwait.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/snapchat-ads-kuwait.html</guid>
+      <description>Kuwait has one of the highest Snapchat penetration rates globally. My exact campaign structure for 40% lower CPA.</description>
+      <category>Media Buying</category>
+      <pubDate>Wed, 12 Nov 2025 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>The Complete Meta CAPI Setup Guide for GCC E-Commerce</title>
+      <link>https://mashhor-hub.com/blog/meta-capi-guide.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/meta-capi-guide.html</guid>
+      <description>Server-side tracking is no longer optional. Here's the complete setup procedure that raises Match Rate to 85%+.</description>
+      <category>Media Buying</category>
+      <pubDate>Fri, 03 Oct 2025 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>My Complete AI Content Workflow: From Brief to Published in 90 Minutes</title>
+      <link>https://mashhor-hub.com/blog/ai-content-workflow.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/ai-content-workflow.html</guid>
+      <description>The exact system I use to go from a client brief to 30 ad-ready variants — without cutting corners on quality.</description>
+      <category>AI &amp; Automation</category>
+      <pubDate>Thu, 18 Sep 2025 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+    <item>
+      <title>The Only Influencer ROI Formula That Actually Means Something</title>
+      <link>https://mashhor-hub.com/blog/influencer-roi-formula.html</link>
+      <guid isPermaLink="true">https://mashhor-hub.com/blog/influencer-roi-formula.html</guid>
+      <description>Stop measuring influencer campaigns by likes and reach. Here's the custom scoring model that calculates real CPE and expected ROAS.</description>
+      <category>Influencer Strategy</category>
+      <pubDate>Tue, 22 Jul 2025 09:00:00 +0300</pubDate>
+      <dc:creator>Mashhor Hub</dc:creator>
+    </item>
+
+  </channel>
+</rss>
