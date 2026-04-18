@@ -8,6 +8,65 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93D_vfs9mTRc8-BevsYhjRjnNFqHxcmq3tIfxfOMU6gLz5Jw9NkJTN0Q/exec"; 
 
 (function() {
+    // Custom Toast Promt
+    function showPromtToast(message, type = 'success') {
+        const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+        const existing = document.getElementById('mashhor-promt-toast');
+        if (existing) existing.remove();
+        
+        const toast = document.createElement('div');
+        toast.id = 'mashhor-promt-toast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 2147483647;
+            font-family: var(--fm, 'Space Grotesk', 'Alexandria', sans-serif);
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: ${isAr ? 'right' : 'left'};
+            direction: ${isAr ? 'rtl' : 'ltr'};
+        `;
+        
+        if (isAr) {
+            toast.style.borderRight = type === 'success' ? '4px solid var(--gold, #f4cd55)' : '4px solid #ef4444';
+        } else {
+            toast.style.borderLeft = type === 'success' ? '4px solid var(--gold, #f4cd55)' : '4px solid #ef4444';
+        }
+
+        const icon = type === 'success' ? '✅' : '⚠️';
+        toast.innerHTML = `<span style="font-size: 1.2rem;">${icon}</span> <span>${message}</span>`;
+        
+        document.body.appendChild(toast);
+        
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(20px)';
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+        }, 3000);
+    }
+
     // 1. Capture UTM Parameters securely across sessions
     function getUTMs() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -28,7 +87,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
                 e.preventDefault();
                 
                 if(APPS_SCRIPT_URL === "INSERT_WEB_APP_URL_HERE") {
-                   alert('هذا النموذج يعمل الآن ولكن بانتظار ربط نظام الـ CRM ليتم الإرسال.');
+                   showPromtToast('هذا النموذج يعمل الآن ولكن بانتظار ربط نظام الـ CRM ليتم الإرسال.', 'error');
                    return; // Prevent action if URL is missing
                 }
 
@@ -66,13 +125,27 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
                 // Send silently
                 fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: payload
+                    body: payload,
+                    mode: 'no-cors'
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(() => {
                     // Navigate securely based on form type
                     if (formType === 'Subscribers') {
-                        window.location.href = "subscribe.html";
+                        const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+                        showPromtToast(isAr ? "تم الاشتراك بنجاح" : "Successfully subscribed", "success");
+                        e.target.reset();
+                        if(submitBtn) {
+                            submitBtn.innerText = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
+                    } else if (formType === 'Unsubscribe') {
+                        const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+                        showPromtToast(isAr ? "تم الغاء الاشتراك بنجاح" : "Successfully unsubscribed", "success");
+                        e.target.reset();
+                        if(submitBtn) {
+                            submitBtn.innerText = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
                     } else if (formType === 'Influencers') {
                         let successMsg = document.getElementById('form-success');
                         if(successMsg) {
@@ -87,7 +160,8 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
                 })
                 .catch(error => {
                     console.error('CRM Error:', error);
-                    alert("There was an error submitting the form. Please try again.");
+                    const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+                    showPromtToast(isAr ? "حدث خطأ أثناء إرسال النموذج. يرجى المحاولة مرة أخرى." : "There was an error submitting the form. Please try again.", "error");
                     if(submitBtn) {
                         submitBtn.innerText = originalBtnText;
                         submitBtn.disabled = false;

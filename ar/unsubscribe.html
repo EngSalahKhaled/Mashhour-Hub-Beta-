@@ -37,14 +37,20 @@
   <main style="min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center;">
     <section class="section" style="max-width: 600px; padding: 0 20px;">
       <div style="font-size: 4rem; margin-bottom: 20px;">👋</div>
-      <h1 style="font-family: var(--far); font-size: 3rem; margin-bottom: 20px;">تم إلغاء <span>الاشتراك بنجاح.</span></h1>
-      <p class="lead" style="color: var(--muted); margin-bottom: 30px;">تمت إزالة بريدك الإلكتروني من قائمتنا النشطة بناءً على طلبك. لن تتلقى بعد الآن أي تقارير أو تحديثات آلية منا. نتمنى لك كل التوفيق!</p>
+      <h1 style="font-family: var(--far); font-size: 3rem; margin-bottom: 20px;">نأسف <span>لمغادرتك.</span></h1>
+      <p class="lead" style="color: var(--muted); margin-bottom: 30px;">يرجى إدخال بريدك الإلكتروني أدناه لإلغاء الاشتراك. لن تتلقى بعد الآن أي تقارير أو تحديثات آلية منا.</p>
+
+      <form class="lead-magnet-form" data-crm="Unsubscribe" style="display: flex; justify-content: center; max-width: 500px; margin: 0 auto 30px; background: rgba(0,0,0,0.3); border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; padding: 6px; position: relative;">
+        <input type="email" name="email" placeholder="بريدك الإلكتروني" required pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" title="يرجى إدخال بريد إلكتروني صحيح" style="flex: 1; min-width: 200px; padding: 12px 24px; border: none; background: transparent; color: var(--white); font-family: var(--fm); font-size: 1rem; outline: none; box-shadow: none;">
+        <button type="submit" class="button button-gold" style="border: none; cursor: pointer; padding: 12px 32px; border-radius: 100px; font-weight: 700; font-family: var(--fm);">إلغاء الاشتراك</button>
+      </form>
+
       <a href="index.html" class="ghost-button">العودة للرئيسية</a>
     </section>
   </main>
   <div data-platform-footer></div>
 </div>
 <script src="../assets/js/mashhor-platform.js"></script>
-\n  <script src="../assets/js/protection.js"></script>\n</body>
+\n  <script src="../assets/js/protection.js"></script>\n  <script src="../assets/js/crm.js"></script>\n</body>
 </html>
 
