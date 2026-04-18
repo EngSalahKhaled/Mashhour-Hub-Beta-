@@ -66,10 +66,10 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
                 // Send silently
                 fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
                     body: payload
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(() => {
                     // Navigate securely based on form type
                     if (formType === 'Subscribers') {
                         window.location.href = "subscribe.html";
@@ -81,6 +81,9 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
                         } else {
                             window.location.href = "thank-you.html";
                         }
+                    } else if (formType === 'Unsubscribers') {
+                         window.location.href = "index.html";
+                         alert("لقد تم إلغاء اشتراكك بنجاح. نتمنى لك التوفيق!");
                     } else {
                         window.location.href = "thank-you.html";
                     }
