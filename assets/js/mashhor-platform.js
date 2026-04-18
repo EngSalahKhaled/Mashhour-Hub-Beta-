@@ -5,14 +5,24 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ═══════════════════════════════════════════════════
-     THEME SYSTEM (Light / Dark)
+     THEME SYSTEM (Color Selection)
      ═══════════════════════════════════════════════════ */
+  // Clear old light/dark preference if it exists
+  if (localStorage.getItem('mashhor-theme')) {
+    localStorage.removeItem('mashhor-theme');
+    html.removeAttribute('data-theme');
+  }
+
   const initTheme = () => {
-    const saved = localStorage.getItem('mashhor-theme');
-    if (saved) {
-      html.setAttribute('data-theme', saved);
+    const savedColor = localStorage.getItem('mashhor-color-theme');
+    if (savedColor && savedColor !== 'default') {
+      html.setAttribute('data-color', savedColor);
+      
+      // ── iOS WebKit Repaint Hack (On Load) ──
+      html.style.display = 'none';
+      html.offsetHeight; // Force reflow
+      html.style.display = '';
     }
-    // If no saved preference, default is dark (no attribute needed)
   };
   initTheme();
 
@@ -110,7 +120,7 @@
   };
 
   const prefix = getPrefix();
-  const brandSrc = `${prefix}logo-flat.png`;
+  const brandSrc = `${prefix}assets/images/icons/logo-flat.png`;
   const currentPath = window.location.pathname.replace(/\\/g, "/");
 
   /* ═══════════════════════════════════════════════════
@@ -240,10 +250,21 @@
           <a class="global-nav-link${activeClass(nav.blog.href)}" href="${nav.blog.href}">${nav.blog.text}</a>
         </nav>
         <div class="global-actions">
-          <button class="theme-toggle" id="theme-toggle" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
-            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          </button>
+          <div class="theme-color-picker" id="theme-color-picker">
+            <button class="color-picker-toggle" aria-label="${isArabic ? 'اختر لون الواجهة' : 'Select Theme Color'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22a10 10 0 0 0 10-10H22A10 10 0 0 0 12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10z"></path>
+                <path d="M12 6v2m0 8v2M6 12h2m8 0h2"></path>
+              </svg>
+            </button>
+            <div class="color-picker-menu">
+              <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+              <button class="color-dot" data-color="light" aria-label="أبيض" style="background: linear-gradient(135deg, #ffffff, #e2e8f0); border: 1px solid #cbd5e1;"></button>
+              <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
+              <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
+              <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
+            </div>
+          </div>
           <a class="global-lang" href="${nav.langHref}">${nav.langText}</a>
           <a class="global-cta" href="${nav.ctaHref}">${nav.ctaText}</a>
           <button class="global-burger" id="global-burger" aria-label="${isArabic ? 'القائمة' : 'Menu'}" aria-expanded="false">
@@ -258,10 +279,21 @@
             <strong>${nav.brandName}</strong>
           </div>
           <div class="global-mobile-header-actions">
-            <button class="theme-toggle" id="theme-toggle-mobile" aria-label="${isArabic ? 'تبديل الوضع' : 'Toggle theme'}">
-              <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-              <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
+            <div class="theme-color-picker" id="theme-color-picker-mobile">
+              <button class="color-picker-toggle" aria-label="${isArabic ? 'اختر لون الواجهة' : 'Select Theme Color'}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22a10 10 0 0 0 10-10H22A10 10 0 0 0 12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10z"></path>
+                  <path d="M12 6v2m0 8v2M6 12h2m8 0h2"></path>
+                </svg>
+              </button>
+              <div class="color-picker-menu">
+                <button class="color-dot" data-color="default" aria-label="ذهبي" style="background: linear-gradient(135deg, #f4cd55, #b8860b);"></button>
+                <button class="color-dot" data-color="light" aria-label="أبيض" style="background: linear-gradient(135deg, #ffffff, #e2e8f0); border: 1px solid #cbd5e1;"></button>
+                <button class="color-dot" data-color="blue" aria-label="أزرق" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></button>
+                <button class="color-dot" data-color="green" aria-label="أخضر" style="background: linear-gradient(135deg, #10b981, #047857);"></button>
+                <button class="color-dot" data-color="purple" aria-label="بنفسجي" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></button>
+              </div>
+            </div>
             <button type="button" class="global-mobile-close" id="global-mobile-close" aria-label="${isArabic ? 'إغلاق' : 'Close'}">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -384,21 +416,52 @@
       });
     }
 
-    // Theme toggle handler
-    const toggleTheme = () => {
-      const current = html.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      if (next === 'dark') {
-        html.removeAttribute('data-theme');
-        localStorage.setItem('mashhor-theme', 'dark');
-      } else {
-        html.setAttribute('data-theme', 'light');
-        localStorage.setItem('mashhor-theme', 'light');
-      }
-    };
+    // Theme color picker handler
+    const colorDots = document.querySelectorAll('.color-dot');
+    colorDots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const selectedColor = e.currentTarget.getAttribute('data-color');
+        if (selectedColor === 'default') {
+          html.removeAttribute('data-color');
+          localStorage.removeItem('mashhor-color-theme');
+        } else {
+          html.setAttribute('data-color', selectedColor);
+          localStorage.setItem('mashhor-color-theme', selectedColor);
+        }
 
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-      btn.addEventListener('click', toggleTheme);
+        // ── iOS WebKit Repaint Hack ──
+        // Toggle display to force Safari to flush its render queue
+        html.style.display = 'none';
+        html.offsetHeight; // Force reflow
+        html.style.display = '';
+        
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll(`.color-dot[data-color="${selectedColor}"]`).forEach(d => d.classList.add('active'));
+        
+        // Close menu after selection
+        document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
+      });
+      
+      const currentTheme = html.getAttribute('data-color') || 'default';
+      if (currentTheme === dot.getAttribute('data-color')) {
+        dot.classList.add('active');
+      }
+    });
+
+    const pickerToggles = document.querySelectorAll('.color-picker-toggle');
+    pickerToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const menu = toggle.nextElementSibling;
+        const isShowing = menu.classList.contains('show');
+        document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
+        if (!isShowing) menu.classList.add('show');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.color-picker-menu').forEach(m => m.classList.remove('show'));
     });
 
     // Header scroll behavior
@@ -470,7 +533,7 @@
             <h4>تواصل</h4>
             <a href="https://wa.me/96555377309" target="_blank" rel="noopener">واتساب</a>
             <a href="mailto:info@mashhor-hub.com">البريد الإلكتروني</a>
-            <a href="tel:+96555377309">هاتف: +965 6509 9769</a>
+            <a href="tel:+96555377309">هاتف: +965 5537 7309</a>
             <a href="${arFp}book-call/index.html">حجز مكالمة</a>
             <a href="${arFp}faqs.html">الأسئلة الشائعة</a>
           </div>
@@ -529,7 +592,7 @@
             <h4>Connect</h4>
             <a href="https://wa.me/96555377309" target="_blank" rel="noopener">WhatsApp</a>
             <a href="mailto:info@mashhor-hub.com">Email</a>
-            <a href="tel:+96555377309">Phone: +965 6509 9769</a>
+            <a href="tel:+96555377309">Phone: +965 5537 7309</a>
             <a href="${p}book-call/index.html">Book a Call</a>
             <a href="${p}faqs.html">FAQs</a>
           </div>
@@ -751,7 +814,7 @@
   if (canvas && !prefersReducedMotion && window.innerWidth > 768) {
     const ctx = canvas.getContext("2d");
     let w, h, particles = [];
-    const PARTICLE_COUNT = 40;
+    const PARTICLE_COUNT = 25;
 
     const resize = () => {
       w = canvas.width = window.innerWidth;
@@ -808,83 +871,48 @@
   }
 
   /* ═══════════════════════════════════════════════════
-     FLOATING BRAND ICONS
+     FLOATING BRAND ICONS — Reliable Lightweight Rebuild
      ═══════════════════════════════════════════════════ */
-  const brandsContainer = document.createElement("div");
-  brandsContainer.className = "floating-brands-container";
-  document.body.prepend(brandsContainer);
+  if (window.innerWidth > 768) {
+    const brandsContainer = document.createElement("div");
+    brandsContainer.className = "floating-brands-container";
+    document.body.prepend(brandsContainer);
 
-  const brandIcons = [
-    "facebook.png", "google.png", "linkedin.png", "twitter.png", 
-    "messenger.png", "skype.png", "slack.png", "telegram.png", 
-    "app-store.png", "behance.png", "dribbble.png", "envato.png", "printerest.png"
-  ];
-  
-  // Create 15 floating icons scattered randomly
-  for (let i = 0; i < 15; i++) {
-    const icon = document.createElement("img");
-    const randomIcon = brandIcons[Math.floor(Math.random() * brandIcons.length)];
-    icon.src = `${prefix}assets/images/${randomIcon}`;
-    icon.className = "floating-brand-icon";
-    
-    // Random CSS positioning & animation delay
-    icon.style.left = `${Math.random() * 90}vw`;
-    icon.style.animationDelay = `${Math.random() * 20}s`;
-    icon.style.animationDuration = `${15 + Math.random() * 15}s`;
-    
-    brandsContainer.appendChild(icon);
+    const brandIcons = [
+      "facebook.png", "google.png", "linkedin.png", "twitter.png",
+      "telegram.png", "behance.png", "dribbble.png", "slack.png"
+    ];
+
+    // Only 8 icons, spread evenly
+    brandIcons.forEach((iconName, i) => {
+      const icon = document.createElement("img");
+      icon.src = `${prefix}assets/images/icons/${iconName}`;
+      icon.className = "floating-brand-icon";
+      icon.alt = "";
+      icon.setAttribute("aria-hidden", "true");
+
+      const baseLeft = (i / brandIcons.length) * 90 + (Math.random() * 5);
+      icon.style.left = `${baseLeft}vw`;
+      
+      // Delay and duration
+      icon.style.animationDelay = `${i * 3.5}s`;
+      icon.style.animationDuration = `${25 + (i % 3) * 6}s`;
+      
+      const size = i % 2 === 0 ? 26 : 32;
+      icon.style.width = `${size}px`;
+      icon.style.height = `${size}px`;
+
+      brandsContainer.appendChild(icon);
+    });
   }
 
-  /* ═══════════════════════════════════════════════════
-     LUXURY CUSTOM CURSOR
-     ═══════════════════════════════════════════════════ */
+  /* Luxury cursor removed for performance — uses native cursor instead */
+  /* Spotlight effect preserved with lightweight mousemove */
   if (window.matchMedia("(pointer: fine)").matches && window.innerWidth > 768) {
-    document.documentElement.classList.add("has-luxury-cursor");
-    const cursor = document.createElement("div");
-    cursor.className = "cursor-luxury";
-    document.body.appendChild(cursor);
-    cursor.innerHTML = `
-      <svg viewBox="0 0 100 100" class="cursor-text-svg">
-        <defs>
-          <path id="cursor-circle" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"></path>
-        </defs>
-        <text font-size="12" fill="var(--gold)" font-weight="600" letter-spacing="2">
-          <textPath href="#cursor-circle">MASHHOR HUB • MARKETING & AI • </textPath>
-        </text>
-      </svg>
-      <div class="cursor-dot-inner"></div>
-    `;
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let cursorX = mouseX;
-    let cursorY = mouseY;
-
     window.addEventListener("mousemove", (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      document.body.style.setProperty("--spotlight-x", `${mouseX}px`);
-      document.body.style.setProperty("--spotlight-y", `${mouseY}px`);
+      document.body.style.setProperty("--spotlight-x", `${e.clientX}px`);
+      document.body.style.setProperty("--spotlight-y", `${e.clientY}px`);
     }, { passive: true });
-
-    const animateLuxuryCursor = () => {
-      cursorX += (mouseX - cursorX) * 0.25;
-      cursorY += (mouseY - cursorY) * 0.25;
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
-      requestAnimationFrame(animateLuxuryCursor);
-    };
-    requestAnimationFrame(animateLuxuryCursor);
-
-    document.addEventListener("mouseover", (e) => {
-      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
-        cursor.classList.add("hover");
-      }
-    });
-    document.addEventListener("mouseout", (e) => {
-      if (e.target.closest("a, button, summary, input, textarea, select, .magnetic-hover")) {
-        cursor.classList.remove("hover");
-      }
-    });
   }
 
   /* ═══════════════════════════════════════════════════
@@ -1344,6 +1372,102 @@
 
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+
+  /* ═══════════════════════════════════════════════════
+     PROJECT SCOPE WIZARD LOGIC
+     ═══════════════════════════════════════════════════ */
+  const initProjectWizard = () => {
+    const wizardCard = document.querySelector('.wizard-card');
+    if (!wizardCard) return;
+
+    let userGoal = '';
+    let userBudget = '';
+
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
+    const progressBar = document.getElementById('wizard-progress-bar');
+    
+    const resultTitle = document.getElementById('result-title');
+    const resultDesc = document.getElementById('result-desc');
+
+    const goToStep = (step) => {
+      // Hide all steps
+      [step1, step2, step3].forEach(s => s && s.classList.remove('active'));
+
+      // Show current step & update progress bar
+      if (step === 1 && step1) {
+        step1.classList.add('active');
+        progressBar.style.width = '33%';
+      } else if (step === 2 && step2) {
+        step2.classList.add('active');
+        progressBar.style.width = '66%';
+      } else if (step === 3 && step3) {
+        step3.classList.add('active');
+        progressBar.style.width = '100%';
+      }
+    };
+
+    const generateRecommendation = () => {
+      let title = isArabic ? "استراتيجية نمو مخصصة" : "Custom Growth Strategy";
+      let desc = isArabic ? "لدينا حل مصمم خصيصاً لعلامتك التجارية. دعنا نناقش التفاصيل." : "We have a tailored solution for your brand. Let's discuss the details.";
+
+      if (userGoal === 'sales') {
+        if (userBudget === 'low') {
+          title = isArabic ? "باقة المبتدئين للأداء" : "Performance Starter Pack";
+          desc = isArabic ? "نركز على إعلانات Meta عالية التحويل لاستهداف النتائج السريعة وزيادة العائد على الإنفاق الإعلاني." : "Focus on high-converting Meta Ads targeting low-hanging fruit to maximize your return on ad spend.";
+        } else {
+          title = isArabic ? "باقة التوسع الشاملة" : "Omnichannel Scaling Package";
+          desc = isArabic ? "مزيج قوي من إعلانات Google Search و TikTok/Snapchat مع إعادة استهداف قوية لدفع المبيعات على نطاق واسع." : "A powerful mix of Google Search Intent Ads, TikTok/Snapchat awareness, and aggressive Meta retargeting to drive sales at scale.";
+        }
+      } else if (userGoal === 'awareness') {
+        title = isArabic ? "مصفوفة الحضور والانتشار" : "Brand Presence & Influencer Matrix";
+        desc = isArabic ? "نوصي بحملة مؤثرين محلية مدمجة مع إعلانات Snapchat و TikTok ذات التأثير العالي للسيطرة على حصة السوق." : "We recommend a localized influencer campaign combined with high-impact Snapchat and TikTok branding ads to dominate market share.";
+      } else if (userGoal === 'content') {
+        title = isArabic ? "محرك المحتوى المتميز" : "Premium Content & UI Engine";
+        desc = isArabic ? "ارتقِ بعلامتك التجارية مع إنتاج فيديو عالي الجودة وكتابة محتوى ثنائية اللغة وتطوير واجهة المستخدم لبناء الثقة." : "Elevate your brand with high-end video production, bilingual copywriting, and a luxury UI/UX overhaul to build long-term trust.";
+      }
+
+      if (resultTitle) resultTitle.textContent = title;
+      if (resultDesc) resultDesc.textContent = desc;
+    };
+
+    // Handle Step 1 Selections
+    document.querySelectorAll('#step-1 .wizard-option').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        userGoal = e.currentTarget.getAttribute('data-goal');
+        goToStep(2);
+      });
+    });
+
+    // Handle Step 2 Selections
+    document.querySelectorAll('#step-2 .wizard-option').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        userBudget = e.currentTarget.getAttribute('data-budget');
+        generateRecommendation();
+        goToStep(3);
+      });
+    });
+
+    // Handle Navigation
+    const backBtn = document.getElementById('back-to-1');
+    if (backBtn) backBtn.addEventListener('click', () => goToStep(1));
+
+    const restartBtn = document.getElementById('wizard-restart');
+    if (restartBtn) restartBtn.addEventListener('click', () => {
+      userGoal = '';
+      userBudget = '';
+      goToStep(1);
+    });
+  };
+
+  // Initialize wizard if element exists
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectWizard);
+  } else {
+    initProjectWizard();
   }
 
 })();

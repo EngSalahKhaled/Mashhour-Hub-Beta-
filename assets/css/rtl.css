@@ -1,1 +1,101 @@
-:root{--fb:'Cairo',sans-serif;--fh:'Cairo',sans-serif;--fm:'Cairo',sans-serif}html[dir="rtl"]{direction:rtl;text-align:right}html[dir="rtl"] body{font-family:var(--fb);font-size:1.05rem}html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3,html[dir="rtl"] h4,html[dir="rtl"] h5,html[dir="rtl"] h6{font-family:var(--fh)}html[dir="rtl"] .new-page-scope,html[dir="rtl"] .new-page-scope p,html[dir="rtl"] .new-page-scope li,html[dir="rtl"] .new-page-scope span,html[dir="rtl"] .new-page-scope a,html[dir="rtl"] .new-page-scope small,html[dir="rtl"] .new-page-scope strong,html[dir="rtl"] .new-page-scope blockquote{font-family:var(--fb)}html[dir="rtl"] .new-page-scope h1,html[dir="rtl"] .new-page-scope h2,html[dir="rtl"] .new-page-scope h3,html[dir="rtl"] .new-page-scope h4,html[dir="rtl"] .new-page-scope h5,html[dir="rtl"] .new-page-scope h6,html[dir="rtl"] .new-page-scope .atitle,html[dir="rtl"] .new-page-scope .sh2,html[dir="rtl"] .new-page-scope .rcat,html[dir="rtl"] .new-page-scope .rct,html[dir="rtl"] .new-page-scope .rctitle,html[dir="rtl"] .new-page-scope .mname,html[dir="rtl"] .new-page-scope .blog-title{font-family:var(--fh)}html[dir="rtl"] .nlogo{margin-right:0;margin-left:auto}html[dir="rtl"] .nlinks{gap:24px}html[dir="rtl"] .hburg{margin-left:0}html[dir="rtl"] .ndropdown-menu{text-align:right}html[dir="rtl"] .ndropdown-group-title{text-align:right;padding:0 14px 4px}html[dir="rtl"] .ndropdown-menu a{text-align:right;padding:9px 14px}html[dir="rtl"] .mnav{left:-100%;right:auto;border-left:none;border-right:1px solid var(--border);box-shadow:10px 0 60px rgba(0,0,0,.7)}html[dir="rtl"] .mnav.open{left:0;right:auto}html[dir="rtl"] .mclose{left:18px;right:auto}html[dir="rtl"] .mnav a{border-left:none;border-right:2px solid transparent;transform:translateX(-18px);justify-content:center;text-align:center;direction:rtl}html[dir="rtl"] .mnav-quicklinks a{justify-content:center;text-align:center;direction:rtl}html[dir="rtl"] .mnav.open a{transform:none}html[dir="rtl"] .mnav a:hover{border-right-color:rgba(196,255,71,.5);border-left-color:transparent}html[dir="rtl"] .mnav-label{justify-content:center;text-align:center;flex-direction:row}html[dir="rtl"] .mnav-label-meta{inset-inline-start:14px;inset-inline-end:auto;flex-direction:row}html[dir="rtl"] .mnav-subhead{text-align:center;padding-right:12px;padding-left:0;direction:rtl}html[dir="rtl"] .mnav-label[data-section="resources"]+.mnav-dropdown-content .mnav-subhead{flex-direction:row-reverse;justify-content:flex-start}html[dir="rtl"] .mnav>a.mnav-cta,html[dir="rtl"] .mnav>a.mnav-lang{border-top:1px solid rgba(255,255,255,.05);color:var(--white)}html[dir="rtl"] .mnav-dropdown-content a{text-align:center;padding:8px 14px!important;justify-content:center;direction:rtl;margin-inline:auto}html[dir="rtl"] .mnav-quicklinks{direction:rtl}html[dir="rtl"] .mnav-quicklinks a{text-align:center}html[dir="rtl"] .mnav-dropdown-content{direction:rtl}html[dir="rtl"] .mnav-label[data-section="resources"]+.mnav-dropdown-content a,html[dir="rtl"] .mnav-label[data-section="resources"]+.mnav-dropdown-content .mnav-subhead{text-align:center}html[dir="rtl"] .mnav-socials{direction:rtl}html[dir="rtl"] .mnav-dropdown-content.open::before{background:linear-gradient(90deg,transparent,rgba(196,255,71,.08),transparent)}html[dir="rtl"] .cmetrics>div{align-items:flex-end;text-align:right}html[dir="rtl"] .cmet-val{justify-content:flex-start;letter-spacing:0;line-height:1.08}html[dir="rtl"] .cmet-val span{font-family:var(--fm);font-size:.84rem}html[dir="rtl"] .cmet-lbl{letter-spacing:0;text-transform:none}@media (max-width:480px){html[dir="rtl"] .mnav-dropdown-content a{padding:7px 11px!important;font-size:.75rem!important}html[dir="rtl"] .mnav-label[data-section="resources"]+.mnav-dropdown-content a{padding:8px 11px!important}html[dir="rtl"] .mnav-subhead{padding-right:10px}html[dir="rtl"] .cmetrics{grid-template-columns:1fr}html[dir="rtl"] .cmetrics>div{min-height:84px}html[dir="rtl"] .cmet-val{font-size:1.28rem}}html[dir="rtl"] .wa-float{left:auto;right:30px;flex-direction:row-reverse}html[dir="rtl"] .wa-float-tip::after{right:auto;left:-6px;border-left:none;border-right:6px solid var(--surf)}@media(max-width:768px){html[dir="rtl"] .wa-float{right:20px;left:auto}}html[dir="rtl"] .cta,html[dir="rtl"] .bcta,html[dir="rtl"] .hcta,html[dir="rtl"] .ncta{font-family:var(--fh);font-weight:600}html[dir="rtl"] .cgrid{}html[dir="rtl"] .cleft{padding-right:0;padding-left:5vw}html[dir="rtl"] .cright{}html[dir="rtl"] .fgrp label{text-align:right;left:auto;right:20px}html[dir="rtl"] .fgrp input:focus~label,html[dir="rtl"] .fgrp input:valid~label,html[dir="rtl"] .fgrp textarea:focus~label,html[dir="rtl"] .fgrp textarea:valid~label,html[dir="rtl"] .fgrp select:focus~label,html[dir="rtl"] .fgrp select:valid~label{transform:translateY(-24px) scale(0.85);transform-origin:right top}html[dir="rtl"] .fgrp select{padding:16px 20px 16px 40px;background-position:left 20px center}html[dir="rtl"] .footer-grid{}html[dir="rtl"] .fsocials{gap:12px}html[dir="rtl"] .footer-contact-item .fci-icon{margin-right:0;margin-left:12px}html[dir="rtl"] .vtag{left:auto;right:24px}html[dir="rtl"] .vlink svg{transform:rotate(-180deg)}html[dir="rtl"] .vcard:hover .vlink svg{transform:rotate(-180deg) translateX(4px)}html[dir="rtl"] .snum{font-family:var(--fm)}html[dir="rtl"] .abt-timeline::before{left:auto;right:24px}html[dir="rtl"] .abt-tm-item{padding-left:0;padding-right:64px}html[dir="rtl"] .abt-tm-dot{left:auto;right:20px}html[dir="rtl"] .quote-card-q{left:auto;right:24px}html[dir="rtl"] .pc-icon{margin-right:0;margin-left:12px}.lang-switch{display:inline-flex;align-items:center;gap:6px;font-family:var(--fb);font-size:0.9rem;color:var(--white);padding:6px 14px;border-radius:4px;background:var(--ink2);border:1px solid var(--border);transition:all 0.3s var(--ease);cursor:pointer}.lang-switch:hover{background:var(--ink3);border-color:var(--lime)}.lang-switch svg{width:14px;height:14px;fill:currentColor}@media (max-width:768px){html[dir="rtl"] .abt-timeline::before{left:auto;right:16px}html[dir="rtl"] .abt-tm-dot{left:auto;right:12px}html[dir="rtl"] .abt-tm-item{padding-left:0;padding-right:48px}html[dir="rtl"] .cleft,html[dir="rtl"] .cright{padding:0 !important}html[dir="rtl"] .fgrp label{right:16px}html[dir="rtl"] .fgrp input:focus~label,html[dir="rtl"] .fgrp input:valid~label,html[dir="rtl"] .fgrp textarea:focus~label,html[dir="rtl"] .fgrp textarea:valid~label{transform:translateY(-22px) scale(0.85);transform-origin:right top}html[dir="rtl"] .hburg{margin-left:0;margin-right:auto}}html[dir="rtl"] .library-card{text-align:right !important}html[dir="rtl"] .library-card-top{justify-content:flex-start !important}html[dir="rtl"] .library-card h3{font-family:var(--fb) !important}html[dir="rtl"] .library-pill{left:auto !important;right:12px !important;border-left:none !important;border-right:3px solid var(--library-accent,var(--lime)) !important}html[dir="rtl"] .library-quickmeta-item{text-align:right !important}html[dir="rtl"] .library-source{font-family:var(--fb) !important;letter-spacing:0 !important}html[dir="rtl"] .academy-orbit-one{right:auto;left:8%}html[dir="rtl"] .academy-orbit-two{right:auto;left:18%}html[dir="rtl"] .academy-orbit-three{right:auto;left:30%}html[dir="rtl"] .academy-headline{letter-spacing:0 !important}html[dir="rtl"] .academy-poster-inner{margin-left:0}
+/* ══════════════════════════════════════════════════════════════════
+   MASHHOR HUB — Arabic (RTL) Styles
+   Integrated with modern CSS Logical Properties
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --fb: "Cairo", sans-serif;
+  --fh: "Cairo", sans-serif;
+  --fm: "Cairo", sans-serif;
+}
+
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--fb);
+}
+
+/* ── Typography Adjustments ── */
+html[dir="rtl"] h1, 
+html[dir="rtl"] h2, 
+html[dir="rtl"] h3, 
+html[dir="rtl"] h4, 
+html[dir="rtl"] h5, 
+html[dir="rtl"] h6, 
+html[dir="rtl"] .eyebrow, 
+html[dir="rtl"] .button, 
+html[dir="rtl"] .ghost-button, 
+html[dir="rtl"] .global-nav-link, 
+html[dir="rtl"] .global-nav-trigger, 
+html[dir="rtl"] .brand-copy strong, 
+html[dir="rtl"] .mono-label {
+  font-family: var(--fh) !important;
+  letter-spacing: 0 !important;
+}
+
+/* ── Component Adjustments ── */
+html[dir="rtl"] .testimonial-content blockquote {
+  border-right: 3px solid var(--gold);
+  border-left: none;
+  padding-right: 20px;
+  padding-left: 0;
+}
+
+html[dir="rtl"] .list li {
+  padding-right: 18px;
+  padding-left: 0;
+}
+
+html[dir="rtl"] .list li::before {
+  right: 0;
+  left: auto;
+}
+
+/* ── UI Elements Repositioning ── */
+html[dir="rtl"] .back-to-top {
+  left: 28px;
+  right: auto;
+}
+
+html[dir="rtl"] .wa-float {
+  left: 28px;
+  right: auto;
+  align-items: flex-start;
+}
+
+html[dir="rtl"] .wa-float-msg {
+  border-radius: 18px 18px 18px 4px;
+}
+
+/* ── Mobile RTL Constraints ── */
+@media (max-width: 768px) {
+  html[dir="rtl"] .global-header {
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  html[dir="rtl"] .announcement {
+    padding-right: 14px !important;
+    padding-left: 44px !important;
+  }
+  
+  html[dir="rtl"] .back-to-top {
+    left: 12px;
+    right: auto;
+  }
+  
+  html[dir="rtl"] .wa-float {
+    left: 12px;
+    right: auto;
+  }
+}
+
+/* ── Price Display (Fix numbers direction) ── */
+html[dir="rtl"] .price {
+  direction: ltr;
+  display: inline-block;
+}
