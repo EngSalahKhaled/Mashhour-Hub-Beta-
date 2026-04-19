@@ -1641,6 +1641,7 @@ img {
   color: var(--muted);
   background: transparent;
   border: 0;
+  white-space: nowrap;
   font:
     600 0.9rem/1 "Space Grotesk",
     sans-serif;
