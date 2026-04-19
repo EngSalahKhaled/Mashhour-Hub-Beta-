@@ -231,8 +231,30 @@ body {
   background: rgba(0, 0, 0, 0.03);
 }
 
-[data-color="light"] .global-burger span {
-  background: var(--text);
+[data-color="light"] .global-burger span,
+[data-color="light"] button.global-burger#global-burger span {
+  background: var(--text) !important;
+}
+
+[data-color="light"] .global-mobile-header {
+  border-bottom-color: rgba(0, 30, 80, 0.08);
+}
+
+[data-color="light"] .global-mobile-brand strong,
+[data-color="light"] .global-mobile-link,
+[data-color="light"] .global-mobile-group summary,
+[data-color="light"] .mobile-social a {
+  color: var(--text);
+}
+
+[data-color="light"] .global-mobile-group a {
+  color: var(--muted);
+}
+
+[data-color="light"] .global-mobile-close {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Light mode cards & panels */
@@ -8782,6 +8804,75 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
   flex-grow: 1;
 }
 
+.portfolio-carousel-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 20px 0;
+  display: flex;
+}
+
+.portfolio-carousel-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: scrollMarquee 30s linear infinite;
+}
+
+.portfolio-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 12px)); /* -50% of track width minus half gap */
+  }
+}
+
+[dir="rtl"] @keyframes scrollMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(50% + 12px));
+  }
+}
+
+.carousel-slide {
+  flex: 0 0 auto;
+  width: 85vw;
+  max-width: 800px;
+  height: 450px;
+  border-radius: 24px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease, filter 0.4s ease;
+  will-change: transform;
+}
+
+.carousel-slide:hover {
+  transform: translateY(-10px) scale(1.02);
+  z-index: 10;
+  filter: brightness(1.1);
+}
+
+@media (min-width: 1024px) {
+  .carousel-slide { width: 50vw; height: 500px; }
+  .portfolio-carousel-track { gap: 32px; }
+  @keyframes scrollMarquee {
+    100% { transform: translateX(calc(-50% - 16px)); }
+  }
+  [dir="rtl"] @keyframes scrollMarquee {
+    100% { transform: translateX(calc(50% + 16px)); }
+  }
+}
+
 .pricing-card .list li {
   position: relative;
   font-size: 0.95rem;
@@ -9633,6 +9724,41 @@ html[dir="rtl"] {
   100% { transform: translateX(-50%); } 
 }
 
+@media (max-width: 767px) {
+  .tech-marquee-section {
+    padding: 10px 0;
+  }
+
+  .tech-marquee-wrapper {
+    animation-duration: 20s;
+  }
+
+  .tech-item {
+    padding: 0 16px;
+    gap: 8px;
+    filter: none;
+    flex: 0 0 auto;
+  }
+
+  .tech-item:hover {
+    transform: none;
+  }
+
+  .tech-item img {
+    height: 18px;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .tech-item span {
+    font-size: 0.8rem;
+  }
+}
+
+[data-color="light"] .tech-item {
+  filter: grayscale(100%) opacity(0.8);
+}
+
 /* ── "Our Proven Process" Section ── */
 .process-timeline-wrap {
   display: flex;
@@ -10446,6 +10572,51 @@ html[dir="rtl"] .bilingual-search-dropdown a:hover { padding-left: 16px; padding
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   gap: 18px;
   align-items: stretch;
+}
+
+/* ... existing story styles ... */
+
+/* ── PORTFOLIO CATEGORY HEADERS ── */
+.portfolio-category {
+  margin: 70px 0 35px;
+}
+.portfolio-category-header {
+  margin-bottom: 35px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 15px;
+  position: relative;
+}
+.portfolio-category-header h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Grotesk', 'Alexandria', sans-serif;
+}
+.portfolio-category-header h3::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(244, 205, 85, 0.4);
+}
+.portfolio-category-header p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin: 8px 0 0 22px;
+  max-width: 60ch;
+  line-height: 1.6;
+}
+[data-color="light"] .portfolio-category-header {
+  border-bottom-color: rgba(0, 30, 80, 0.08);
+}
+[data-color="light"] .portfolio-category-header h3 {
+  color: #1a1a2e;
 }
 
 .story-copy {
