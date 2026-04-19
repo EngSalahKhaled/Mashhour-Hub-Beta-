@@ -193,7 +193,7 @@
       contact: { text: "Contact", href: `${enP}contact.html` },
       langText: "العربية",
       langHref: `${p}ar/index.html`,
-      ctaText: "Start Project",
+      ctaText: "Start Now",
       ctaHref: `${p}contact.html`,
       brandName: "Mashhor Hub",
       brandSub: "MARKETING • AI • GROWTH"
@@ -479,14 +479,18 @@
     });
 
     // Bilingual Search Integration
+    const searchBase = isArabic ? arBase : p;
     const servicesDB = [
-      { url: "${p}services/web-development.html", titleAr: "تطوير الويب", titleEn: "Web Development", keywords: ["برمجة", "مواقع", "منصات", "web", "coding", "development", "website"] },
-      { url: "${p}services/graphic-design.html", titleAr: "الهوية البصرية", titleEn: "Brand Identity & Design", keywords: ["تصميم", "واجهة", "تجربة", "design", "interface", "experience", "ui", "ux", "graphic"] },
-      { url: "${p}services/seo.html", titleAr: "تحسين محركات البحث", titleEn: "SEO", keywords: ["جوجل", "ارشفة", "محركات", "بحث", "google", "search", "ranking", "optimization"] },
-      { url: "${p}services/e-marketing.html", titleAr: "الإعلانات الرقمية", titleEn: "Digital Advertising", keywords: ["تسويق", "إعلانات", "مبيعات", "ads", "digital", "marketing", "sales", "meta", "tiktok"] },
-      { url: "${p}services/influencer-marketing.html", titleAr: "التسويق المؤثر", titleEn: "Influencer Marketing", keywords: ["مؤثرين", "مشاهير", "حملات", "creator", "campaigns", "influencer"] },
-      { url: "${p}services/video-production.html", titleAr: "الإنتاج المرئي", titleEn: "Video Production", keywords: ["فيديو", "تصوير", "انتاج", "video", "production", "shooting"] },
-      { url: "${p}services/smart-automation.html", titleAr: "الذكاء الاصطناعي والأتمتة", titleEn: "AI & Automation", keywords: ["ذكاء", "اصطناعي", "روبوت", "اتمتة", "ai", "automation", "systems", "bots"] }
+      { url: searchBase + "programming.html", titleAr: "تطوير الويب", titleEn: "Web Development", keywords: ["برمجة", "مواقع", "منصات", "web", "coding", "development", "website"] },
+      { url: searchBase + "services/graphic-design.html", titleAr: "الهوية البصرية", titleEn: "Brand Identity & Design", keywords: ["تصميم", "واجهة", "تجربة", "design", "interface", "experience", "ui", "ux", "graphic"] },
+      { url: searchBase + "services/seo.html", titleAr: "تحسين محركات البحث", titleEn: "SEO", keywords: ["جوجل", "ارشفة", "محركات", "بحث", "google", "search", "ranking", "optimization"] },
+      { url: searchBase + "services/e-marketing.html", titleAr: "الإعلانات الرقمية", titleEn: "Digital Advertising", keywords: ["تسويق", "إعلانات", "مبيعات", "ads", "digital", "marketing", "sales", "meta", "tiktok"] },
+      { url: searchBase + "services/influencer-marketing.html", titleAr: "التسويق المؤثر", titleEn: "Influencer Marketing", keywords: ["مؤثرين", "مشاهير", "حملات", "creator", "campaigns", "influencer"] },
+      { url: searchBase + "services/video-production.html", titleAr: "الإنتاج المرئي", titleEn: "Video Production", keywords: ["فيديو", "تصوير", "انتاج", "video", "production", "shooting"] },
+      { url: searchBase + "services/smart-automation.html", titleAr: "الذكاء الاصطناعي والأتمتة", titleEn: "AI & Automation", keywords: ["ذكاء", "اصطناعي", "روبوت", "اتمتة", "ai", "automation", "systems", "bots"] },
+      { url: searchBase + "services/content-writing.html", titleAr: "كتابة المحتوى", titleEn: "Content Writing", keywords: ["محتوى", "كتابة", "مقالات", "content", "writing", "copywriting", "blog", "articles"] },
+      { url: searchBase + "services/consultation.html", titleAr: "الاستشارات", titleEn: "Consultation", keywords: ["استشارة", "استشارات", "نمو", "consultation", "consulting", "strategy", "growth"] },
+      { url: searchBase + "services/mashhor-ai.html", titleAr: "Mashhor AI", titleEn: "Mashhor AI", keywords: ["ذكاء", "mashhor", "ai", "مشهور", "أداة", "tool", "cloud"] }
     ];
 
     const normalizeText = (text) => {
