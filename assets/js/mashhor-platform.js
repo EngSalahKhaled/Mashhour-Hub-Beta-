@@ -24,7 +24,35 @@
       html.style.display = '';
     }
   };
+  const ensureMetaTag = (name) => {
+    let meta = document.querySelector(`meta[name="${name}"]`);
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", name);
+      document.head.appendChild(meta);
+    }
+    return meta;
+  };
+
+  const browserThemeMap = {
+    default: { scheme: "dark", chrome: "#041121", statusBar: "black-translucent" },
+    blue: { scheme: "dark", chrome: "#0b1830", statusBar: "black-translucent" },
+    green: { scheme: "dark", chrome: "#08221c", statusBar: "black-translucent" },
+    purple: { scheme: "dark", chrome: "#18112b", statusBar: "black-translucent" },
+    rose: { scheme: "dark", chrome: "#2a1017", statusBar: "black-translucent" },
+    light: { scheme: "light", chrome: "#f4f1ec", statusBar: "default" }
+  };
+
+  const applyBrowserChromeTheme = (colorName = "default") => {
+    const theme = browserThemeMap[colorName] || browserThemeMap.default;
+    html.style.colorScheme = theme.scheme;
+    ensureMetaTag("color-scheme").setAttribute("content", "light dark");
+    ensureMetaTag("supported-color-schemes").setAttribute("content", "light dark");
+    ensureMetaTag("theme-color").setAttribute("content", theme.chrome);
+    ensureMetaTag("apple-mobile-web-app-status-bar-style").setAttribute("content", theme.statusBar);
+  };
   initTheme();
+  applyBrowserChromeTheme(html.getAttribute("data-color") || "default");
 
   const mojibakePattern = /(?:â€¦|â€”|â€“|â€|â€¢|â†’|â†|âœ|â–¾|â”‚|ï¸|ðŸ|Ã|Ø|Ù|ط|ظ|€|™|œ|¢|£|¤|¥)/;
   const repairMojibake = (value) => {
@@ -443,6 +471,7 @@
           html.setAttribute('data-color', selectedColor);
           localStorage.setItem('mashhor-color-theme', selectedColor);
         }
+        applyBrowserChromeTheme(selectedColor);
 
         // ── iOS WebKit Repaint Hack ──
         // Toggle display to force Safari to flush its render queue
@@ -493,6 +522,44 @@
       { url: searchBase + "services/mashhor-ai.html", titleAr: "Mashhor AI", titleEn: "Mashhor AI", keywords: ["ذكاء", "mashhor", "ai", "مشهور", "أداة", "tool", "cloud"] }
     ];
 
+    const animatedSearchTerms = [
+      ...(isArabic
+        ? [
+            "تطوير الويب",
+            "الهوية البصرية",
+            "الإعلانات الرقمية",
+            "التسويق المؤثر",
+            "الإنتاج المرئي",
+            "كتابة المحتوى",
+            "الذكاء الاصطناعي والأتمتة",
+            "الاستشارات",
+            "من نحن",
+            "الأعمال",
+            "دراسات الحالة",
+            "المدونة",
+            "الباقات",
+            "الأكاديمية",
+            "تواصل معنا"
+          ]
+        : [
+            "Web Development",
+            "Brand Identity & Design",
+            "Digital Advertising",
+            "Influencer Marketing",
+            "Video Production",
+            "Content Writing",
+            "AI & Automation",
+            "Consultation",
+            "About Mashhor Hub",
+            "Portfolio",
+            "Case Studies",
+            "Blog",
+            "Pricing",
+            "Academy",
+            "Contact Us"
+          ])
+    ];
+
     const normalizeText = (text) => {
       if (!text) return "";
       return text.toString().trim().toLowerCase()
@@ -510,6 +577,10 @@
     document.querySelectorAll(".bilingual-search-wrapper").forEach(wrapper => {
       const input = wrapper.querySelector(".bilingual-search-input");
       const dropdown = wrapper.querySelector(".bilingual-search-dropdown");
+      if (input && !input.hasAttribute("data-placeholder-terms")) {
+        input.setAttribute("data-placeholder-terms", JSON.stringify(animatedSearchTerms));
+        input.setAttribute("data-placeholder-base", "");
+      }
       
       const handleSearch = () => {
         const normQuery = normalizeText(input.value);
@@ -1123,7 +1194,7 @@
   /* ═══════════════════════════════════════════════════
      ANIMATED SEARCH PLACEHOLDER
      ═══════════════════════════════════════════════════ */
-  const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms]');
+  const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms], .bilingual-search-input[data-placeholder-terms]');
   searchInputs.forEach(input => {
     const terms = JSON.parse(input.getAttribute('data-placeholder-terms') || '[]');
     if (!terms.length) return;
