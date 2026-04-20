@@ -1,16 +1,4 @@
-# robots.txt — mashhor-hub.com
-# Mashhor Hub Portfolio · Bilingual (EN/AR) Static Site
-
 User-agent: *
 Allow: /
-Disallow: /.claude/
-Disallow: /.git/
-Disallow: /data/
-Disallow: /thank-you.html
-Disallow: /consultation-booked.html
-Disallow: /ar/thank-you.html
-Disallow: /ar/consultation-booked.html
 
-# Sitemap
 Sitemap: https://mashhor-hub.com/sitemap.xml
-Sitemap: https://mashhor-hub.com/sitemap-images.xml
