@@ -26,7 +26,35 @@
       html.style.display = "";
     }
   };
+  const ensureMetaTag = (name) => {
+    let meta = document.querySelector(`meta[name="${name}"]`);
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", name);
+      document.head.appendChild(meta);
+    }
+    return meta;
+  };
+
+  const browserThemeMap = {
+    default: { scheme: "dark", chrome: "#041121", statusBar: "black-translucent" },
+    blue: { scheme: "dark", chrome: "#0b1830", statusBar: "black-translucent" },
+    green: { scheme: "dark", chrome: "#08221c", statusBar: "black-translucent" },
+    purple: { scheme: "dark", chrome: "#18112b", statusBar: "black-translucent" },
+    rose: { scheme: "dark", chrome: "#2a1017", statusBar: "black-translucent" },
+    light: { scheme: "light", chrome: "#f4f1ec", statusBar: "default" }
+  };
+
+  const applyBrowserChromeTheme = (colorName = "default") => {
+    const theme = browserThemeMap[colorName] || browserThemeMap.default;
+    html.style.colorScheme = theme.scheme;
+    ensureMetaTag("color-scheme").setAttribute("content", "light dark");
+    ensureMetaTag("supported-color-schemes").setAttribute("content", "light dark");
+    ensureMetaTag("theme-color").setAttribute("content", theme.chrome);
+    ensureMetaTag("apple-mobile-web-app-status-bar-style").setAttribute("content", theme.statusBar);
+  };
   initTheme();
+  applyBrowserChromeTheme(html.getAttribute("data-color") || "default");
 
   const mojibakePattern =
     /(?:â€¦|â€”|â€“|â€|â€¢|â†’|â†|âœ|â–¾|â”‚|ï¸|ðŸ|Ã|Ø|Ù|ط|ظ|€|™|œ|¢|£|¤|¥)/;
@@ -114,22 +142,8 @@
     const path = window.location.pathname.replace(/\\/g, "/");
     const parts = path.split("/").filter(Boolean);
     if (parts.length === 0) return "./";
-    if (window.location.protocol === "file:") {
-      const idx = parts.findIndex(
-        (p) =>
-          p === "ar" ||
-          p === "services" ||
-          p === "academy" ||
-          p === "pricing" ||
-          p === "blog" ||
-          p === "book-call" ||
-          p === "case-studies" ||
-          p === "legal" ||
-          p === "prompts" ||
-          p === "search" ||
-          p === "portfolio" ||
-          Boolean(p.match(/\.html$/)),
-      );
+    if (window.location.protocol === 'file:') {
+      const idx = parts.findIndex(p => p === 'ar' || p === 'services' || p === 'academy' || p === 'pricing' || p === 'blog' || p === 'book-call' || p === 'case-studies' || p === 'legal' || p === 'prompts' || p === 'search' || p === 'portfolio' || Boolean(p.match(/\.html$/)));
       if (idx !== -1) {
         const remaining = parts.length - idx;
         return remaining <= 1 ? "./" : "../".repeat(remaining - 1);
@@ -168,122 +182,63 @@
     const arBase = `${p}ar/`;
     // enP: use prefix directly — it correctly resolves to site root from any depth
     const enP = p;
-    const nav = isArabic
-      ? {
-          home: { text: "الرئيسية", href: `${arBase}index.html` },
-          about: { text: "من نحن", href: `${arBase}about.html` },
-          services: {
-            text: "الخدمات",
-            children: [
-              {
-                text: "التسويق المؤثر",
-                href: `${arBase}services/influencer-marketing.html`,
-              },
-              {
-                text: "الهوية البصرية",
-                href: `${arBase}services/graphic-design.html`,
-              },
-              {
-                text: "الإعلانات الرقمية",
-                href: `${arBase}services/e-marketing.html`,
-              },
-              {
-                text: "الإنتاج المرئي",
-                href: `${arBase}services/video-production.html`,
-              },
-              {
-                text: "كتابة المحتوى",
-                href: `${arBase}services/content-writing.html`,
-              },
-              {
-                text: "تحسين محركات البحث",
-                href: `${arBase}services/seo.html`,
-              },
-              {
-                text: "الأتمتة والذكاء",
-                href: `${arBase}services/smart-automation.html`,
-              },
-              {
-                text: "الاستشارات",
-                href: `${arBase}services/consultation.html`,
-              },
-            ],
-          },
-          explore: {
-            text: "استكشف",
-            children: [
-              { text: "الأعمال", href: `${arBase}portfolio/index.html` },
-              { text: "المؤثرون", href: `${arBase}influencers/index.html` },
-              { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
-              { text: "الباقات", href: `${arBase}pricing/index.html` },
-              { text: "الأكاديمية", href: `${arBase}academy/index.html` },
-            ],
-          },
-          blog: { text: "المدونة", href: `${arBase}blog/index.html` },
-          contact: { text: "تواصل", href: `${arBase}contact.html` },
-          langText: "English",
-          langHref: `${arBase}../index.html`,
-          ctaText: "ابدأ مشروعك",
-          ctaHref: `${arBase}contact.html`,
-          brandName: "مشهور هب",
-          brandSub: "MARKETING • AI • GROWTH",
-        }
-      : {
-          home: { text: "Home", href: `${enP}index.html` },
-          about: { text: "About", href: `${enP}about.html` },
-          services: {
-            text: "Services",
-            children: [
-              {
-                text: "Influencer Marketing",
-                href: `${enP}services/influencer-marketing.html`,
-              },
-              {
-                text: "Brand Identity & Design",
-                href: `${enP}services/graphic-design.html`,
-              },
-              {
-                text: "Digital Advertising",
-                href: `${enP}services/e-marketing.html`,
-              },
-              {
-                text: "Video Production",
-                href: `${enP}services/video-production.html`,
-              },
-              {
-                text: "Content Writing",
-                href: `${enP}services/content-writing.html`,
-              },
-              { text: "SEO", href: `${enP}services/seo.html` },
-              {
-                text: "AI & Automation",
-                href: `${enP}services/smart-automation.html`,
-              },
-              {
-                text: "Consultation",
-                href: `${enP}services/consultation.html`,
-              },
-            ],
-          },
-          explore: {
-            text: "Explore",
-            children: [
-              { text: "Portfolio", href: `${enP}portfolio/index.html` },
-              { text: "Influencers", href: `${enP}influencers/index.html` },
-              { text: "Mashhor AI", href: `${enP}services/mashhor-ai.html` },
-              { text: "Pricing", href: `${enP}pricing/index.html` },
-              { text: "Academy", href: `${enP}academy/index.html` },
-            ],
-          },
-          blog: { text: "Blog", href: `${enP}blog/index.html` },
-          contact: { text: "Contact", href: `${enP}contact.html` },
-          langText: "العربية",
-          langHref: `${p}ar/index.html`,
-          ctaText: "Start Project",
-          ctaHref: `${p}contact.html`,
-          brandName: "Mashhor Hub",
-          brandSub: "MARKETING • AI • GROWTH",
-        };
+    const nav = isArabic ? {
+      home: { text: "الرئيسية", href: `${arBase}index.html` },
+      about: { text: "من نحن", href: `${arBase}about.html` },
+      services: { text: "الخدمات", children: [
+        { text: "التسويق المؤثر", href: `${arBase}services/influencer-marketing.html` },
+        { text: "الهوية البصرية", href: `${arBase}services/graphic-design.html` },
+        { text: "الإعلانات الرقمية", href: `${arBase}services/e-marketing.html` },
+        { text: "الإنتاج المرئي", href: `${arBase}services/video-production.html` },
+        { text: "كتابة المحتوى", href: `${arBase}services/content-writing.html` },
+        { text: "تحسين محركات البحث", href: `${arBase}services/seo.html` },
+        { text: "الأتمتة والذكاء", href: `${arBase}services/smart-automation.html` },
+        { text: "الاستشارات", href: `${arBase}services/consultation.html` }
+      ]},
+      explore: { text: "استكشف", children: [
+        { text: "الأعمال", href: `${arBase}portfolio/index.html` },
+        { text: "المؤثرون", href: `${arBase}influencers/index.html` },
+        { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
+        { text: "الباقات", href: `${arBase}pricing/index.html` },
+        { text: "الأكاديمية", href: `${arBase}academy/index.html` }
+      ]},
+      blog: { text: "المدونة", href: `${arBase}blog/index.html` },
+      contact: { text: "تواصل", href: `${arBase}contact.html` },
+      langText: "English",
+      langHref: `${arBase}../index.html`,
+      ctaText: "ابدأ مشروعك",
+      ctaHref: `${arBase}contact.html`,
+      brandName: "مشهور هب",
+      brandSub: "MARKETING • AI • GROWTH"
+    } : {
+      home: { text: "Home", href: `${enP}index.html` },
+      about: { text: "About", href: `${enP}about.html` },
+      services: { text: "Services", children: [
+        { text: "Influencer Marketing", href: `${enP}services/influencer-marketing.html` },
+        { text: "Brand Identity & Design", href: `${enP}services/graphic-design.html` },
+        { text: "Digital Advertising", href: `${enP}services/e-marketing.html` },
+        { text: "Video Production", href: `${enP}services/video-production.html` },
+        { text: "Content Writing", href: `${enP}services/content-writing.html` },
+        { text: "SEO", href: `${enP}services/seo.html` },
+        { text: "AI & Automation", href: `${enP}services/smart-automation.html` },
+        { text: "Consultation", href: `${enP}services/consultation.html` }
+      ]},
+      explore: { text: "Explore", children: [
+        { text: "Portfolio", href: `${enP}portfolio/index.html` },
+        { text: "Influencers", href: `${enP}influencers/index.html` },
+        { text: "Mashhor AI", href: `${enP}services/mashhor-ai.html` },
+        { text: "Pricing", href: `${enP}pricing/index.html` },
+        { text: "Academy", href: `${enP}academy/index.html` }
+      ]},
+      blog: { text: "Blog", href: `${enP}blog/index.html` },
+      contact: { text: "Contact", href: `${enP}contact.html` },
+      langText: "العربية",
+      langHref: `${p}ar/index.html`,
+      ctaText: "Start Project",
+      ctaHref: `${p}contact.html`,
+      brandName: "Mashhor Hub",
+      brandSub: "MARKETING • AI • GROWTH"
+    };
 
     // Fix lang href based on alternate hreflang
     // Only use the hreflang URL override on the real production domain.
@@ -548,6 +503,7 @@
           html.setAttribute("data-color", selectedColor);
           localStorage.setItem("mashhor-color-theme", selectedColor);
         }
+        applyBrowserChromeTheme(selectedColor);
 
         // ── iOS WebKit Repaint Hack ──
         // Toggle display to force Safari to flush its render queue
@@ -594,109 +550,15 @@
     });
 
     // Bilingual Search Integration
+    const searchBase = isArabic ? arBase : p;
     const servicesDB = [
-      {
-        url: "${p}services/web-development.html",
-        titleAr: "تطوير الويب",
-        titleEn: "Web Development",
-        keywords: [
-          "برمجة",
-          "مواقع",
-          "منصات",
-          "web",
-          "coding",
-          "development",
-          "website",
-        ],
-      },
-      {
-        url: "${p}services/graphic-design.html",
-        titleAr: "الهوية البصرية",
-        titleEn: "Brand Identity & Design",
-        keywords: [
-          "تصميم",
-          "واجهة",
-          "تجربة",
-          "design",
-          "interface",
-          "experience",
-          "ui",
-          "ux",
-          "graphic",
-        ],
-      },
-      {
-        url: "${p}services/seo.html",
-        titleAr: "تحسين محركات البحث",
-        titleEn: "SEO",
-        keywords: [
-          "جوجل",
-          "ارشفة",
-          "محركات",
-          "بحث",
-          "google",
-          "search",
-          "ranking",
-          "optimization",
-        ],
-      },
-      {
-        url: "${p}services/e-marketing.html",
-        titleAr: "الإعلانات الرقمية",
-        titleEn: "Digital Advertising",
-        keywords: [
-          "تسويق",
-          "إعلانات",
-          "مبيعات",
-          "ads",
-          "digital",
-          "marketing",
-          "sales",
-          "meta",
-          "tiktok",
-        ],
-      },
-      {
-        url: "${p}services/influencer-marketing.html",
-        titleAr: "التسويق المؤثر",
-        titleEn: "Influencer Marketing",
-        keywords: [
-          "مؤثرين",
-          "مشاهير",
-          "حملات",
-          "creator",
-          "campaigns",
-          "influencer",
-        ],
-      },
-      {
-        url: "${p}services/video-production.html",
-        titleAr: "الإنتاج المرئي",
-        titleEn: "Video Production",
-        keywords: [
-          "فيديو",
-          "تصوير",
-          "انتاج",
-          "video",
-          "production",
-          "shooting",
-        ],
-      },
-      {
-        url: "${p}services/smart-automation.html",
-        titleAr: "الذكاء الاصطناعي والأتمتة",
-        titleEn: "AI & Automation",
-        keywords: [
-          "ذكاء",
-          "اصطناعي",
-          "روبوت",
-          "اتمتة",
-          "ai",
-          "automation",
-          "systems",
-          "bots",
-        ],
-      },
+      { url: "${p}services/web-development.html", titleAr: "تطوير الويب", titleEn: "Web Development", keywords: ["برمجة", "مواقع", "منصات", "web", "coding", "development", "website"] },
+      { url: "${p}services/graphic-design.html", titleAr: "الهوية البصرية", titleEn: "Brand Identity & Design", keywords: ["تصميم", "واجهة", "تجربة", "design", "interface", "experience", "ui", "ux", "graphic"] },
+      { url: "${p}services/seo.html", titleAr: "تحسين محركات البحث", titleEn: "SEO", keywords: ["جوجل", "ارشفة", "محركات", "بحث", "google", "search", "ranking", "optimization"] },
+      { url: "${p}services/e-marketing.html", titleAr: "الإعلانات الرقمية", titleEn: "Digital Advertising", keywords: ["تسويق", "إعلانات", "مبيعات", "ads", "digital", "marketing", "sales", "meta", "tiktok"] },
+      { url: "${p}services/influencer-marketing.html", titleAr: "التسويق المؤثر", titleEn: "Influencer Marketing", keywords: ["مؤثرين", "مشاهير", "حملات", "creator", "campaigns", "influencer"] },
+      { url: "${p}services/video-production.html", titleAr: "الإنتاج المرئي", titleEn: "Video Production", keywords: ["فيديو", "تصوير", "انتاج", "video", "production", "shooting"] },
+      { url: "${p}services/smart-automation.html", titleAr: "الذكاء الاصطناعي والأتمتة", titleEn: "AI & Automation", keywords: ["ذكاء", "اصطناعي", "روبوت", "اتمتة", "ai", "automation", "systems", "bots"] }
     ];
 
     const normalizeText = (text) => {
@@ -721,19 +583,17 @@
       };
     };
 
-    document
-      .querySelectorAll(".bilingual-search-wrapper")
-      .forEach((wrapper) => {
-        const input = wrapper.querySelector(".bilingual-search-input");
-        const dropdown = wrapper.querySelector(".bilingual-search-dropdown");
-
-        const handleSearch = () => {
-          const normQuery = normalizeText(input.value);
-          if (!normQuery) {
-            dropdown.innerHTML = "";
-            dropdown.hidden = true;
-            return;
-          }
+    document.querySelectorAll(".bilingual-search-wrapper").forEach(wrapper => {
+      const input = wrapper.querySelector(".bilingual-search-input");
+      const dropdown = wrapper.querySelector(".bilingual-search-dropdown");
+      
+      const handleSearch = () => {
+        const normQuery = normalizeText(input.value);
+        if (!normQuery) {
+          dropdown.innerHTML = "";
+          dropdown.hidden = true;
+          return;
+        }
 
           const matches = servicesDB.filter((item) => {
             return (
@@ -850,7 +710,7 @@
           </div>
           <div class="global-footer-col">
             <h4>تواصل</h4>
-            <a href="https://wa.me/96555377309" target="_blank" rel="noopener">واتساب</a>
+            <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">واتساب</a>
             <a href="mailto:info@mashhor-hub.com">البريد الإلكتروني</a>
             <a href="tel:+96555377309">هاتف: +965 5537 7309</a>
             <a href="${arFp}book-call/index.html">حجز مكالمة</a>
@@ -909,7 +769,7 @@
           </div>
           <div class="global-footer-col">
             <h4>Connect</h4>
-            <a href="https://wa.me/96555377309" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">WhatsApp</a>
             <a href="mailto:info@mashhor-hub.com">Email</a>
             <a href="tel:+96555377309">Phone: +965 5537 7309</a>
             <a href="${p}book-call/index.html">Book a Call</a>
@@ -1232,14 +1092,8 @@
     document.body.prepend(brandsContainer);
 
     const brandIcons = [
-      "facebook.png",
-      "google.png",
-      "linkedin.png",
-      "twitter.png",
-      "telegram.png",
-      "behance.png",
-      "dribbble.png",
-      "slack.png",
+      "facebook.png", "google.png", "linkedin.png", "twitter.png",
+      "telegram.png", "behance.png", "dribbble.png", "slack.png"
     ];
 
     // Only 8 icons, spread evenly
@@ -1407,13 +1261,9 @@
   /* ═══════════════════════════════════════════════════
      ANIMATED SEARCH PLACEHOLDER
      ═══════════════════════════════════════════════════ */
-  const searchInputs = document.querySelectorAll(
-    ".search-input[data-placeholder-terms]",
-  );
-  searchInputs.forEach((input) => {
-    const terms = JSON.parse(
-      input.getAttribute("data-placeholder-terms") || "[]",
-    );
+  const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms]');
+  searchInputs.forEach(input => {
+    const terms = JSON.parse(input.getAttribute('data-placeholder-terms') || '[]');
     if (!terms.length) return;
 
     const baseText = input.getAttribute("data-placeholder-base") || "";
