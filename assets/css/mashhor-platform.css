@@ -10620,7 +10620,7 @@ html[dir="rtl"] .bilingual-search-dropdown a:hover { padding-left: 16px; padding
   margin-left: auto;
   margin-right: auto;
   padding: 0 5%;
-  margin: 70px 0 35px;
+  margin: 70px auto 35px auto;
 }
 .portfolio-category-header {
   margin-bottom: 35px;
