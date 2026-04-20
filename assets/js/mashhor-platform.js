@@ -135,7 +135,7 @@
     const parts = path.split("/").filter(Boolean);
     if (parts.length === 0) return "./";
     if (window.location.protocol === 'file:') {
-      const idx = parts.findIndex(p => p === 'ar' || p === 'services' || p === 'academy' || p === 'pricing' || p === 'blog' || p === 'book-call' || p === 'case-studies' || p === 'legal' || p === 'prompts' || p === 'search' || p === 'portfolio' || Boolean(p.match(/\.html$/)));
+      const idx = parts.findIndex(p => p === 'ar' || p === 'services' || p === 'academy' || p === 'pricing' || p === 'blog' || p === 'book-call' || p === 'case-studies' || p === 'legal' || p === 'prompts' || p === 'search' || p === 'portfolio' || Boolean(p.match(/\.html$/ || p === 'data' || p === 'influencers' || p === 'tmp_archive')));
       if (idx !== -1) {
         const remaining = parts.length - idx;
         return remaining <= 1 ? "./" : "../".repeat(remaining - 1);
@@ -1042,10 +1042,7 @@
     brandsContainer.className = "floating-brands-container";
     document.body.prepend(brandsContainer);
 
-    const brandIcons = [
-      "facebook.png", "google.png", "linkedin.png", "twitter.png",
-      "telegram.png", "behance.png", "dribbble.png", "slack.png"
-    ];
+    const brandIcons = [ "facebook.png", "google.png", "linkedin.png", "twitter.png", "telegram.png", "behance.png", "dribbble.png", "slack.png", "Meta.png", "claude.png", "Figma.png", "Canva.png", "Notion.png" ];
 
     // Only 8 icons, spread evenly
     brandIcons.forEach((iconName, i) => {

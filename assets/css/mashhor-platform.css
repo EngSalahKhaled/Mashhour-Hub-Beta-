@@ -2095,7 +2095,7 @@ body.mobile-nav-open .global-mobile-backdrop {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("../images/map.png") no-repeat center center;
+  background: url("../images/map.webp") no-repeat center center;
   background-size: cover;
   opacity: 0.6;
   mix-blend-mode: overlay;
@@ -8833,13 +8833,17 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
   }
 }
 
-[dir="rtl"] @keyframes scrollMarquee {
+@keyframes scrollMarquee-rtl {
   0% {
     transform: translateX(0);
   }
   100% {
     transform: translateX(calc(50% + 12px));
   }
+}
+
+[dir="rtl"] .portfolio-carousel-track {
+  animation-name: scrollMarquee-rtl;
 }
 
 .carousel-slide {
@@ -8869,7 +8873,7 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
   @keyframes scrollMarquee {
     100% { transform: translateX(calc(-50% - 16px)); }
   }
-  [dir="rtl"] @keyframes scrollMarquee {
+  @keyframes scrollMarquee-rtl {
     100% { transform: translateX(calc(50% + 16px)); }
   }
 }
@@ -9687,7 +9691,7 @@ html[dir="rtl"] {
 .tech-marquee-wrapper {
   display: flex;
   width: max-content;
-  animation: tech-scroll 35s linear infinite;
+  animation: tech-scroll 90s linear infinite;
 }
 .tech-marquee-wrapper:hover {
   animation-play-state: paused;
@@ -9725,13 +9729,22 @@ html[dir="rtl"] {
   100% { transform: translateX(-50%); } 
 }
 
+@keyframes tech-scroll-rtl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); } 
+}
+
+[dir="rtl"] .tech-marquee-wrapper {
+  animation-name: tech-scroll-rtl;
+}
+
 @media (max-width: 767px) {
   .tech-marquee-section {
     padding: 10px 0;
   }
 
   .tech-marquee-wrapper {
-    animation-duration: 20s;
+    animation-duration: 50s;
   }
 
   .tech-item {

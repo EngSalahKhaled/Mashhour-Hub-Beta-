@@ -20,7 +20,7 @@
       "purpose": "any"
     },
     {
-      "src": "assets/images/icons/logo-512x512.png",
+      "src": "assets/images/icons/logo-512x512.webp",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
