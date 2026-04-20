@@ -9140,6 +9140,7 @@ html[dir="rtl"] .game-hero .hero-stat:not(:last-child)::after {
    PORTFOLIO VISUAL GALLERY & CAROUSEL
    ═══════════════════════════════════════════════════ */
 .portfolio-gallery-section {
+  /* FIX FOR EDGE-TO-EDGE CAROUSEL BUG */
   padding: 80px 0;
   overflow: hidden;
 }
@@ -10615,6 +10616,10 @@ html[dir="rtl"] .bilingual-search-dropdown a:hover { padding-left: 16px; padding
 
 /* ── PORTFOLIO CATEGORY HEADERS ── */
 .portfolio-category {
+  max-width: var(--container, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 5%;
   margin: 70px 0 35px;
 }
 .portfolio-category-header {
@@ -11304,3 +11309,9 @@ html[dir="rtl"] .bilingual-search-dropdown a:hover { padding-left: 16px; padding
     .game-hero { padding-top: 80px; }
 }
 
+
+.portfolio-category-header.reveal {
+  max-width: var(--container, 1400px);
+  margin-left: auto;
+  margin-right: auto;
+}
