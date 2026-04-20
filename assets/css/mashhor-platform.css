@@ -1983,35 +1983,45 @@ html[dir="rtl"] .global-mobile-panel {
   transition: all 0.25s ease;
 }
 
+/* ── Mobile Menu Social Icons ── */
 .mobile-social {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-wrap: nowrap;
+  gap: 10px;
   margin-top: 24px;
 }
+
 .mobile-social a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
   color: var(--muted);
-  transition: all 0.25s ease;
+  transition: transform 0.25s ease;
 }
-.mobile-social a svg {
-  width: 18px;
-  height: 18px;
-}
+
 .mobile-social a:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-  transform: translateY(-2px);
+  transform: scale(1.15);
 }
+
+.mobile-social a img,
+.mobile-social a svg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Brand colors for SVG icons — specificity must beat .parent a */
+a.social-snapchat { color: #FFFC00 !important; }
+a.social-tiktok {
+  color: #fff !important;
+  filter: drop-shadow(1px 1px 0 #00f2fe) drop-shadow(-1px -1px 0 #ff0050);
+}
+a.social-pinterest { color: #E60023 !important; }
+
 
 .mobile-cta:hover {
   transform: translateY(-2px);
@@ -2081,23 +2091,51 @@ body.mobile-nav-open .global-mobile-backdrop {
 }
 
 .global-footer-brand img {
-  width: 86px;
+  width: 30px;
   margin-bottom: 16px;
+}
+
+/* ── Footer Social Icons ── */
+.global-footer-social {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 14px;
+  margin: 16px 0;
 }
 
 .global-footer-social a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
   color: var(--muted);
-  transition:
-    color 0.3s ease,
-    transform 0.3s ease;
+  transition: transform 0.25s ease;
 }
 
 .global-footer-social a:hover {
-  color: var(--gold-soft);
-  transform: translateY(-2px);
+  transform: scale(1.15);
+}
+
+.global-footer-social a img,
+.global-footer-social a svg {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .global-footer-social {
+    justify-content: center;
+  }
+
+  .global-footer-social a img,
+  .global-footer-social a svg {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 .global-footer-brand h3,
@@ -4165,9 +4203,11 @@ html[lang^="en"] .search-input {
   .global-footer-brand {
     grid-column: 1 / -1;
   }
-  .global-footer-social {
+  .global-footer-social  {
     justify-content: center;
+      
   }
+
   .global-footer-brand p,
   .global-footer-col a {
     font-size: 0.8rem;
