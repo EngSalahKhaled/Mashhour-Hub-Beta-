@@ -695,7 +695,7 @@
           </div>
           <div class="global-footer-col">
             <h4>تواصل</h4>
-            <a href="https://wa.me/96555377309" target="_blank" rel="noopener">واتساب</a>
+            <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">واتساب</a>
             <a href="mailto:info@mashhor-hub.com">البريد الإلكتروني</a>
             <a href="tel:+96555377309">هاتف: +965 5537 7309</a>
             <a href="${arFp}book-call/index.html">حجز مكالمة</a>
@@ -754,7 +754,7 @@
           </div>
           <div class="global-footer-col">
             <h4>Connect</h4>
-            <a href="https://wa.me/96555377309" target="_blank" rel="noopener">WhatsApp</a>
+            <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">WhatsApp</a>
             <a href="mailto:info@mashhor-hub.com">Email</a>
             <a href="tel:+96555377309">Phone: +965 5537 7309</a>
             <a href="${p}book-call/index.html">Book a Call</a>
