@@ -310,7 +310,11 @@
         </nav>
         <div class="global-actions">
           <div class="bilingual-search-wrapper desktop-search">
-            <input type="search" class="bilingual-search-input" placeholder="${isArabic ? "ابحث..." : "Search..."}" autocomplete="off">
+            <input type="search" class="bilingual-search-input search-input" 
+                   placeholder="${isArabic ? "ابحث..." : "Search..."}" 
+                   autocomplete="off"
+                   data-placeholder-base="${isArabic ? "ابحث عن " : "Search "}"
+                   data-placeholder-terms='${isArabic ? '["الخدمات","الأسعار","الأكاديمية","الذكاء الاصطناعي","الأعمال","دراسات الحالة","التسويق بالمؤثرين","الاستشارات","تحسين محركات البحث","المحتوى","الأتمتة","البرومبتات"]' : '["services","pricing","academy","AI tools","portfolio","case studies","influencer marketing","consultation","SEO","content writing","automation","prompts"]'}'>
             <ul class="bilingual-search-dropdown" hidden></ul>
           </div>
           <div class="theme-color-picker" id="theme-color-picker">
@@ -364,7 +368,11 @@
         </div>
         <div class="global-mobile-nav-frame">
           <div class="bilingual-search-wrapper mobile-search">
-            <input type="search" class="bilingual-search-input" placeholder="${isArabic ? "ابحث عن خدمة..." : "Search services..."}" autocomplete="off">
+            <input type="search" class="bilingual-search-input search-input" 
+                   placeholder="${isArabic ? "ابحث عن خدمة..." : "Search services..."}" 
+                   autocomplete="off"
+                   data-placeholder-base="${isArabic ? "ابحث عن " : "Search "}"
+                   data-placeholder-terms='${isArabic ? '["الخدمات","الأسعار","الأكاديمية","الذكاء الاصطناعي","الأعمال","دراسات الحالة","التسويق بالمؤثرين","الاستشارات","تحسين محركات البحث","المحتوى","الأتمتة","البرومبتات"]' : '["services","pricing","academy","AI tools","portfolio","case studies","influencer marketing","consultation","SEO","content writing","automation","prompts"]'}'>
             <ul class="bilingual-search-dropdown" hidden></ul>
           </div>
           <a class="global-mobile-link${activeClass(nav.home.href)}" href="${nav.home.href}">${nav.home.text}</a>
@@ -661,6 +669,10 @@
         { passive: true },
       );
     }
+    // Re-initialize animations for the newly injected header
+    if (typeof initSearchAnimations === 'function') {
+      initSearchAnimations();
+    }
   }
 
   /* ═══════════════════════════════════════════════════
@@ -722,7 +734,23 @@
           <a href="${arFp}legal/terms.html">الشروط والأحكام</a>
           <a href="${arFp}sitemap.html">خريطة الموقع</a>
         </div>
-        <div class="global-footer-bottom">© ${year} مشهور هب. جميع الحقوق محفوظة. الكويت</div>
+        <div class="global-footer-bottom">
+          <div class="footer-bottom-parteners">
+            <img src="${p}assets/images/Parteners/Google_Premiere_2026.png" alt="Google Premiere" title="Google Partner">
+            <img src="${p}assets/images/Parteners/meta_badge_HD.png" alt="Meta Partner" title="Meta Business Partner">
+            <img src="${p}assets/images/Parteners/tiktok-badge-hd.webp" alt="TikTok Ads" title="TikTok Partner">
+            <img src="${p}assets/images/Parteners/pinterest_logo.png" alt="Pinterest Partner" title="Pinterest Partner">
+          </div>
+          <div class="footer-copy">© ${year} مشهور هب. جميع الحقوق محفوظة. الكويت</div>
+          <div class="footer-bottom-payments">
+            <img src="${p}assets/images/Payments/visa-svgrepo-com.svg" alt="Visa">
+            <img src="${p}assets/images/Payments/Mastercard-logo.svg" alt="Mastercard">
+            <img src="${p}assets/images/Payments/Apple_Pay_logo.svg" alt="Apple Pay">
+            <img src="${p}assets/images/Payments/Google_Pay_Logo.svg" alt="Google Pay">
+            <img src="${p}assets/images/Payments/paypal-svgrepo-com.svg" alt="PayPal">
+            <img src="${p}assets/images/Payments/knet-seeklogo.png" alt="KNET">
+          </div>
+        </div>
       </footer>
       <div class="sticky-mobile-cta" id="sticky-cta">
         <div class="sticky-cta-text">
@@ -781,7 +809,23 @@
           <a href="${p}legal/terms.html">Terms & Conditions</a>
           <a href="${p}sitemap.html">Sitemap</a>
         </div>
-        <div class="global-footer-bottom">© ${year} Mashhor Hub. All rights reserved. Kuwait</div>
+        <div class="global-footer-bottom">
+          <div class="footer-bottom-parteners">
+            <img src="${p}assets/images/Parteners/Google_Premiere_2026.png" alt="Google Premiere" title="Google Partner">
+            <img src="${p}assets/images/Parteners/meta_badge_HD.png" alt="Meta Partner" title="Meta Business Partner">
+            <img src="${p}assets/images/Parteners/tiktok-badge-hd.webp" alt="TikTok Ads" title="TikTok Partner">
+            <img src="${p}assets/images/Parteners/pinterest_logo.png" alt="Pinterest Partner" title="Pinterest Partner">
+          </div>
+          <div class="footer-copy">© ${year} Mashhor Hub. All rights reserved. Kuwait</div>
+          <div class="footer-bottom-payments">
+            <img src="${p}assets/images/Payments/visa-svgrepo-com.svg" alt="Visa">
+            <img src="${p}assets/images/Payments/Mastercard-logo.svg" alt="Mastercard">
+            <img src="${p}assets/images/Payments/Apple_Pay_logo.svg" alt="Apple Pay">
+            <img src="${p}assets/images/Payments/Google_Pay_Logo.svg" alt="Google Pay">
+            <img src="${p}assets/images/Payments/paypal-svgrepo-com.svg" alt="PayPal">
+            <img src="${p}assets/images/Payments/knet-seeklogo.png" alt="KNET">
+          </div>
+        </div>
       </footer>
       <div class="sticky-mobile-cta" id="sticky-cta">
         <div class="sticky-cta-text">
@@ -1261,112 +1305,34 @@
   /* ═══════════════════════════════════════════════════
      ANIMATED SEARCH PLACEHOLDER
      ═══════════════════════════════════════════════════ */
-  const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms]');
-  searchInputs.forEach(input => {
-    const terms = JSON.parse(input.getAttribute('data-placeholder-terms') || '[]');
-    if (!terms.length) return;
+  window.initSearchAnimations = () => {
+    const searchInputs = document.querySelectorAll('.search-input[data-placeholder-terms]');
+    searchInputs.forEach(input => {
+      // Prevent double initialization
+      if (input.dataset.animationInitialized) return;
+      input.dataset.animationInitialized = "true";
 
-    const baseText = input.getAttribute("data-placeholder-base") || "";
-    let termIdx = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-    let pauseTimer = 0;
-    const TYPING_SPEED = 80;
-    const DELETING_SPEED = 40;
-    const PAUSE_AFTER_TYPE = 2000;
-    const PAUSE_AFTER_DELETE = 400;
+      const terms = JSON.parse(input.getAttribute('data-placeholder-terms') || '[]');
+      if (!terms.length) return;
 
-    const animate = () => {
-      const currentTerm = terms[termIdx];
+      const baseText = input.getAttribute("data-placeholder-base") || "";
+      let termIdx = 0;
+      let charIdx = 0;
+      let isDeleting = false;
+      const TYPING_SPEED = 80;
+      const DELETING_SPEED = 40;
+      const PAUSE_AFTER_TYPE = 2000;
+      const PAUSE_AFTER_DELETE = 400;
 
-      if (!isDeleting) {
-        charIdx++;
-        if (charIdx > currentTerm.length) {
-          // Finished typing, pause before deleting
-          pauseTimer = PAUSE_AFTER_TYPE;
-          isDeleting = true;
-        }
-      } else {
-        charIdx--;
-        if (charIdx < 0) {
-          charIdx = 0;
-          isDeleting = false;
-          termIdx = (termIdx + 1) % terms.length;
-          pauseTimer = PAUSE_AFTER_DELETE;
-        }
-      }
-
-      const display =
-        baseText +
-        currentTerm.substring(0, charIdx) +
-        (charIdx < currentTerm.length || isDeleting ? "|" : "");
-      input.setAttribute("placeholder", display);
-
-      const speed = isDeleting ? DELETING_SPEED : TYPING_SPEED;
-      setTimeout(
-        animate,
-        pauseTimer > 0
-          ? (pauseTimer, (pauseTimer = 0), pauseTimer || speed)
-          : speed,
-      );
-    };
-
-    // Fix the setTimeout logic
-    const runAnimation = () => {
-      const currentTerm = terms[termIdx];
-
-      if (!isDeleting) {
-        charIdx++;
-        if (charIdx > currentTerm.length) {
-          isDeleting = true;
-          setTimeout(runAnimation, PAUSE_AFTER_TYPE);
-          return;
-        }
-      } else {
-        charIdx--;
-        if (charIdx < 0) {
-          charIdx = 0;
-          isDeleting = false;
-          termIdx = (termIdx + 1) % terms.length;
-          setTimeout(runAnimation, PAUSE_AFTER_DELETE);
-          return;
-        }
-      }
-
-      const typed = terms[termIdx].substring(0, charIdx);
-      const cursor = "|";
-      input.setAttribute("placeholder", baseText + typed + cursor);
-
-      setTimeout(runAnimation, isDeleting ? DELETING_SPEED : TYPING_SPEED);
-    };
-
-    // Only animate when input is empty
-    let animationRunning = true;
-    input.addEventListener("focus", () => {
-      animationRunning = false;
-    });
-    input.addEventListener("blur", () => {
-      if (!input.value.trim()) {
-        animationRunning = true;
-      }
-    });
-
-    // Start with a delay
-    setTimeout(() => {
-      const tick = () => {
-        if (!animationRunning || input.value.trim()) {
-          input.setAttribute("placeholder", baseText.replace(/\|$/, ""));
-          setTimeout(tick, 500);
-          return;
-        }
+      const runAnimation = () => {
         const currentTerm = terms[termIdx];
+        let nextInterval = isDeleting ? DELETING_SPEED : TYPING_SPEED;
 
         if (!isDeleting) {
           charIdx++;
           if (charIdx > currentTerm.length) {
             isDeleting = true;
-            setTimeout(tick, PAUSE_AFTER_TYPE);
-            return;
+            nextInterval = PAUSE_AFTER_TYPE;
           }
         } else {
           charIdx--;
@@ -1374,18 +1340,24 @@
             charIdx = 0;
             isDeleting = false;
             termIdx = (termIdx + 1) % terms.length;
-            setTimeout(tick, PAUSE_AFTER_DELETE);
-            return;
+            nextInterval = PAUSE_AFTER_DELETE;
           }
         }
 
         const typed = terms[termIdx].substring(0, charIdx);
-        input.setAttribute("placeholder", baseText + typed + "│");
-        setTimeout(tick, isDeleting ? DELETING_SPEED : TYPING_SPEED);
+        const cursor = "|";
+        input.setAttribute("placeholder", baseText + typed + cursor);
+
+        setTimeout(runAnimation, nextInterval);
       };
-      tick();
-    }, 1200);
-  });
+
+      runAnimation();
+    });
+  };
+
+  // Initial call on DOMContentLoaded
+  initSearchAnimations();
+
 
   /* ═══════════════════════════════════════════════════
      FORM INTELLIGENCE & VALIDATION

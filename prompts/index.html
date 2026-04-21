@@ -149,8 +149,9 @@
       const loadBtn = document.getElementById('vLoadBtn');
 
       let currentList = [];
-      let visibleCount = 12;
-      const BATCH_SIZE = 12;
+      let visibleCount = 20;
+      const BATCH_SIZE = 20;
+      const MAX_ITEMS = 100;
 
       function catClass(cat) { return 'vtag vtag-cat ' + (cat || ''); }
 
@@ -254,6 +255,9 @@
           const matchText = !q || searchFields.some(field => field.toLowerCase().includes(q));
           return matchCat && matchText;
         });
+        if (currentList.length > MAX_ITEMS) {
+          currentList = currentList.slice(0, MAX_ITEMS);
+        }
         visibleCount = BATCH_SIZE;
         renderCards();
       }
@@ -272,6 +276,9 @@
       });
 
       currentList = prompts;
+      if (currentList.length > MAX_ITEMS) {
+        currentList = currentList.slice(0, MAX_ITEMS);
+      }
       renderCards();
     });
     </script>

@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const dir = 'c:\\Users\\USER\\Downloads\\Mashhour-New\\Mashhour-New\\Mashhor Hub Website New\\assets\\images\\Portofolio';
+const dir = path.join(__dirname, 'assets', 'images', 'Portofolio');
 
 async function compressImage(inputFileBuffer, outputFile, originalName) {
     let quality = 80;
