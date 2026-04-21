@@ -7,10 +7,5 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   optimizeDeps: {
     include: ["react-is", "recharts"], // هذا السطر هو الحل
-  },
-  build: {
-    rollupOptions: {
-      external: ["react-is"], // هذا السطر ينهي خطأ Resolve
-    },
-  },
+  }
 });
