@@ -8,6 +8,10 @@ const admin = require('firebase-admin');
 //     strings — we must convert them to real newlines before passing to the SDK.
 
 if (!admin.apps.length) {
+    if (!process.env.FIREBASE_STORAGE_BUCKET) {
+        console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env. Storage bucket operations may fail.');
+    }
+
     admin.initializeApp({
         credential: admin.credential.cert({
             projectId:   process.env.FIREBASE_PROJECT_ID,
@@ -19,6 +23,6 @@ if (!admin.apps.length) {
 }
 
 const db     = admin.firestore();
-const bucket = admin.storage().bucket();
+// const bucket = admin.storage().bucket();
 
 module.exports = { admin, db, bucket };
