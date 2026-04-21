@@ -7,10 +7,5 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   optimizeDeps: {
     include: ["react-is", "recharts"],
-  },
-  build: {
-    rollupOptions: {
-      input: "entry.html"
-    }
   }
 });
