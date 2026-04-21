@@ -1,9 +1,11 @@
 const express = require('express');
-const router = express.Router();
-const db = require('../config/database');
-const auth = require('../middleware/auth');
+const router  = express.Router();
+const { db }  = require('../config/firebase');
+const auth    = require('../middleware/auth');
 
-// POST /api/leads (Public - for contact forms)
+const COLLECTION = 'leads';
+
+// ─── POST /api/leads (Public — contact/lead form submission) ──────────────────
 router.post('/', async (req, res) => {
     const { name, email, phone, company, service_interest, message, source } = req.body;
 
@@ -12,60 +14,80 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        await db.execute(
-            `INSERT INTO leads (name, email, phone, company, service_interest, message, source) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [name, email, phone || null, company || null, service_interest || null, message || null, source || 'website']
-        );
+        const leadData = {
+            name,
+            email,
+            phone:            phone            || null,
+            company:          company          || null,
+            service_interest: service_interest || null,
+            message:          message          || null,
+            source:           source           || 'website',
+            status:           'new',
+            assigned_to:      null,
+            createdAt:        new Date().toISOString(),
+        };
 
-        res.status(201).json({ success: true, message: 'Form submitted successfully!' });
+        const docRef = await db.collection(COLLECTION).add(leadData);
+
+        res.status(201).json({
+            success: true,
+            id:      docRef.id,
+            message: 'Form submitted successfully!',
+        });
     } catch (error) {
-        console.error('Lead submission error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('[LEADS POST ERROR]', error.message);
+        res.status(500).json({ success: false, message: 'Server error. Please try again.' });
     }
 });
 
-// GET /api/leads (Admin - list all leads)
+// ─── GET /api/leads (Admin — list all leads, newest first) ───────────────────
 router.get('/', auth, async (req, res) => {
     try {
-        const [rows] = await db.execute('SELECT * FROM leads ORDER BY created_at DESC');
-        res.json({ success: true, count: rows.length, leads: rows });
+        const snapshot = await db.collection(COLLECTION)
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const leads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        res.json({ success: true, count: leads.length, leads });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('[LEADS GET ERROR]', error.message);
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 });
 
-// PATCH /api/leads/:id (Admin - update status or assignment)
+// ─── PATCH /api/leads/:id (Admin — update status or assignment) ───────────────
 router.patch('/:id', auth, async (req, res) => {
     const { status, assigned_to } = req.body;
     const { id } = req.params;
 
+    const updates = {};
+    if (status      !== undefined) updates.status      = status;
+    if (assigned_to !== undefined) updates.assigned_to = assigned_to;
+
+    if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ success: false, message: 'No fields provided for update.' });
+    }
+
+    updates.updatedAt = new Date().toISOString();
+
     try {
-        // Build dynamic query
-        let query = 'UPDATE leads SET ';
-        const values = [];
-        
-        if (status) {
-            query += 'status = ?, ';
-            values.push(status);
-        }
-        if (assigned_to !== undefined) {
-            query += 'assigned_to = ?, ';
-            values.push(assigned_to);
-        }
-        
-        // Remove trailing comma and add WHERE
-        query = query.slice(0, -2) + ' WHERE id = ?';
-        values.push(id);
-
-        if (values.length === 1) { // Only the ID was added
-            return res.status(400).json({ success: false, message: 'No fields provided for update.' });
-        }
-
-        await db.execute(query, values);
+        await db.collection(COLLECTION).doc(id).update(updates);
         res.json({ success: true, message: 'Lead updated successfully.' });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('[LEADS PATCH ERROR]', error.message);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
+// ─── DELETE /api/leads/:id (Admin) ────────────────────────────────────────────
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        await db.collection(COLLECTION).doc(req.params.id).delete();
+        res.json({ success: true, message: 'Lead deleted.' });
+    } catch (error) {
+        console.error('[LEADS DELETE ERROR]', error.message);
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 });
 

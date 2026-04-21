@@ -1,30 +1,43 @@
-const jwt = require('jsonwebtoken');
+const { admin } = require('../config/firebase');
 
-module.exports = (req, res, next) => {
+/**
+ * Firebase Auth Token Verification Middleware
+ *
+ * Expects: Authorization: Bearer <Firebase ID Token>
+ *
+ * The token is obtained on the client via:
+ *   const token = await firebase.auth().currentUser.getIdToken();
+ *
+ * The Admin SDK verifies the token without a network call (uses Firebase's
+ * public keys cached locally), making it fast and serverless-safe.
+ */
+module.exports = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        
+
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
                 success: false,
-                message: 'Authentication failed: No token provided.'
+                message: 'Authentication failed: No token provided.',
             });
         }
 
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        const idToken = authHeader.split(' ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+        // Attach decoded Firebase user to request
         req.admin = {
-            id: decoded.id,
-            email: decoded.email,
-            role: decoded.role
+            uid:   decodedToken.uid,
+            email: decodedToken.email,
+            role:  decodedToken.role || 'admin', // set custom claims via Admin SDK if needed
         };
-        
+
         next();
     } catch (error) {
+        console.error('[AUTH ERROR]', error.message);
         return res.status(401).json({
             success: false,
-            message: 'Authentication failed: Invalid or expired token.'
+            message: 'Authentication failed: Invalid or expired token.',
         });
     }
 };
