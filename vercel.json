@@ -20,9 +20,9 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/src/server.js" },
-    { "source": "/assets/(.*)", "destination": "/admin-dashboard/dist/assets/$1" },
-    { "source": "/admin", "destination": "/admin-dashboard/dist/index.html" },
-    { "source": "/admin/(.*)", "destination": "/admin-dashboard/dist/index.html" },
+    { "source": "/assets/(.*)", "destination": "/admin-dashboard/assets/$1" },
+    { "source": "/admin", "destination": "/admin-dashboard/index.html" },
+    { "source": "/admin/(.*)", "destination": "/admin-dashboard/index.html" },
     { "source": "/(.*)", "destination": "/$1" }
   ]
 }
