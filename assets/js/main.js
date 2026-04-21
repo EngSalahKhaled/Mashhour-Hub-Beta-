@@ -910,13 +910,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 responses: {
                     pricing: "I offer transparent, value-driven pricing models. Whether you need a one-time audit or a monthly growth partnership, we have a plan for you.",
-                    pricingLink: "/pricing/index.html",
+                    pricingLink: "/pricing/",
                     pricingText: "View Pricing Details",
                     academy: "Mashhor Academy provides practical, no-fluff courses on AI, Performance Marketing, and Automation built from 10+ years of real execution.",
-                    academyLink: "/academy/index.html",
+                    academyLink: "/academy/",
                     academyText: "Open The Academy",
                     contact: "Great! Let's build something that actually converts. You can book a direct strategy call to qualify your project.",
-                    contactLink: "/book-call/index.html",
+                    contactLink: "/book-call/",
                     contactText: "Book a Strategy Call",
                     services: "Which specific area are you looking to improve?"
                 },
@@ -952,13 +952,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 responses: {
                     pricing: "أقدم نماذج تسعير شفافة مبنية على القيمة. سواء كنت تحتاج إلى مراجعة لمرة واحدة أو شراكة نمو شهرية، لدينا باقة تناسبك.",
-                    pricingLink: "/ar/pricing/index.html",
+                    pricingLink: "/ar/pricing/",
                     pricingText: "عرض تفاصيل الأسعار",
                     academy: "تقدم أكاديمية مشهور دورات عملية في الذكاء الاصطناعي والتسويق الرقمي والأتمتة مبنية على خبرة تتجاوز 10 سنوات.",
-                    academyLink: "/ar/academy/index.html",
+                    academyLink: "/ar/academy/",
                     academyText: "اكتشف الأكاديمية",
                     contact: "رائع! لنبدأ في بناء نظام يجلب نتائج حقيقية. يمكنك حجز مكالمة استراتيجية مباشرة الآن.",
-                    contactLink: "/ar/book-call/index.html",
+                    contactLink: "/ar/book-call/",
                     contactText: "حجز مكالمة استراتيجية",
                     services: "أي قسم بالتحديد تود التعرف عليه لتطوير عملك؟"
                 },

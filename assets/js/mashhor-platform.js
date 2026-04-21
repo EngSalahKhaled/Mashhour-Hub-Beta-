@@ -183,7 +183,7 @@
     // enP: use prefix directly — it correctly resolves to site root from any depth
     const enP = p;
     const nav = isArabic ? {
-      home: { text: "الرئيسية", href: `${arBase}index.html` },
+      home: { text: "الرئيسية", href: `${arBase}` },
       about: { text: "من نحن", href: `${arBase}about.html` },
       services: { text: "الخدمات", children: [
         { text: "التسويق المؤثر", href: `${arBase}services/influencer-marketing.html` },
@@ -196,22 +196,22 @@
         { text: "الاستشارات", href: `${arBase}services/consultation.html` }
       ]},
       explore: { text: "استكشف", children: [
-        { text: "الأعمال", href: `${arBase}portfolio/index.html` },
-        { text: "المؤثرون", href: `${arBase}influencers/index.html` },
+        { text: "الأعمال", href: `${arBase}portfolio/` },
+        { text: "المؤثرون", href: `${arBase}influencers/` },
         { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
-        { text: "الباقات", href: `${arBase}pricing/index.html` },
-        { text: "الأكاديمية", href: `${arBase}academy/index.html` }
+        { text: "الباقات", href: `${arBase}pricing/` },
+        { text: "الأكاديمية", href: `${arBase}academy/` }
       ]},
-      blog: { text: "المدونة", href: `${arBase}blog/index.html` },
+      blog: { text: "المدونة", href: `${arBase}blog/` },
       contact: { text: "تواصل", href: `${arBase}contact.html` },
       langText: "English",
-      langHref: `${arBase}../index.html`,
+      langHref: `${arBase}../`,
       ctaText: "ابدأ مشروعك",
       ctaHref: `${arBase}contact.html`,
       brandName: "مشهور هب",
       brandSub: "MARKETING • AI • GROWTH"
     } : {
-      home: { text: "Home", href: `${enP}index.html` },
+      home: { text: "Home", href: `${enP}` },
       about: { text: "About", href: `${enP}about.html` },
       services: { text: "Services", children: [
         { text: "Influencer Marketing", href: `${enP}services/influencer-marketing.html` },
@@ -224,16 +224,16 @@
         { text: "Consultation", href: `${enP}services/consultation.html` }
       ]},
       explore: { text: "Explore", children: [
-        { text: "Portfolio", href: `${enP}portfolio/index.html` },
-        { text: "Influencers", href: `${enP}influencers/index.html` },
+        { text: "Portfolio", href: `${enP}portfolio/` },
+        { text: "Influencers", href: `${enP}influencers/` },
         { text: "Mashhor AI", href: `${enP}services/mashhor-ai.html` },
-        { text: "Pricing", href: `${enP}pricing/index.html` },
-        { text: "Academy", href: `${enP}academy/index.html` }
+        { text: "Pricing", href: `${enP}pricing/` },
+        { text: "Academy", href: `${enP}academy/` }
       ]},
-      blog: { text: "Blog", href: `${enP}blog/index.html` },
+      blog: { text: "Blog", href: `${enP}blog/` },
       contact: { text: "Contact", href: `${enP}contact.html` },
       langText: "العربية",
-      langHref: `${p}ar/index.html`,
+      langHref: `${p}ar/`,
       ctaText: "Start Project",
       ctaHref: `${p}contact.html`,
       brandName: "Mashhor Hub",
@@ -1585,7 +1585,7 @@
         : "Book a Call";
     const secondaryHref = isBookCallPage
       ? `${prefix}contact.html`
-      : `${prefix}book-call/index.html`;
+      : `${prefix}book-call/`;
 
     bar.innerHTML = `
       <div class="sticky-cta-text">
