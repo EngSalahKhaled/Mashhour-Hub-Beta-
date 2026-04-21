@@ -1,36 +1,7 @@
 {
-  "dependencies": {
-    "firebase": "^12.12.1",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^1.8.0",
-    "react-dropzone": "^15.0.0",
-    "react-hot-toast": "^2.6.0",
-    "react-quill-new": "^3.8.3",
-    "react-router-dom": "^7.14.1",
-    "recharts": "^3.8.1",
-    "sharp": "^0.34.5"
-  },
-  "name": "mashhor-hub-website-new",
-  "version": "1.0.0",
-  "description": "",
-  "main": "check-links.js",
+  "name": "mashhour-hub-mono-repo",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EngSalahKhaled/Mashhour-Hub-Beta-.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/EngSalahKhaled/Mashhour-Hub-Beta-/issues"
-  },
-  "homepage": "https://github.com/EngSalahKhaled/Mashhour-Hub-Beta-#readme",
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.2.4",
-    "tailwindcss": "^4.2.4"
+    "build": "cd admin-dashboard && npm install --legacy-peer-deps && npm run build"
   }
 }
