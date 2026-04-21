@@ -4,7 +4,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
-  Users, Briefcase, Layers, Image,
+  Users, Briefcase, Layers, Mail,
   TrendingUp, TrendingDown, ArrowRight,
 } from 'lucide-react';
 import { getCollection } from '../services/firebase';
@@ -17,25 +17,28 @@ const ACCENT_MAP = {
   amber:   { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', shadow: 'rgba(245,158,11,0.2)' },
 };
 
-const ICON_MAP = { Users, Briefcase, Layers, Image };
+const ICON_MAP = { Users, Briefcase, Layers, Mail };
 
-// Mock analytics data — replace with real Firestore queries
-const CHART_DATA = [
-  { name: 'Jan', leads: 12, visitors: 820 },
-  { name: 'Feb', leads: 19, visitors: 1100 },
-  { name: 'Mar', leads: 14, visitors: 970  },
-  { name: 'Apr', leads: 28, visitors: 1540 },
-  { name: 'May', leads: 22, visitors: 1280 },
-  { name: 'Jun', leads: 35, visitors: 1820 },
-  { name: 'Jul', leads: 41, visitors: 2100 },
-];
-
-const RECENT_LEADS = [
-  { name: 'Ahmed Al-Rashidi',  service: 'SEO Package',      status: 'new',       time: '2h ago'  },
-  { name: 'Sara Al-Mutairi',   service: 'Social Media Mgmt', status: 'contacted', time: '5h ago'  },
-  { name: 'Mohammed Al-Enezi', service: 'Web Development',  status: 'closed',    time: '1d ago'  },
-  { name: 'Fatima Al-Sayed',   service: 'Brand Identity',   status: 'new',       time: '2d ago'  },
-];
+// ─── Build chart data from real leads ─────────────────────────────────────────
+function buildChartData(leads) {
+  const months = {};
+  const now = new Date();
+  // Initialize last 7 months
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = d.toLocaleString('en', { month: 'short' });
+    months[key] = 0;
+  }
+  // Count leads per month
+  leads.forEach((lead) => {
+    try {
+      const date = lead.createdAt?.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+      const key = date.toLocaleString('en', { month: 'short' });
+      if (months[key] !== undefined) months[key]++;
+    } catch { /* skip invalid dates */ }
+  });
+  return Object.entries(months).map(([name, leads]) => ({ name, leads }));
+}
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
 function CustomTooltip({ active, payload, label }) {
@@ -53,10 +56,9 @@ function CustomTooltip({ active, payload, label }) {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ label, icon, accent, value, change, changeLabel, delay = 0 }) {
+function StatCard({ label, icon, accent, value, delay = 0 }) {
   const a = ACCENT_MAP[accent] || ACCENT_MAP.cyan;
   const Icon = ICON_MAP[icon] || Users;
-  const isUp = change >= 0;
 
   return (
     <motion.div
@@ -79,18 +81,12 @@ function StatCard({ label, icon, accent, value, change, changeLabel, delay = 0 }
         >
           <Icon size={20} color={a.color} />
         </div>
-        {/* Change badge */}
-        <span className={isUp ? 'stat-badge-up' : 'stat-badge-down'}>
-          {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-          {Math.abs(change)}%
-        </span>
       </div>
 
       <p className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
         {value === null ? '—' : value}
       </p>
       <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{label}</p>
-      <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{changeLabel}</p>
     </motion.div>
   );
 }
@@ -103,30 +99,49 @@ function StatusChip({ status }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function OverviewPage() {
-  const [stats, setStats] = useState({ leads: null, projects: null, services: null });
+  const [stats, setStats] = useState({ leads: null, subscribers: null, influencers: null, services: null });
+  const [recentLeads, setRecentLeads] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [leads, projects, services] = await Promise.all([
+        const [leads, subscribers, influencers, services] = await Promise.allSettled([
           getCollection('leads'),
-          getCollection('projects'),
+          getCollection('subscribers'),
+          getCollection('influencers'),
           getCollection('services'),
         ]);
-        setStats({ leads: leads.length, projects: projects.length, services: services.length });
+
+        const leadsData = leads.status === 'fulfilled' ? leads.value : [];
+        const subsData = subscribers.status === 'fulfilled' ? subscribers.value : [];
+        const inflData = influencers.status === 'fulfilled' ? influencers.value : [];
+        const svcData = services.status === 'fulfilled' ? services.value : [];
+
+        setStats({
+          leads: leadsData.length,
+          subscribers: subsData.length,
+          influencers: inflData.length,
+          services: svcData.length,
+        });
+
+        // Recent leads — last 5
+        setRecentLeads(leadsData.slice(0, 5));
+
+        // Build chart from real data
+        setChartData(buildChartData(leadsData));
       } catch {
-        // Collections may not exist yet in Firebase
-        setStats({ leads: 0, projects: 0, services: 0 });
+        setStats({ leads: 0, subscribers: 0, influencers: 0, services: 0 });
       }
     };
     load();
   }, []);
 
   const CARDS = [
-    { label: 'Total Leads',      icon: 'Users',    accent: 'cyan',    value: stats.leads,    change: 12,  changeLabel: 'vs. last month' },
-    { label: 'Active Projects',  icon: 'Briefcase',accent: 'purple',  value: stats.projects, change: 5,   changeLabel: 'vs. last month' },
-    { label: 'Services Listed',  icon: 'Layers',   accent: 'emerald', value: stats.services, change: 0,   changeLabel: 'No change'      },
-    { label: 'Monthly Visitors', icon: 'Image',    accent: 'amber',   value: '2.1K',         change: -3,  changeLabel: 'vs. last month' },
+    { label: 'Total Leads',       icon: 'Users',     accent: 'cyan',    value: stats.leads     },
+    { label: 'Subscribers',       icon: 'Mail',      accent: 'purple',  value: stats.subscribers },
+    { label: 'Influencer Apps',   icon: 'Briefcase', accent: 'emerald', value: stats.influencers },
+    { label: 'Services Listed',   icon: 'Layers',    accent: 'amber',   value: stats.services   },
   ];
 
   return (
@@ -169,35 +184,30 @@ export default function OverviewPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-semibold text-base" style={{ color: 'var(--text-primary)' }}>
-                Growth Analytics
+                Leads Over Time
               </h2>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Leads & Visitors • 2025</p>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Last 7 months • Live from Firestore</p>
             </div>
             <span
               className="text-xs px-3 py-1 rounded-lg font-medium"
               style={{ background: 'rgba(0,212,255,0.1)', color: 'var(--accent-cyan)' }}
             >
-              Monthly
+              Live Data
             </span>
           </div>
           <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={CHART_DATA} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradLeads" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%"  stopColor="#00d4ff" stopOpacity={0.25} />
                   <stop offset="95%" stopColor="#00d4ff" stopOpacity={0}    />
                 </linearGradient>
-                <linearGradient id="gradVisitors" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#7c3aed" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#7c3aed" stopOpacity={0}   />
-                </linearGradient>
               </defs>
               <CartesianGrid stroke="rgba(99,179,237,0.06)" strokeDasharray="4 4" />
               <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="leads"    stroke="#00d4ff" strokeWidth={2} fill="url(#gradLeads)"    dot={false} />
-              <Area type="monotone" dataKey="visitors" stroke="#7c3aed" strokeWidth={2} fill="url(#gradVisitors)" dot={false} />
+              <Area type="monotone" dataKey="leads" stroke="#00d4ff" strokeWidth={2} fill="url(#gradLeads)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
@@ -215,41 +225,56 @@ export default function OverviewPage() {
               View all <ArrowRight size={12} />
             </a>
           </div>
-          <ul className="space-y-4">
-            {RECENT_LEADS.map((lead, i) => (
-              <motion.li
-                key={i}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + i * 0.07 }}
-                className="flex items-start gap-3"
-              >
-                <div
-                  className="flex-shrink-0 rounded-lg flex items-center justify-center text-xs font-bold"
-                  style={{
-                    width: 36, height: 36,
-                    background: 'linear-gradient(135deg, rgba(0,212,255,0.15), rgba(124,58,237,0.15))',
-                    color: 'var(--accent-cyan)',
-                    border: '1px solid rgba(0,212,255,0.15)',
-                  }}
+          {recentLeads.length === 0 ? (
+            <p className="text-sm text-center py-8" style={{ color: 'var(--text-muted)' }}>
+              No leads yet. Forms will appear here.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {recentLeads.map((lead, i) => (
+                <motion.li
+                  key={lead.id || i}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + i * 0.07 }}
+                  className="flex items-start gap-3"
                 >
-                  {lead.name.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-                    {lead.name}
-                  </p>
-                  <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{lead.service}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <StatusChip status={lead.status} />
-                  <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{lead.time}</span>
-                </div>
-              </motion.li>
-            ))}
-          </ul>
+                  <div
+                    className="flex-shrink-0 rounded-lg flex items-center justify-center text-xs font-bold"
+                    style={{
+                      width: 36, height: 36,
+                      background: 'linear-gradient(135deg, rgba(0,212,255,0.15), rgba(124,58,237,0.15))',
+                      color: 'var(--accent-cyan)',
+                      border: '1px solid rgba(0,212,255,0.15)',
+                    }}
+                  >
+                    {(lead.name || lead.email || '?').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                      {lead.name || lead.email || '—'}
+                    </p>
+                    <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                      {lead.formType || lead.service_interest || lead.email || ''}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusChip status={lead.status || 'new'} />
+                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      {lead.createdAt?.toDate
+                        ? lead.createdAt.toDate().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+                        : typeof lead.createdAt === 'string'
+                          ? new Date(lead.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+                          : '—'}
+                    </span>
+                  </div>
+                </motion.li>
+              ))}
+            </ul>
+          )}
         </motion.div>
       </div>
     </div>
   );
 }
+

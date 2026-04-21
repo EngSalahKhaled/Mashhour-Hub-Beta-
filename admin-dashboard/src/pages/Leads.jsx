@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Search, Loader2 } from 'lucide-react';
+import { ChevronDown, Search, Loader2, Users, Mail, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCollection, updateDocument } from '../services/firebase';
 
-const COLLECTION = 'leads';
+// CRM Collection Tabs
+const CRM_TABS = [
+  { key: 'leads',       label: 'Leads',        icon: Users,    collection: 'leads'       },
+  { key: 'subscribers', label: 'Subscribers',   icon: Mail,     collection: 'subscribers' },
+  { key: 'influencers', label: 'Influencers',   icon: UserPlus, collection: 'influencers' },
+];
+
 const STATUSES    = ['new', 'contacted', 'closed'];
 
 const STATUS_STYLES = {
@@ -91,19 +97,22 @@ function StatusDropdown({ leadId, current, onChange }) {
 }
 
 export default function LeadsPage() {
+  const [activeTab, setActiveTab] = useState('leads');
   const [leads,   setLeads]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter,  setFilter]  = useState('all');
   const [search,  setSearch]  = useState('');
 
-  const load = async () => {
+  const currentTab = CRM_TABS.find(t => t.key === activeTab) || CRM_TABS[0];
+
+  const load = async (col) => {
     setLoading(true);
-    try { setLeads(await getCollection(COLLECTION)); }
+    try { setLeads(await getCollection(col || currentTab.collection)); }
     catch { setLeads([]); }
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(currentTab.collection); setFilter('all'); setSearch(''); }, [activeTab]);
 
   const updateStatus = (id, status) =>
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
@@ -111,7 +120,7 @@ export default function LeadsPage() {
   const filtered = leads.filter((l) => {
     const matchFilter = filter === 'all' || l.status === filter;
     const q = search.toLowerCase();
-    const matchSearch = !q || [l.name, l.email, l.phone, l.service].some((v) => v?.toLowerCase().includes(q));
+    const matchSearch = !q || [l.name, l.email, l.phone, l.service, l.formType].some((v) => v?.toLowerCase().includes(q));
     return matchFilter && matchSearch;
   });
 
@@ -120,10 +129,34 @@ export default function LeadsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Leads Management</h1>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>CRM Management</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-          {leads.length} total lead{leads.length !== 1 && 's'} from contact form submissions
+          Manage all form submissions — Leads, Subscribers, and Influencer applications
         </p>
+      </div>
+
+      {/* CRM Collection Tabs */}
+      <div className="flex gap-2">
+        {CRM_TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={{
+                background: isActive ? 'rgba(0,212,255,0.1)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isActive ? 'rgba(0,212,255,0.3)' : 'rgba(99,179,237,0.1)'}`,
+                color: isActive ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                cursor: 'pointer',
+              }}
+            >
+              <Icon size={15} />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Quick stats */}

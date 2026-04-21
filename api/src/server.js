@@ -1,6 +1,9 @@
-const express = require('express');
-const cors    = require('cors');
-const dotenv  = require('dotenv');
+const express     = require('express');
+const cors        = require('cors');
+const helmet      = require('helmet');
+const morgan      = require('morgan');
+const rateLimit   = require('express-rate-limit');
+const dotenv      = require('dotenv');
 
 // Load environment variables FIRST — before any other imports that read process.env
 dotenv.config();
@@ -10,10 +13,23 @@ require('./config/firebase');
 
 const app = express();
 
-// ─── Core Middleware ──────────────────────────────────────────────────────────
+// Trust reverse proxy for Hostinger / Vercel
+app.set('trust proxy', 1);
 
-app.use(express.json());
+// ─── Core Middleware ──────────────────────────────────────────────────────────
+app.use(helmet());
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// ─── Rate Limiting (Public endpoints protection) ─────────────────────────────
+const publicLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10,                   // max 10 submissions per window per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many submissions. Please try again later.' },
+});
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 // Set CORS_ORIGIN in your Vercel env vars (comma-separated if multiple origins):
@@ -41,6 +57,9 @@ app.use('/api/auth',      require('./routes/auth'));
 app.use('/api/leads',     require('./routes/leads'));
 app.use('/api/blog',      require('./routes/blog'));
 app.use('/api/portfolio', require('./routes/portfolio'));
+
+// Apply rate limiting to public form submission endpoint
+app.use('/api/leads', publicLimiter);
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 

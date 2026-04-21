@@ -1,9 +1,8 @@
 /**
  * Mashhour Hub CRM Tracker
  * Captures UTMs, automates AJAX forms, and logs advanced telemetry.
+ * Submits directly to the Node.js API endpoint.
  */
-
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93D_vfs9mTRc8-BevsYhjRjnNFqHxcmq3tIfxfOMU6gLz5Jw9NkJTN0Q/exec"; 
 
 (function() {
     // Custom Toast Promt
@@ -75,61 +74,31 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
     }
     getUTMs();
 
-    // ─── Hidden Iframe Submission (Bypass CORS) ───
-    function submitViaIframe(url, params, callback) {
-        const iframeName = 'crm_iframe_' + Date.now();
-        const iframe = document.createElement('iframe');
-        iframe.name = iframeName;
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = url;
-        form.target = iframeName;
-        form.style.display = 'none';
-
-        for (const [key, value] of params.entries()) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
+    // ─── API Submission (Node.js Express Backend) ───
+    async function submitToApi(url, payload) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            return data.success === true;
+        } catch (error) {
+            console.error('CRM Submission Error:', error);
+            return false;
         }
-
-        document.body.appendChild(form);
-
-        iframe.onload = function() {
-            setTimeout(() => {
-                iframe.remove();
-                form.remove();
-            }, 2000);
-            if (callback) callback(true);
-        };
-
-        iframe.onerror = function() {
-            setTimeout(() => {
-                iframe.remove();
-                form.remove();
-            }, 2000);
-            if (callback) callback(false);
-        };
-
-        form.submit();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const crmForms = document.querySelectorAll('form[data-crm]');
         
         crmForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                if(APPS_SCRIPT_URL === "INSERT_WEB_APP_URL_HERE") {
-                   showPromtToast('هذا النموذج يعمل الآن ولكن بانتظار ربط نظام الـ CRM ليتم الإرسال.', 'error');
-                   return;
-                }
-
                 // Change button to loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalBtnText = submitBtn ? submitBtn.innerText : '';
@@ -140,55 +109,57 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXa2mrKqwrfL93
 
                 // Gather Data using FormData
                 const formData = new FormData(this);
-                const payload = new URLSearchParams();
+                const payload = {};
                 
                 // Add base fields
-                for (const pair of formData.entries()) {
-                    payload.append(pair[0], pair[1]);
+                for (const [key, value] of formData.entries()) {
+                    payload[key] = value;
                 }
 
                 // Inject Advanced CRM Telemetry
                 const formType = this.getAttribute('data-crm') || 'Inbox';
-                payload.append('formType', formType);
-                payload.append('timestamp', new Date().toISOString());
-                payload.append('page_url', window.location.href);
-                payload.append('language', navigator.language);
+                payload.formType = formType;
+                payload.timestamp = new Date().toISOString();
+                payload.page_url = window.location.href;
+                payload.language = navigator.language;
                 
                 // Inject UTMs from cache if they exist
                 ['utm_source', 'utm_medium', 'utm_campaign'].forEach(param => {
                     const val = localStorage.getItem(param);
-                    if (val) payload.append(param, val);
+                    if (val) payload[param] = val;
                 });
 
-                // Submit via iframe
-                submitViaIframe(APPS_SCRIPT_URL, payload, function(success) {
-                    if (success) {
-                        const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
-                        if (formType === 'Subscribers') {
-                            showPromtToast(isAr ? "تم الاشتراك بنجاح" : "Successfully subscribed", "success");
-                            e.target.reset();
-                            if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
-                        } else if (formType === 'Unsubscribe' || formType === 'Unsubscribers') {
-                            showPromtToast(isAr ? "تم الغاء الاشتراك بنجاح" : "Successfully unsubscribed", "success");
-                            e.target.reset();
-                            if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
-                        } else if (formType === 'Influencers') {
-                            let successMsg = document.getElementById('form-success');
-                            if(successMsg) {
-                                successMsg.style.display = 'flex';
-                                e.target.style.display = 'none';
-                            } else {
-                                window.location.href = "thank-you.html";
-                            }
+                // Submit via JSON fetch
+                // Depending on deployment, the API runs on /api/leads
+                const API_URL = '/api/leads';
+                const success = await submitToApi(API_URL, payload);
+
+                if (success) {
+                    const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+                    if (formType === 'Subscribers') {
+                        showPromtToast(isAr ? "تم الاشتراك بنجاح" : "Successfully subscribed", "success");
+                        e.target.reset();
+                        if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+                    } else if (formType === 'Unsubscribe' || formType === 'Unsubscribers') {
+                        showPromtToast(isAr ? "تم الغاء الاشتراك بنجاح" : "Successfully unsubscribed", "success");
+                        e.target.reset();
+                        if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+                    } else if (formType === 'Influencers') {
+                        let successMsg = document.getElementById('form-success');
+                        if(successMsg) {
+                            successMsg.style.display = 'flex';
+                            e.target.style.display = 'none';
                         } else {
                             window.location.href = "thank-you.html";
                         }
                     } else {
-                        const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
-                        showPromtToast(isAr ? "حدث خطأ أثناء إرسال النموذج. يرجى المحاولة مرة أخرى." : "There was an error submitting the form. Please try again.", "error");
-                        if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+                        window.location.href = "thank-you.html";
                     }
-                });
+                } else {
+                    const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
+                    showPromtToast(isAr ? "حدث خطأ أثناء إرسال النموذج. يرجى المحاولة مرة أخرى." : "There was an error submitting the form. Please try again.", "error");
+                    if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+                }
             });
         });
     });

@@ -22,7 +22,8 @@ if (!admin.apps.length) {
     });
 }
 
-const db     = admin.firestore();
-// const bucket = admin.storage().bucket();
+const db = admin.firestore();
+// const bucket = admin.storage().bucket(); // Requires Blaze plan
 
-module.exports = { admin, db, bucket };
+module.exports = { admin, db };
+

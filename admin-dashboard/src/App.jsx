@@ -46,7 +46,7 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter basename="/admin">
+    <BrowserRouter basename={import.meta.env.DEV ? "/" : "/admin"}>
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
