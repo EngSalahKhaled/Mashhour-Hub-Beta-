@@ -4,6 +4,7 @@
     { "source": "/api/(.*)", "destination": "/api/src/server.js" },
     { "source": "/admin", "destination": "/admin-dashboard/dist/index.html" },
     { "source": "/admin/(.*)", "destination": "/admin-dashboard/dist/$1" },
+    { "source": "/", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/$1" }
   ]
 }
