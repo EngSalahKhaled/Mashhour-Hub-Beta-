@@ -1815,4 +1815,79 @@
   } else {
     setTimeout(initWowFactors, 100); // Slight delay to ensure DOM templates are fully injected
   }
+
+  /* ═══════════════════════════════════════════════════
+     GLOBAL EVENT TRACKING (GTM & FBQ)
+     ═══════════════════════════════════════════════════ */
+  const initGlobalTracking = () => {
+    const pushEvent = (eventName, eventData = {}) => {
+      // 1. Google Tag Manager
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: eventName, ...eventData });
+      }
+      
+      // 2. Facebook Pixel (Meta)
+      if (typeof fbq === 'function') {
+        const standardEvents = ['Lead', 'Contact', 'SubmitApplication', 'ViewContent', 'Schedule'];
+        let fbEventName = eventName;
+        
+        if (eventName === 'high_intent_click') fbEventName = 'Lead';
+        if (eventName === 'contact_initiation') fbEventName = 'Contact';
+        if (eventName === 'form_submission') fbEventName = 'SubmitApplication';
+        if (eventName === 'resource_download') fbEventName = 'ViewContent';
+
+        if (standardEvents.includes(fbEventName)) {
+           fbq('track', fbEventName, eventData);
+        } else {
+           fbq('trackCustom', fbEventName, eventData);
+        }
+      }
+    };
+
+    // Buttons
+    document.querySelectorAll('.button, .button-gold').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        pushEvent('high_intent_click', {
+          button_text: e.target.innerText || 'Button Click',
+          button_url: e.currentTarget.getAttribute('href') || ''
+        });
+      });
+    });
+
+    // Contact Links
+    document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"], a[href^="https://wa.me"]').forEach(link => {
+      link.addEventListener('click', () => {
+        const href = link.getAttribute('href');
+        pushEvent('contact_initiation', {
+          contact_type: href.startsWith('tel') ? 'Phone' : href.startsWith('mailto') ? 'Email' : 'WhatsApp',
+          contact_url: href
+        });
+      });
+    });
+
+    // PDF / Resources
+    document.querySelectorAll('.service-pdf-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pushEvent('resource_download', {
+          file_url: btn.getAttribute('href')
+        });
+      });
+    });
+
+    // Form Submits
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', () => {
+        pushEvent('form_submission', {
+          form_id: form.id || form.getAttribute('name') || 'generic_form'
+        });
+      });
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGlobalTracking);
+  } else {
+    setTimeout(initGlobalTracking, 200);
+  }
+
 })();

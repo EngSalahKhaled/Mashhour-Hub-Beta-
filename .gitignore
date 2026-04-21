@@ -1,0 +1,26 @@
+# Mashhor Hub .gitignore
+
+# ZIP archives
+*.zip
+
+# Node modules
+node_modules/
+mashhor-backend/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Temp
+tmp_archive/
+_dev_tools_backup/
