@@ -1,0 +1,7 @@
+{
+  "name": "mashhour-hub-mono-repo",
+  "private": true,
+  "scripts": {
+    "build": "cd admin-dashboard && npm install --legacy-peer-deps && npm run build"
+  }
+}
