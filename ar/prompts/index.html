@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -103,6 +103,14 @@
         <div class="viewer-grid" id="vGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
           <div class="viewer-empty" id="vEmpty" style="display: none; grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); font-family: var(--far); font-size: .9rem;">لا توجد برومبتات تطابق بحثك. جرب كلمة أخرى.</div>
         </div>
+        
+        <!-- Load More -->
+        <div class="load-more-wrap" id="vLoadWrap" style="display: none;">
+          <button class="load-more-btn" id="vLoadBtn">
+            تحميل المزيد من البرومبتات
+            <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- Toast notification -->
@@ -113,12 +121,6 @@
     <style>
       .vcf-btn { padding: 7px 14px; border-radius: 100px; border: 1px solid var(--border); background: transparent; font-family: var(--far); font-size: .75rem; color: var(--muted); cursor: pointer; transition: all .2s; }
       .vcf-btn:hover, .vcf-btn.active { background: rgba(196,255,71,.08); border-color: rgba(196,255,71,.3); color: var(--lime); }
-      .vcard { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 14px; transition: transform .3s ease, border-color .3s; }
-      .vcard:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.1); }
-      .vcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-      .vcard-tags { display: flex; gap: 7px; flex-wrap: wrap; }
-      .vtag { font-family: var(--fm); font-size: .6rem; letter-spacing: .05em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
-      .vtag-cat { background: rgba(196,255,71,.1); color: var(--lime); }
       .vtag-cat.Video { background: rgba(255,79,30,.1); color: var(--orange); }
       .vtag-cat.Image { background: rgba(233,201,123,.1); color: #E9C97B; }
       .vtag-cat.Ads { background: rgba(255,180,30,.1); color: #FFB41E; }
@@ -126,15 +128,6 @@
       .vtag-cat.Strategy { background: rgba(200,180,255,.1); color: #c8b4ff; }
       .vtag-cat.Automation { background: rgba(30,220,200,.1); color: #1EDCC8; }
       .vtag-cat.Design { background: rgba(255,79,130,.1); color: #FF4F82; }
-      .vtag-cat.Text { background: rgba(196,255,71,.1); color: var(--lime); }
-      .vtag-tool { background: rgba(255,255,255,.04); color: var(--muted); border: 1px solid transparent; }
-      .vcard-copy-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color .2s, border-color .2s, background .2s; }
-      .vcard-copy-btn:hover { color: var(--lime); border-color: var(--lime); }
-      .vcard-copy-btn.copied { background: var(--lime); color: #000; border-color: var(--lime); }
-      .vcard-title { font-family: var(--fh); font-weight: 700; font-size: 1.15rem; color: var(--white); line-height: 1.4; text-align: right; }
-      .vcard-body { background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: var(--far); font-size: .85rem; color: var(--muted); line-height: 1.65; white-space: pre-wrap; flex: 1; max-height: 200px; overflow-y: auto; text-align: right; }
-      .vcard-body::-webkit-scrollbar { width: 4px; }
-      .vcard-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
       .viewer-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 
@@ -152,26 +145,36 @@
       const empty = document.getElementById('vEmpty');
       const counter = document.getElementById('vCount');
       const toast = document.getElementById('vToast');
+      const loadWrap = document.getElementById('vLoadWrap');
+      const loadBtn = document.getElementById('vLoadBtn');
+
+      let currentList = [];
+      let visibleCount = 12;
+      const BATCH_SIZE = 12;
 
       function catClass(cat) { return 'vtag vtag-cat ' + (cat || ''); }
 
-      function render(list) {
+      function renderCards() {
         const existing = grid.querySelectorAll('.vcard');
         existing.forEach(el => el.remove());
 
-        if (list.length === 0) {
+        if (currentList.length === 0) {
           empty.style.display = 'block';
           counter.textContent = '0 برومبت';
+          loadWrap.style.display = 'none';
           return;
         }
         empty.style.display = 'none';
-        counter.textContent = list.length + ' برومبت';
+        counter.textContent = currentList.length + ' برومبت';
 
         const frag = document.createDocumentFragment();
-        list.forEach(p => {
+        const itemsToRender = currentList.slice(0, visibleCount);
+
+        itemsToRender.forEach(p => {
           const card = document.createElement('div');
           card.className = 'vcard';
-          card.innerHTML = `
+          
+          let elementsHTML = `
             <div class="vcard-head">
               <button class="vcard-copy-btn" title="نسخ البرومبت">
                 <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -182,8 +185,29 @@
               </div>
             </div>
             <h3 class="vcard-title">${p.title}</h3>
-            <div class="vcard-body" dir="rtl">${p.text}</div>
           `;
+
+          if (p.desc) {
+            elementsHTML += `<p class="vcard-desc">${p.desc}</p>`;
+          }
+
+          if (p.benefit) {
+            elementsHTML += `
+              <div class="vcard-benefit">
+                <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                ${p.benefit}
+              </div>
+            `;
+          }
+
+          elementsHTML += `
+            <div class="vcard-body-wrap">
+              <div class="vcard-body" dir="rtl">${p.text}</div>
+            </div>
+          `;
+
+          card.innerHTML = elementsHTML;
+          
           card.querySelector('.vcard-copy-btn').addEventListener('click', function() {
             const text = card.querySelector('.vcard-body').innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -199,7 +223,18 @@
           frag.appendChild(card);
         });
         grid.appendChild(frag);
+
+        if (visibleCount < currentList.length) {
+          loadWrap.style.display = 'flex';
+        } else {
+          loadWrap.style.display = 'none';
+        }
       }
+
+      loadBtn.addEventListener('click', function() {
+        visibleCount += BATCH_SIZE;
+        renderCards();
+      });
 
       let toastTimer;
       function showToast() {
@@ -213,15 +248,14 @@
 
       function applyFilters() {
         const q = searchQ.toLowerCase();
-        const filtered = prompts.filter(p => {
+        currentList = prompts.filter(p => {
           const matchCat = activeCat === 'all' || p.cat === activeCat;
-          const matchText = !q || p.title.toLowerCase().includes(q)
-                               || p.text.toLowerCase().includes(q)
-                               || p.tool.toLowerCase().includes(q)
-                               || p.cat.toLowerCase().includes(q);
+          const searchFields = [p.title, p.text, p.tool, p.cat, p.desc || '', p.benefit || ''];
+          const matchText = !q || searchFields.some(field => field.toLowerCase().includes(q));
           return matchCat && matchText;
         });
-        render(filtered);
+        visibleCount = BATCH_SIZE;
+        renderCards();
       }
 
       document.getElementById('vSearch').addEventListener('input', function() {
@@ -237,7 +271,8 @@
         applyFilters();
       });
 
-      render(prompts);
+      currentList = prompts;
+      renderCards();
     });
     </script>
     
