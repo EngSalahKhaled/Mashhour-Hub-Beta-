@@ -12,6 +12,9 @@ const LeadsPage       = lazy(() => import('../pages/Leads'));
 const MediaPage       = lazy(() => import('../pages/Media'));
 const CmsServicesPage = lazy(() => import('../pages/CmsServices'));
 const CmsCasesPage    = lazy(() => import('../pages/CmsCases'));
+const CmsBlogPage     = lazy(() => import('../pages/CmsBlog'));
+const CmsAcademyPage  = lazy(() => import('../pages/CmsAcademy'));
+const UsersPage       = lazy(() => import('../pages/Users'));
 const SettingsPage    = lazy(() => import('../pages/Settings'));
 const WebsiteEditor   = lazy(() => import('../pages/WebsiteEditor'));
 
@@ -82,6 +85,21 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
                 <Route path="/cms/case-studies" element={
                   <motion.div key="cms-cases" {...pageVariants}>
                     <CmsCasesPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/blog" element={
+                  <motion.div key="cms-blog" {...pageVariants}>
+                    <CmsBlogPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/academy" element={
+                  <motion.div key="cms-academy" {...pageVariants}>
+                    <CmsAcademyPage />
+                  </motion.div>
+                }/>
+                <Route path="/users" element={
+                  <motion.div key="users" {...pageVariants}>
+                    <UsersPage />
                   </motion.div>
                 }/>
                 <Route path="/website-editor" element={

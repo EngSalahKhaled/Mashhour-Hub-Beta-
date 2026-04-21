@@ -8,6 +8,9 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 // ─── Brand Design Tokens (matching mashhour-platform.css) ─────────────────────
 const BRAND = {
@@ -24,6 +27,26 @@ const BRAND = {
 
 // ─── Website Sections Map ─────────────────────────────────────────────────────
 const WEBSITE_SECTIONS = [
+  {
+    id: 'global',
+    label: 'Global Settings',
+    labelAr: 'الإعدادات العامة',
+    icon: '🌐',
+    description: 'Contact info, social media links, and brand settings',
+    fields: ['phone', 'email', 'whatsapp', 'linkedinUrl', 'instagramUrl', 'facebookUrl', 'snapchatUrl', 'tiktokUrl', 'pinterestUrl'],
+    collection: 'site_settings',
+    color: '#f4cd55',
+  },
+  {
+    id: 'pages',
+    label: 'Page Content',
+    labelAr: 'محتوى الصفحات',
+    icon: '📄',
+    description: 'Rich text content for About, Privacy, Terms, and more',
+    fields: ['pageId', 'contentEn', 'contentAr'],
+    collection: 'site_pages',
+    color: '#36daf5',
+  },
   {
     id: 'hero',
     label: 'Hero Section',
@@ -98,6 +121,30 @@ const WEBSITE_SECTIONS = [
 
 // Field labels
 const FIELD_META = {
+  // Global
+  phone:      { label: 'Phone Number',     type: 'text',     placeholder: '+965 ...'              },
+  email:      { label: 'Email Address',    type: 'text',     placeholder: 'info@...'              },
+  whatsapp:   { label: 'WhatsApp Link',    type: 'text',     placeholder: 'https://wa.me/...'     },
+  instagramUrl:{ label: 'Instagram URL',   type: 'text',     placeholder: 'https://instagram.com/...'},
+  facebookUrl: { label: 'Facebook URL',    type: 'text',     placeholder: 'https://facebook.com/...' },
+  snapchatUrl: { label: 'Snapchat URL',    type: 'text',     placeholder: 'https://snapchat.com/...' },
+  tiktokUrl:   { label: 'TikTok URL',      type: 'text',     placeholder: 'https://tiktok.com/...'   },
+  pinterestUrl:{ label: 'Pinterest URL',   type: 'text',     placeholder: 'https://pinterest.com/...'},
+  
+  // Pages
+  pageId:     { label: 'Select Page',      type: 'select',   options: [
+    { value: 'home', label: 'Home (الرئيسية)' },
+    { value: 'about', label: 'About Us (من نحن)' },
+    { value: 'academy', label: 'Academy Home (الأكاديمية)' },
+    { value: 'privacy', label: 'Privacy Policy (سياسة الخصوصية)' },
+    { value: 'terms', label: 'Terms & Conditions (الشروط والأحكام)' },
+    { value: 'sitemap', label: 'Sitemap (خريطة الموقع)' },
+    { value: 'blog', label: 'Blog Home (المدونة)' },
+  ]},
+  contentEn:  { label: 'Content (EN)',     type: 'rich-text', placeholder: 'English content...'     },
+  contentAr:  { label: 'Content (AR)',     type: 'rich-text', placeholder: 'المحتوى بالعربي...'      },
+
+  // General
   title:      { label: 'Title (EN)',        type: 'text',     placeholder: 'English title'         },
   titleAr:    { label: 'Title (AR)',        type: 'text',     placeholder: 'العنوان بالعربي'        },
   subtitle:   { label: 'Subtitle',         type: 'text',     placeholder: 'Subtitle or tagline'   },
@@ -313,7 +360,35 @@ function ItemModal({ section, item, onClose, onSave }) {
                       )}
                     </label>
 
-                    {meta.type === 'textarea' ? (
+                    {meta.type === 'select' ? (
+                      <select
+                        className="input-field"
+                        value={form[fieldKey] || ''}
+                        onChange={set(fieldKey)}
+                        style={{ fontSize: 15 }}
+                      >
+                        <option value="">Select an option...</option>
+                        {meta.options.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : meta.type === 'rich-text' ? (
+                      <div className="bg-white text-black rounded-lg overflow-hidden" dir="ltr">
+                        <ReactQuill 
+                          theme="snow" 
+                          value={form[fieldKey] || ''} 
+                          onChange={(val) => setForm(p => ({ ...p, [fieldKey]: val }))}
+                          modules={{
+                            toolbar: [
+                              [{ 'header': [1, 2, 3, false] }],
+                              ['bold', 'italic', 'underline', 'strike'],
+                              [{'list': 'ordered'}, {'list': 'bullet'}],
+                              ['link', 'clean']
+                            ],
+                          }}
+                        />
+                      </div>
+                    ) : meta.type === 'textarea' ? (
                       <textarea
                         className="input-field resize-none"
                         rows={4}

@@ -1884,10 +1884,108 @@
     });
   };
 
+  // ═════ DYNAMIC CONTENT INTEGRATION ═════
+  const initDynamicContent = async () => {
+    // Determine API URL (default to localhost if not specified)
+    const API_URL = 'http://localhost:5000'; // Update this to production URL on deploy
+
+    try {
+      // 1. Fetch Global Settings (Contact & Social)
+      const settingsRes = await fetch(`${API_URL}/api/settings`);
+      const settingsData = await settingsRes.json();
+
+      if (settingsData.success && settingsData.settings) {
+        const s = settingsData.settings;
+
+        // Update Social Links in Footer & Mobile Menu
+        const socialMappings = [
+          { key: 'linkedinUrl', selector: 'a[aria-label="LinkedIn"]' },
+          { key: 'instagramUrl', selector: 'a[aria-label="Instagram"]' },
+          { key: 'facebookUrl', selector: 'a[aria-label="Facebook"]' },
+          { key: 'snapchatUrl', selector: '.social-snapchat' },
+          { key: 'tiktokUrl', selector: '.social-tiktok' },
+          { key: 'pinterestUrl', selector: '.social-pinterest' },
+        ];
+
+        socialMappings.forEach(m => {
+          if (s[m.key]) {
+            document.querySelectorAll(m.selector).forEach(el => el.href = s[m.key]);
+          }
+        });
+
+        // Update Contact Info
+        if (s.email) {
+          document.querySelectorAll('a[href^="mailto:"]').forEach(el => {
+            el.href = `mailto:${s.email}`;
+            if (el.textContent.includes('@')) el.textContent = s.email;
+          });
+        }
+        if (s.phone) {
+          document.querySelectorAll('a[href^="tel:"]').forEach(el => {
+            el.href = `tel:${s.phone}`;
+            if (el.textContent.match(/\+\d+/)) el.textContent = s.phone;
+          });
+        }
+        if (s.whatsapp) {
+          document.querySelectorAll('a[href*="wa.me"]').forEach(el => el.href = s.whatsapp);
+        }
+      }
+
+      // 2. Fetch Page-Specific Content
+      // Identify current page ID
+      let pageId = '';
+      if (currentPath === '/' || currentPath.endsWith('/index.html')) pageId = 'home';
+      else if (currentPath.includes('/about.html')) pageId = 'about';
+      else if (currentPath.includes('/academy/')) pageId = 'academy';
+      else if (currentPath.includes('/blog/')) pageId = 'blog';
+      else if (currentPath.includes('/privacy.html')) pageId = 'privacy';
+      else if (currentPath.includes('/terms.html')) pageId = 'terms';
+      else if (currentPath.includes('/sitemap.html')) pageId = 'sitemap';
+
+      if (pageId) {
+        const pageRes = await fetch(`${API_URL}/api/settings/pages/${pageId}`);
+        const pageData = await pageRes.json();
+
+        if (pageData.success && pageData.page) {
+          const content = isArabic ? pageData.page.contentAr : pageData.page.contentEn;
+          if (content) {
+            // Look for a specific container to inject content
+            const container = document.querySelector('[data-dynamic-content]');
+            if (container) {
+              container.innerHTML = content;
+            }
+          }
+        }
+      }
+
+      // 3. Fetch Portfolio if on Portfolio page
+      if (currentPath.includes('/portfolio/')) {
+        const portfolioRes = await fetch(`${API_URL}/api/portfolio`);
+        const portfolioData = await portfolioRes.json();
+        if (portfolioData.success && portfolioData.items) {
+          const grid = document.querySelector('.portfolio-grid');
+          if (grid) {
+            // Optionally clear static items and render dynamic ones
+            // grid.innerHTML = portfolioData.items.map(item => renderPortfolioCard(item)).join('');
+          }
+        }
+      }
+
+    } catch (err) {
+      console.warn('Dynamic content failed to load:', err);
+    }
+  };
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initGlobalTracking);
+    document.addEventListener("DOMContentLoaded", () => {
+      initGlobalTracking();
+      initDynamicContent();
+    });
   } else {
-    setTimeout(initGlobalTracking, 200);
+    setTimeout(() => {
+      initGlobalTracking();
+      initDynamicContent();
+    }, 200);
   }
 
 })();

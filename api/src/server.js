@@ -57,6 +57,11 @@ app.use('/api/auth',      require('./routes/auth'));
 app.use('/api/leads',     require('./routes/leads'));
 app.use('/api/blog',      require('./routes/blog'));
 app.use('/api/portfolio', require('./routes/portfolio'));
+app.use('/api/academy',   require('./routes/academy'));
+app.use('/api/users',     require('./routes/users'));
+app.use('/api/settings',  require('./routes/settings'));
+
+
 
 // Apply rate limiting to public form submission endpoint
 app.use('/api/leads', publicLimiter);

@@ -32,7 +32,16 @@ export const navItems = [
     children: [
       { id: 'services',     label: 'Services',      labelAr: 'الخدمات',       path: '/cms/services'     },
       { id: 'case-studies', label: 'Case Studies',  labelAr: 'دراسات الحالة', path: '/cms/case-studies' },
+      { id: 'blog',         label: 'Blog',          labelAr: 'المدونة',       path: '/cms/blog'         },
+      { id: 'academy',      label: 'Academy',       labelAr: 'الأكاديمية',      path: '/cms/academy'      },
     ],
+  },
+  {
+    id:    'users',
+    label: 'Users & Roles',
+    labelAr: 'إدارة المشرفين',
+    icon:  'Users',
+    path:  '/users',
   },
   {
     id:    'website-editor',
