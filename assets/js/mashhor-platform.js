@@ -714,18 +714,18 @@
           <div class="global-footer-col">
             <h4>المنصة</h4>
             <a href="${arFp}about.html">من نحن</a>
-            <a href="${arFp}portfolio/index.html">الأعمال</a>
-            <a href="${arFp}case-studies/index.html">دراسات الحالة</a>
-            <a href="${arFp}pricing/index.html">الباقات</a>
-            <a href="${arFp}blog/index.html">المدونة</a>
-            <a href="${arFp}academy/index.html">الأكاديمية</a>
+            <a href="${arFp}portfolio/">الأعمال</a>
+            <a href="${arFp}case-studies/">دراسات الحالة</a>
+            <a href="${arFp}pricing/">الباقات</a>
+            <a href="${arFp}blog/">المدونة</a>
+            <a href="${arFp}academy/">الأكاديمية</a>
           </div>
           <div class="global-footer-col">
             <h4>تواصل</h4>
             <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">واتساب</a>
             <a href="mailto:info@mashhor-hub.com">البريد الإلكتروني</a>
             <a href="tel:+96555377309">هاتف: +965 5537 7309</a>
-            <a href="${arFp}book-call/index.html">حجز مكالمة</a>
+            <a href="${arFp}book-call/">حجز مكالمة</a>
             <a href="${arFp}faqs.html">الأسئلة الشائعة</a>
           </div>
         </div>
@@ -789,18 +789,18 @@
           <div class="global-footer-col">
             <h4>Platform</h4>
             <a href="${p}about.html">About</a>
-            <a href="${p}portfolio/index.html">Portfolio</a>
-            <a href="${p}case-studies/index.html">Case Studies</a>
-            <a href="${p}pricing/index.html">Pricing</a>
-            <a href="${p}blog/index.html">Blog</a>
-            <a href="${p}academy/index.html">Academy</a>
+            <a href="${p}portfolio/">Portfolio</a>
+            <a href="${p}case-studies/">Case Studies</a>
+            <a href="${p}pricing/">Pricing</a>
+            <a href="${p}blog/">Blog</a>
+            <a href="${p}academy/">Academy</a>
           </div>
           <div class="global-footer-col">
             <h4>Connect</h4>
             <a href="https://wa.me/96555377309" target="_blank" rel="noopener" aria-label="WhatsApp Contact">WhatsApp</a>
             <a href="mailto:info@mashhor-hub.com">Email</a>
             <a href="tel:+96555377309">Phone: +965 5537 7309</a>
-            <a href="${p}book-call/index.html">Book a Call</a>
+            <a href="${p}book-call/">Book a Call</a>
             <a href="${p}faqs.html">FAQs</a>
           </div>
         </div>
