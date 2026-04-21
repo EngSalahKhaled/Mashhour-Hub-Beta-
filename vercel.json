@@ -1,10 +1,28 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "api/src/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "admin-dashboard/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "installCommand": "npm install --legacy-peer-deps"
+      }
+    },
+    {
+      "src": "**",
+      "use": "@vercel/static"
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/src/server.js" },
-    { "source": "/admin/assets/(.*)", "destination": "/admin-dashboard/dist/assets/$1" },
-    { "source": "/admin", "destination": "/admin-dashboard/dist/index.html" },
-    { "source": "/admin/(.*)", "destination": "/admin-dashboard/dist/index.html" },
+    { "source": "/admin/assets/(.*)", "destination": "/admin-dashboard/assets/$1" },
+    { "source": "/admin", "destination": "/admin-dashboard/entry.html" },
+    { "source": "/admin/(.*)", "destination": "/admin-dashboard/entry.html" },
     { "source": "/", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/$1" }
   ]

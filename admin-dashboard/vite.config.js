@@ -6,6 +6,11 @@ export default defineConfig({
   base: "/admin/",
   plugins: [react(), tailwindcss()],
   optimizeDeps: {
-    include: ["react-is", "recharts"], // هذا السطر هو الحل
+    include: ["react-is", "recharts"],
+  },
+  build: {
+    rollupOptions: {
+      input: "entry.html"
+    }
   }
 });
