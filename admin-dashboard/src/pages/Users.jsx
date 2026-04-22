@@ -121,6 +121,12 @@ export default function Users() {
       const res = await fetch(`${API_URL}/api/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${res.status} ${res.statusText}`);
+      }
+
       const data = await res.json();
       if (data.success) {
         setUsers(data.users);
@@ -128,7 +134,8 @@ export default function Users() {
         toast.error(data.message || 'Failed to load users');
       }
     } catch (err) {
-      toast.error('Error connecting to API');
+      console.error('[USERS LOAD ERROR]', err);
+      toast.error(err.message || 'Error connecting to API');
     } finally {
       setLoading(false);
     }

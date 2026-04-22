@@ -7,10 +7,12 @@ const admin = require('firebase-admin');
 // ⚠️  FIREBASE_PRIVATE_KEY copied from the JSON export contains literal "\n"
 //     strings — we must convert them to real newlines before passing to the SDK.
 
+let db;
+
 if (!admin.apps.length) {
     try {
         if (!process.env.FIREBASE_STORAGE_BUCKET) {
-            console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env. Storage bucket operations may fail.');
+            console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env.');
         }
 
         admin.initializeApp({
@@ -23,13 +25,17 @@ if (!admin.apps.length) {
         });
         console.log('✅ Firebase Admin initialized successfully.');
     } catch (error) {
-        console.error('❌ CRITICAL: Firebase Admin failed to initialize. Some features (Auth, RBAC) will be disabled.');
+        console.error('❌ CRITICAL: Firebase Admin failed to initialize.');
         console.error('Reason:', error.message);
+        console.log('⚠️  The server will continue to run, but Auth/Firestore features will fail until .env is fixed.');
     }
 }
 
-const db = admin.firestore();
-// const bucket = admin.storage().bucket(); // Requires Blaze plan
+try {
+    db = admin.firestore();
+} catch (e) {
+    console.error('❌ Could not initialize Firestore:', e.message);
+}
 
 module.exports = { admin, db };
 
