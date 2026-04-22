@@ -23,6 +23,7 @@ const CmsPromptsPage  = lazy(() => import('../pages/CmsPrompts'));
 const CmsVaultPage    = lazy(() => import('../pages/CmsVault'));
 const CmsPortfolioPage = lazy(() => import('../pages/CmsPortfolio'));
 const CmsPricingPage   = lazy(() => import('../pages/CmsPricing'));
+const CmsSiteElements  = lazy(() => import('../pages/CmsSiteElements'));
 const ErpClientsPage   = lazy(() => import('../pages/ErpClients'));
 const ErpQuotationsPage = lazy(() => import('../pages/ErpQuotations'));
 const ErpInvoicesPage  = lazy(() => import('../pages/ErpInvoices'));
@@ -135,6 +136,11 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
                 <Route path="/cms/pricing" element={
                   <motion.div key="cms-pricing" {...pageVariants}>
                     <CmsPricingPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/site-elements" element={
+                  <motion.div key="cms-site-elements" {...pageVariants}>
+                    <CmsSiteElements />
                   </motion.div>
                 }/>
                 <Route path="/erp/clients" element={

@@ -8,7 +8,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthChange((firebaseUser) => {
+    const unsub = onAuthChange(async (firebaseUser) => {
+      if (firebaseUser) {
+        // Automatically fetch and store token on auth change/refresh
+        try {
+          const token = await firebaseUser.getIdToken(true);
+          localStorage.setItem('token', token);
+        } catch (err) {
+          console.error('Failed to sync token:', err);
+        }
+      } else {
+        localStorage.removeItem('token');
+      }
+      
       setUser(firebaseUser);
       setLoading(false);
     });
@@ -17,10 +29,14 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const cred = await loginWithEmail(email, password);
+    // Token will be handled by the onAuthChange listener above
     return cred.user;
   };
 
-  const logout = () => logoutUser();
+  const logout = () => {
+    localStorage.removeItem('token');
+    return logoutUser();
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
