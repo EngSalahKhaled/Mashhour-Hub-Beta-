@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Trash2, Copy, Loader2, Image, Link2, X, Search, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCollection, addDocument, deleteDocument } from '../services/firebase';
+import ConfirmModal from '../components/ConfirmModal';
 
 const COLLECTION = 'media_library';
 const MAX_BASE64 = 750000; // ~750KB
@@ -15,6 +16,7 @@ export default function MediaPage() {
   const [urlInput, setUrlInput] = useState('');
   const [nameInput, setNameInput] = useState('');
   const [search, setSearch]   = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const fileRef = useRef(null);
 
   const load = async () => {
@@ -65,9 +67,17 @@ export default function MediaPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this media?')) return;
-    try { await deleteDocument(COLLECTION, id); toast.success('Deleted'); load(); }
-    catch { toast.error('Delete failed'); }
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    try { 
+      await deleteDocument(COLLECTION, deleteTarget); 
+      toast.success('Deleted ✓'); 
+      load(); 
+    } catch { toast.error('Delete failed'); }
+    finally { setDeleteTarget(null); }
   };
 
   const copyUrl = (item) => {
@@ -166,6 +176,15 @@ export default function MediaPage() {
           })}
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete Media"
+        message="Are you sure you want to permanently delete this file? This action cannot be undone."
+        confirmText="Delete File"
+      />
     </div>
   );
 }

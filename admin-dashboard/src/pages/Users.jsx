@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Trash2, Shield, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAuth } from 'firebase/auth';
+import ConfirmModal from '../components/ConfirmModal';
 
 // Helper to get auth token
 const getAuthToken = async () => {
@@ -40,6 +41,11 @@ function UserModal({ onClose, onSave }) {
         body: JSON.stringify(form)
       });
       
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${res.status} ${res.statusText}`);
+      }
+
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
       
@@ -113,6 +119,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModal, setIsModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const load = async () => {
     try {
@@ -144,20 +151,26 @@ export default function Users() {
   useEffect(() => { load(); }, []);
 
   const handleDelete = async (uid) => {
-    if (!window.confirm('Are you sure you want to completely delete this admin user?')) return;
+    setDeleteTarget(uid);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
       const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/api/users/${uid}`, {
+      const res = await fetch(`${API_URL}/api/users/${deleteTarget}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
       
-      toast.success('User deleted successfully');
+      toast.success('User deleted successfully ✓');
       load();
     } catch (err) {
       toast.error(err.message || 'Delete failed');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -224,7 +237,17 @@ export default function Users() {
         </div>
       )}
 
+
       {isModal && <UserModal onClose={() => setIsModal(false)} onSave={load} />}
+
+      <ConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete Admin Account"
+        message="Are you sure you want to completely delete this admin user? They will lose all access to the dashboard immediately."
+        confirmText="Delete Account"
+      />
     </div>
   );
 }

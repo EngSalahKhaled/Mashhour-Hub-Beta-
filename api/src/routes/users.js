@@ -21,6 +21,9 @@ const userValidation = [
 // ─── GET /api/users (Admin — list all admins) ─────────────────────────────────
 // Only superadmins and admins can view the user list.
 router.get('/', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
+    if (!db) {
+        throw new AppError('Database connection is not initialized. Check server logs for Firebase Admin errors.', 500);
+    }
     const snapshot = await db.collection(COLLECTION).get();
     const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json({ success: true, count: users.length, users });
@@ -29,6 +32,9 @@ router.get('/', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (
 // ─── POST /api/users (Admin — create new admin/moderator) ─────────────────────
 // Only superadmins can create new users.
 router.post('/', auth, authorizeRole('superadmin'), userValidation, validate, asyncHandler(async (req, res) => {
+    if (!db) {
+        throw new AppError('Database connection is not initialized. Check server logs.', 500);
+    }
     const { email, password, displayName, role } = req.body;
 
     try {
@@ -65,6 +71,9 @@ router.post('/', auth, authorizeRole('superadmin'), userValidation, validate, as
 // ─── DELETE /api/users/:uid (Admin — delete user) ─────────────────────────────
 // Only superadmins can delete users.
 router.delete('/:uid', auth, authorizeRole('superadmin'), asyncHandler(async (req, res) => {
+    if (!db) {
+        throw new AppError('Database connection is not initialized. Check server logs.', 500);
+    }
     const { uid } = req.params;
 
     if (uid === req.admin.uid) {
