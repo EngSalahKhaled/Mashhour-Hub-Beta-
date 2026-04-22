@@ -1,33 +1,35 @@
 const express = require('express');
 const router  = express.Router();
+const { body } = require('express-validator');
 const { admin, db }  = require('../config/firebase');
 const auth    = require('../middleware/auth');
+const authorizeRole = require('../middleware/role');
+const validate = require('../middleware/validate');
+const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/AppError');
 
 const COLLECTION = 'admins';
 
-// Security Helper: Only superadmin or admin can manage users
-// For now, we assume any authenticated token reaching this route is allowed,
-// but we should ideally check `req.admin.role === 'superadmin'`
+// ─── Validation Rules ────────────────────────────────────────────────────────
+const userValidation = [
+    body('email').isEmail().withMessage('Please provide a valid email address.').normalizeEmail(),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.'),
+    body('role').isIn(['superadmin', 'admin', 'editor']).withMessage('Invalid role specified.'),
+    body('displayName').optional().trim().escape()
+];
 
 // ─── GET /api/users (Admin — list all admins) ─────────────────────────────────
-router.get('/', auth, async (req, res) => {
-    try {
-        const snapshot = await db.collection(COLLECTION).get();
-        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.json({ success: true, count: users.length, users });
-    } catch (error) {
-        console.error('[USERS GET ALL ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error.' });
-    }
-});
+// Only superadmins and admins can view the user list.
+router.get('/', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION).get();
+    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, count: users.length, users });
+}));
 
 // ─── POST /api/users (Admin — create new admin/moderator) ─────────────────────
-router.post('/', auth, async (req, res) => {
+// Only superadmins can create new users.
+router.post('/', auth, authorizeRole('superadmin'), userValidation, validate, asyncHandler(async (req, res) => {
     const { email, password, displayName, role } = req.body;
-
-    if (!email || !password || !role) {
-        return res.status(400).json({ success: false, message: 'Email, password, and role are required.' });
-    }
 
     try {
         // 1. Create user in Firebase Authentication
@@ -52,17 +54,21 @@ router.post('/', auth, async (req, res) => {
 
         res.status(201).json({ success: true, uid: userRecord.uid, message: 'User created successfully.' });
     } catch (error) {
-        console.error('[USERS POST ERROR]', error.message);
-        res.status(500).json({ success: false, message: error.message || 'Server error creating user.' });
+        // Handle specific Firebase Auth errors
+        if (error.code === 'auth/email-already-exists') {
+            throw new AppError('The email address is already in use by another account.', 400);
+        }
+        throw new AppError(error.message || 'Server error creating user.', 500);
     }
-});
+}));
 
 // ─── DELETE /api/users/:uid (Admin — delete user) ─────────────────────────────
-router.delete('/:uid', auth, async (req, res) => {
+// Only superadmins can delete users.
+router.delete('/:uid', auth, authorizeRole('superadmin'), asyncHandler(async (req, res) => {
     const { uid } = req.params;
 
     if (uid === req.admin.uid) {
-        return res.status(400).json({ success: false, message: 'Cannot delete yourself.' });
+        throw new AppError('You cannot delete your own account.', 400);
     }
 
     try {
@@ -74,9 +80,11 @@ router.delete('/:uid', auth, async (req, res) => {
 
         res.json({ success: true, message: 'User deleted successfully.' });
     } catch (error) {
-        console.error('[USERS DELETE ERROR]', error.message);
-        res.status(500).json({ success: false, message: error.message || 'Server error.' });
+        if (error.code === 'auth/user-not-found') {
+            throw new AppError('User not found.', 404);
+        }
+        throw new AppError(error.message || 'Server error deleting user.', 500);
     }
-});
+}));
 
 module.exports = router;

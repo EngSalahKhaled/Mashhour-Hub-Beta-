@@ -17,6 +17,18 @@ export const navItems = [
     path:  '/leads',
   },
   {
+    id:    'erp',
+    label: 'ERP & Billing',
+    labelAr: 'المحاسبة والفوترة',
+    icon:  'Receipt',
+    path:  '/erp',
+    children: [
+      { id: 'erp-clients',    label: 'Clients',     labelAr: 'العملاء',        path: '/erp/clients'    },
+      { id: 'erp-quotations', label: 'Quotations',  labelAr: 'عروض الأسعار',   path: '/erp/quotations' },
+      { id: 'erp-invoices',   label: 'Invoices',    labelAr: 'الفواتير',       path: '/erp/invoices'   },
+    ],
+  },
+  {
     id:    'media',
     label: 'Media Library',
     labelAr: 'مكتبة الوسائط',

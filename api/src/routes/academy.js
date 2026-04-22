@@ -1,93 +1,95 @@
 const express = require('express');
 const router  = express.Router();
+const { body } = require('express-validator');
 const { db }  = require('../config/firebase');
 const auth    = require('../middleware/auth');
+const authorizeRole = require('../middleware/role');
+const validate = require('../middleware/validate');
+const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/AppError');
 
 const COLLECTION = 'academy_courses';
 
+// ─── Validation Rules ────────────────────────────────────────────────────────
+const courseValidation = [
+    body('title_en').notEmpty().withMessage('title_en is required.'),
+    body('slug').notEmpty().withMessage('slug is required.'),
+    body('title_ar').optional(),
+    body('excerpt_en').optional(),
+    body('excerpt_ar').optional(),
+    body('content_en').optional(),
+    body('content_ar').optional(),
+    body('thumbnail').optional(),
+    body('video_url').optional(),
+    body('price').optional().isNumeric().withMessage('Price must be a number.'),
+    body('instructor').optional(),
+    body('status').optional().isIn(['draft', 'published', 'archived']).withMessage('Invalid status.')
+];
+
 // ─── GET /api/academy (Public — list all published courses) ───────────────────────
-router.get('/', async (req, res) => {
-    try {
-        const snapshot = await db.collection(COLLECTION)
-            .where('status', '==', 'published')
-            .orderBy('createdAt', 'desc')
-            .get();
+router.get('/', asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION)
+        .where('status', '==', 'published')
+        .orderBy('createdAt', 'desc')
+        .get();
 
-        const courses = snapshot.docs.map(doc => {
-            const data = doc.data();
-            // Don't send full content to list view, only summary
-            const { content_en, content_ar, ...summary } = data;
-            return { id: doc.id, ...summary };
-        });
+    const courses = snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Don't send full content to list view, only summary
+        const { content_en, content_ar, ...summary } = data;
+        return { id: doc.id, ...summary };
+    });
 
-        res.json({ success: true, count: courses.length, courses });
-    } catch (error) {
-        console.error('[ACADEMY GET ALL ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error.' });
-    }
-});
+    res.json({ success: true, count: courses.length, courses });
+}));
 
 // ─── GET /api/academy/:slug (Public — get single course by slug) ──────────────────
-router.get('/:slug', async (req, res) => {
-    try {
-        const snapshot = await db.collection(COLLECTION)
-            .where('slug', '==', req.params.slug)
-            .where('status', '==', 'published')
-            .limit(1)
-            .get();
+router.get('/:slug', asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION)
+        .where('slug', '==', req.params.slug)
+        .where('status', '==', 'published')
+        .limit(1)
+        .get();
 
-        if (snapshot.empty) {
-            return res.status(404).json({ success: false, message: 'Course not found.' });
-        }
-
-        const doc = snapshot.docs[0];
-        res.json({ success: true, course: { id: doc.id, ...doc.data() } });
-    } catch (error) {
-        console.error('[ACADEMY GET ONE ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error.' });
+    if (snapshot.empty) {
+        throw new AppError('Course not found.', 404);
     }
-});
+
+    const doc = snapshot.docs[0];
+    res.json({ success: true, course: { id: doc.id, ...doc.data() } });
+}));
 
 // ─── POST /api/academy (Admin — create course) ────────────────────────────────────
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, authorizeRole('superadmin', 'admin', 'editor'), courseValidation, validate, asyncHandler(async (req, res) => {
     const {
         title_en, title_ar, slug, excerpt_en, excerpt_ar, 
         content_en, content_ar, thumbnail, video_url, 
         price, instructor, status,
     } = req.body;
 
-    if (!title_en || !slug) {
-        return res.status(400).json({ success: false, message: 'title_en and slug are required.' });
-    }
+    const now = new Date().toISOString();
+    const courseData = {
+        title_en, title_ar, slug,
+        excerpt_en:  excerpt_en  || '',
+        excerpt_ar:  excerpt_ar  || '',
+        content_en:  content_en  || '',
+        content_ar:  content_ar  || '',
+        thumbnail:   thumbnail   || null,
+        video_url:   video_url   || null,
+        price:       Number(price) || 0,
+        instructor:  instructor  || '',
+        status:      status      || 'draft',
+        authorId:    req.admin.uid,
+        createdAt:   now,
+        updatedAt:   now,
+    };
 
-    try {
-        const now = new Date().toISOString();
-        const courseData = {
-            title_en, title_ar, slug,
-            excerpt_en:  excerpt_en  || '',
-            excerpt_ar:  excerpt_ar  || '',
-            content_en:  content_en  || '',
-            content_ar:  content_ar  || '',
-            thumbnail:   thumbnail   || null,
-            video_url:   video_url   || null,
-            price:       price       || 0,
-            instructor:  instructor  || '',
-            status:      status      || 'draft',
-            authorId:    req.admin.uid,
-            createdAt:   now,
-            updatedAt:   now,
-        };
-
-        const docRef = await db.collection(COLLECTION).add(courseData);
-        res.status(201).json({ success: true, id: docRef.id, message: 'Course created successfully.' });
-    } catch (error) {
-        console.error('[ACADEMY POST ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error. Check for duplicate slug.' });
-    }
-});
+    const docRef = await db.collection(COLLECTION).add(courseData);
+    res.status(201).json({ success: true, id: docRef.id, message: 'Course created successfully.' });
+}));
 
 // ─── PUT /api/academy/:id (Admin — update course) ─────────────────────────────────
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, authorizeRole('superadmin', 'admin', 'editor'), courseValidation, validate, asyncHandler(async (req, res) => {
     const {
         title_en, title_ar, slug, excerpt_en, excerpt_ar, 
         content_en, content_ar, thumbnail, video_url, 
@@ -96,39 +98,31 @@ router.put('/:id', auth, async (req, res) => {
 
     const { id } = req.params;
 
-    try {
-        const docRef  = db.collection(COLLECTION).doc(id);
-        const docSnap = await docRef.get();
+    const docRef  = db.collection(COLLECTION).doc(id);
+    const docSnap = await docRef.get();
 
-        if (!docSnap.exists) {
-            return res.status(404).json({ success: false, message: 'Course not found.' });
-        }
-
-        const updates = {
-            title_en, title_ar, slug,
-            excerpt_en, excerpt_ar,
-            content_en, content_ar,
-            thumbnail, video_url, price, instructor, status,
-            updatedAt: new Date().toISOString(),
-        };
-
-        await docRef.update(updates);
-        res.json({ success: true, message: 'Course updated successfully.' });
-    } catch (error) {
-        console.error('[ACADEMY PUT ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error.' });
+    if (!docSnap.exists) {
+        throw new AppError('Course not found.', 404);
     }
-});
+
+    const updates = {
+        title_en, title_ar, slug,
+        excerpt_en, excerpt_ar,
+        content_en, content_ar,
+        thumbnail, video_url, 
+        price: Number(price) || 0, 
+        instructor, status,
+        updatedAt: new Date().toISOString(),
+    };
+
+    await docRef.update(updates);
+    res.json({ success: true, message: 'Course updated successfully.' });
+}));
 
 // ─── DELETE /api/academy/:id (Admin) ────────────────────────────────────────────
-router.delete('/:id', auth, async (req, res) => {
-    try {
-        await db.collection(COLLECTION).doc(req.params.id).delete();
-        res.json({ success: true, message: 'Course deleted.' });
-    } catch (error) {
-        console.error('[ACADEMY DELETE ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Server error.' });
-    }
-});
+router.delete('/:id', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
+    await db.collection(COLLECTION).doc(req.params.id).delete();
+    res.json({ success: true, message: 'Course deleted.' });
+}));
 
 module.exports = router;

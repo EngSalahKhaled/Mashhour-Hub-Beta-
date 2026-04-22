@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   User, Lock, Bell, Palette, Globe, Shield, Save,
   Loader2, Eye, EyeOff, Check, ChevronRight, Sun, Moon,
-  Mail, Phone, Building2, AlertCircle,
+  Mail, Phone, Building2, AlertCircle, Construction, RefreshCw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -602,7 +602,109 @@ function SystemInfoSection({ user }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Maintenance Mode Section ─────────────────────────────────────────────────
+function MaintenanceSection() {
+  const [enabled, setEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving]   = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'site_settings', 'global'));
+        if (snap.exists()) setEnabled(!!snap.data().maintenanceMode);
+      } catch {} finally { setLoading(false); }
+    }; load();
+  }, []);
+
+  const toggle = async () => {
+    const newVal = !enabled;
+    setSaving(true);
+    try {
+      await setDoc(doc(db, 'site_settings', 'global'), { maintenanceMode: newVal }, { merge: true });
+      setEnabled(newVal);
+      toast.success(newVal ? 'Maintenance mode ENABLED' : 'Maintenance mode DISABLED');
+    } catch { toast.error('Failed to update'); }
+    finally { setSaving(false); }
+  };
+
+  if (loading) return null;
+
+  return (
+    <SectionCard icon={Construction} title="Maintenance Mode" color={BRAND.red}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Enable Maintenance Mode</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>When enabled, visitors will see a maintenance page instead of the live site.</p>
+        </div>
+        <button
+          onClick={toggle} disabled={saving}
+          className="flex-shrink-0 rounded-full transition-all duration-300"
+          style={{
+            width: 52, height: 28,
+            background: enabled ? 'rgba(244,63,94,0.25)' : 'rgba(255,255,255,0.06)',
+            border: `1px solid ${enabled ? 'rgba(244,63,94,0.4)' : 'rgba(99,179,237,0.15)'}`,
+            cursor: 'pointer', position: 'relative', padding: 3,
+          }}
+        >
+          <motion.div
+            animate={{ x: enabled ? 24 : 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            style={{ width: 20, height: 20, borderRadius: '50%', background: enabled ? BRAND.red : 'rgba(255,255,255,0.25)' }}
+          />
+        </button>
+      </div>
+      {enabled && (
+        <div className="p-3 rounded-xl flex items-center gap-3" style={{ background: 'rgba(244,63,94,0.08)', border: '1px solid rgba(244,63,94,0.2)' }}>
+          <AlertCircle size={16} color={BRAND.red} />
+          <p className="text-xs" style={{ color: BRAND.red }}>The website is currently in maintenance mode. Visitors cannot access it.</p>
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
+// ─── Cache Buster Section ─────────────────────────────────────────────────────
+function CacheBusterSection() {
+  const [clearing, setClearing] = useState(false);
+  const [lastCleared, setLastCleared] = useState(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'site_settings', 'global'));
+        if (snap.exists() && snap.data().cacheVersion) setLastCleared(snap.data().cacheVersion);
+      } catch {}
+    }; load();
+  }, []);
+
+  const clearCache = async () => {
+    setClearing(true);
+    try {
+      const newVersion = Date.now().toString();
+      await setDoc(doc(db, 'site_settings', 'global'), { cacheVersion: newVersion }, { merge: true });
+      setLastCleared(newVersion);
+      toast.success('Cache cleared successfully ✓');
+    } catch { toast.error('Failed to clear cache'); }
+    finally { setClearing(false); }
+  };
+
+  return (
+    <SectionCard icon={RefreshCw} title="Cache Management" color={BRAND.cyan}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Clear Global Cache</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Forces all visitors to fetch fresh content. Useful after updating CMS content.</p>
+          {lastCleared && <p className="text-xs mt-1 font-mono" style={{ color: 'var(--text-muted)' }}>Last cleared: {new Date(Number(lastCleared)).toLocaleString('en-GB')}</p>}
+        </div>
+        <button onClick={clearCache} disabled={clearing} className="btn-primary !py-2.5">
+          {clearing ? <><Loader2 size={15} className="animate-spin" /> Clearing…</> : <><RefreshCw size={15} /> Clear Cache</>}
+        </button>
+      </div>
+    </SectionCard>
+  );
+}
+
 export default function SettingsPage() {
   const { user } = useAuth();
 
@@ -619,6 +721,8 @@ export default function SettingsPage() {
       {/* Sections */}
       <ProfileSection user={user} />
       <CompanyDetailsSection />
+      <MaintenanceSection />
+      <CacheBusterSection />
       <TwoFactorSection />
       <PasswordSection />
       <AppearanceSection />

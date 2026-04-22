@@ -3,7 +3,9 @@ const router  = express.Router();
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const path = require('path');
 const fs = require('fs');
-const authMiddleware = require('../middleware/auth');
+const auth = require('../middleware/auth');
+const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/AppError');
 
 /**
  * GA4 Analytics Service
@@ -22,7 +24,7 @@ if (fs.existsSync(KEY_FILE)) {
 
 // ─── GET /api/analytics/overview ─────────────────────────────────────────────
 // Returns key metrics: Active Users (Realtime), Top Source, Daily Visits.
-router.get('/overview', authMiddleware, async (req, res) => {
+router.get('/overview', auth, asyncHandler(async (req, res) => {
     if (!analyticsClient) {
         return res.json({ 
             success: true, 
@@ -43,58 +45,51 @@ router.get('/overview', authMiddleware, async (req, res) => {
         });
     }
 
-    try {
-        // 1. Fetch Realtime Active Users
-        const [realtimeResponse] = await analyticsClient.runRealtimeReport({
-            property: `properties/${PROPERTY_ID}`,
-            dimensions: [{ name: 'deviceCategory' }],
-            metrics: [{ name: 'activeUsers' }],
-        });
+    // 1. Fetch Realtime Active Users
+    const [realtimeResponse] = await analyticsClient.runRealtimeReport({
+        property: `properties/${PROPERTY_ID}`,
+        dimensions: [{ name: 'deviceCategory' }],
+        metrics: [{ name: 'activeUsers' }],
+    });
 
-        const activeUsersCount = realtimeResponse.rows?.reduce((acc, row) => acc + parseInt(row.metricValues[0].value), 0) || 0;
+    const activeUsersCount = realtimeResponse.rows?.reduce((acc, row) => acc + parseInt(row.metricValues[0].value), 0) || 0;
 
-        // 2. Fetch Sessions & Sources (Last 7 Days)
-        const [reportResponse] = await analyticsClient.runReport({
-            property: `properties/${PROPERTY_ID}`,
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'date' }, { name: 'sessionSource' }],
-            metrics: [{ name: 'sessions' }],
-        });
+    // 2. Fetch Sessions & Sources (Last 7 Days)
+    const [reportResponse] = await analyticsClient.runReport({
+        property: `properties/${PROPERTY_ID}`,
+        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'date' }, { name: 'sessionSource' }],
+        metrics: [{ name: 'sessions' }],
+    });
 
-        // Process report data...
-        // This is a simplified version for the example architecture
-        const dailyData = {};
-        let topSource = 'N/A';
-        let maxSourceCount = 0;
-        const sourceCounts = {};
+    // Process report data...
+    const dailyData = {};
+    let topSource = 'N/A';
+    let maxSourceCount = 0;
+    const sourceCounts = {};
 
-        reportResponse.rows?.forEach(row => {
-            const date = row.dimensionValues[0].value;
-            const source = row.dimensionValues[1].value;
-            const count = parseInt(row.metricValues[0].value);
+    reportResponse.rows?.forEach(row => {
+        const date = row.dimensionValues[0].value;
+        const source = row.dimensionValues[1].value;
+        const count = parseInt(row.metricValues[0].value);
 
-            dailyData[date] = (dailyData[date] || 0) + count;
-            sourceCounts[source] = (sourceCounts[source] || 0) + count;
-            if (sourceCounts[source] > maxSourceCount) {
-                maxSourceCount = sourceCounts[source];
-                topSource = source;
-            }
-        });
+        dailyData[date] = (dailyData[date] || 0) + count;
+        sourceCounts[source] = (sourceCounts[source] || 0) + count;
+        if (sourceCounts[source] > maxSourceCount) {
+            maxSourceCount = sourceCounts[source];
+            topSource = source;
+        }
+    });
 
-        res.json({
-            success: true,
-            mode: 'live',
-            data: {
-                activeUsers: activeUsersCount,
-                topSource: topSource,
-                dailyVisits: Object.entries(dailyData).map(([date, sessions]) => ({ date, sessions })),
-            }
-        });
-
-    } catch (error) {
-        console.error('[ANALYTICS ERROR]', error.message);
-        res.status(500).json({ success: false, message: 'Failed to fetch GA4 data.' });
-    }
-});
+    res.json({
+        success: true,
+        mode: 'live',
+        data: {
+            activeUsers: activeUsersCount,
+            topSource: topSource,
+            dailyVisits: Object.entries(dailyData).map(([date, sessions]) => ({ date, sessions })),
+        }
+    });
+}));
 
 module.exports = router;

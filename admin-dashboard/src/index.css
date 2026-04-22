@@ -322,3 +322,10 @@
       var(--bg-primary);
   }
 }
+
+/* ─── Print Styles (Invoice PDF) ───────────────────────────────────────────── */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .mesh-bg, nav, aside, .glass-card { background: transparent !important; backdrop-filter: none !important; }
+  .print\\:hidden { display: none !important; }
+}

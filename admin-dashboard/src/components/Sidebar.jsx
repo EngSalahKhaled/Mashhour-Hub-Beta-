@@ -3,13 +3,13 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, Image, FileText, Settings,
-  ChevronDown, ChevronLeft, ChevronRight, LogOut, Layers, Briefcase, Globe,
+  ChevronDown, ChevronLeft, ChevronRight, LogOut, Layers, Briefcase, Globe, Receipt,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { navItems } from '../constants/navigation';
 import toast from 'react-hot-toast';
 
-const ICON_MAP = { LayoutDashboard, Users, Image, FileText, Settings, Layers, Briefcase, Globe };
+const ICON_MAP = { LayoutDashboard, Users, Image, FileText, Settings, Layers, Briefcase, Globe, Receipt };
 
 function NavIcon({ name, size = 18 }) {
   const Comp = ICON_MAP[name];

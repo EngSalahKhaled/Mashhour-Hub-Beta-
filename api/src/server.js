@@ -11,6 +11,8 @@ dotenv.config();
 // ─── Firebase Admin (initializes on first require) ────────────────────────────
 require('./config/firebase');
 
+const globalErrorHandler = require('./middleware/error');
+
 const app = express();
 
 // Trust reverse proxy for Hostinger / Vercel
@@ -53,6 +55,9 @@ app.options('*', cors(corsOptions)); // Handle all preflight (OPTIONS) requests
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
 
+// Apply rate limiting to public form submission endpoint BEFORE the route
+app.use('/api/leads', publicLimiter);
+
 app.use('/api/auth',      require('./routes/auth'));
 app.use('/api/leads',     require('./routes/leads'));
 app.use('/api/blog',      require('./routes/blog'));
@@ -66,11 +71,13 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/analytics',     require('./routes/analytics'));
 app.use('/api/users',     require('./routes/users'));
 app.use('/api/settings',  require('./routes/settings'));
+app.use('/api/media',     require('./routes/media'));
 
-
-
-// Apply rate limiting to public form submission endpoint
-app.use('/api/leads', publicLimiter);
+// ERP Modules
+app.use('/api/erp/clients',    require('./routes/erp/clients'));
+app.use('/api/erp/quotations', require('./routes/erp/quotations'));
+app.use('/api/erp/invoices',   require('./routes/erp/invoices'));
+app.use('/api/erp/payments',   require('./routes/erp/payments'));
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 
@@ -91,14 +98,7 @@ app.use((req, res) => {
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-    console.error('[SERVER ERROR]', err.stack);
-    res.status(err.status || 500).json({
-        success: false,
-        message: err.message || 'Internal Server Error',
-    });
-});
+app.use(globalErrorHandler);
 
 // ─── Local Development Server ─────────────────────────────────────────────────
 // On Vercel the file is imported as a module — listen() must NOT run.
