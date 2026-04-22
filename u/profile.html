@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر المشهور | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --p-color: #3b82f6; }
+        body { background: #f8fafc; font-family: 'Alexandria', sans-serif; margin: 0; }
+        
+        .profile-header { position: relative; height: 350px; background: #0f172a; overflow: hidden; }
+        .cover-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .profile-info-bar { position: relative; margin-top: -100px; padding: 0 5%; display: flex; align-items: flex-end; gap: 30px; }
+        .avatar-box { 
+            width: 180px; height: 180px; border-radius: 40px; border: 8px solid #fff; background: #fff; 
+            overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+        }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .info-content { flex: 1; padding-bottom: 20px; }
+        .p-name { font-size: 2.5rem; font-weight: 800; color: #1e293b; margin: 0; }
+        .p-field { color: var(--p-color); font-weight: 700; font-size: 1.1rem; }
+
+        .main-container { max-width: 1200px; margin: 50px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+        
+        .section-title { font-weight: 800; font-size: 1.5rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .product-card { background: #fff; border-radius: 20px; padding: 15px; border: 1px solid #f1f5f9; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .prod-img { width: 100%; height: 200px; border-radius: 15px; object-fit: cover; margin-bottom: 15px; }
+        .prod-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+        .prod-price { color: var(--p-color); font-weight: 800; font-size: 1.2rem; }
+
+        .sidebar-card { background: #fff; border-radius: 24px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .bio-text { color: #64748b; line-height: 1.8; font-size: 0.95rem; }
+        
+        .social-row { display: flex; gap: 10px; margin-top: 20px; }
+        .social-icon { 
+            width: 45px; height: 45px; border-radius: 12px; background: #f1f5f9; 
+            display: flex; align-items: center; justify-content: center; text-decoration: none; color: #1e293b; transition: 0.2s;
+        }
+        .social-icon:hover { background: var(--p-color); color: #fff; }
+
+        .btn-buy { 
+            background: #1e293b; color: #fff; border: none; width: 100%; padding: 12px; 
+            border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="profile-header">
+        <img src="https://images.unsplash.com/photo-1557683316-973673baf926" class="cover-img" id="cover-img">
+    </header>
+
+    <div class="profile-info-bar">
+        <div class="avatar-box">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" id="avatar-img">
+        </div>
+        <div class="info-content">
+            <h1 class="p-name" id="user-name">محمد رضا</h1>
+            <span class="p-field" id="user-field">خبير تسويق إلكتروني وذكاء اصطناعي</span>
+        </div>
+        <div style="padding-bottom: 20px;">
+            <button class="button button-gold" style="padding: 15px 35px; border-radius: 12px;">حجز استشارة 📞</button>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <!-- Products -->
+        <section>
+            <h2 class="section-title"><i>📦</i> خدماتي ومنتجاتي</h2>
+            <div class="product-grid" id="product-list">
+                <!-- Recorded Course -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3" class="prod-img">
+                    <div class="prod-title">دورة الذكاء الاصطناعي الشاملة</div>
+                    <div class="prod-price">150.00 ج.م</div>
+                    <button class="btn-buy">شراء الآن 🛒</button>
+                </div>
+                <!-- Session -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" class="prod-img">
+                    <div class="prod-title">جلسة استشارية 1:1 (ساعة)</div>
+                    <div class="prod-price">50.00 ج.م</div>
+                    <button class="btn-buy">حجز موعد 📅</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar Info -->
+        <aside>
+            <div class="sidebar-card">
+                <h3 style="font-weight: 800; margin-bottom: 15px;">نبذة عني</h3>
+                <p class="bio-text" id="user-bio">
+                    خبير تسويق رقمي وصناعة محتوى إبداعي، أساعد العلامات التجارية على النمو باستخدام الاستراتيجيات الذكية، الإعلانات المدفوعة، والتصميم وصناعة المحتوى المدعوم بالذكاء الاصطناعي.
+                </p>
+                <div class="social-row" id="social-links">
+                    <a href="#" class="social-icon">f</a>
+                    <a href="#" class="social-icon">X</a>
+                    <a href="#" class="social-icon">in</a>
+                    <a href="#" class="social-icon">IG</a>
+                </div>
+            </div>
+
+            <div class="sidebar-card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;">
+                <h3 style="font-weight: 800; margin-bottom: 10px;">احصل على خصم!</h3>
+                <p style="font-size: 0.85rem; opacity: 0.8;">استخدم الكود MASHHOR50 للحصول على خصم 10% على أول طلب لك من متجري.</p>
+            </div>
+        </aside>
+    </main>
+
+    <footer style="text-align: center; padding: 40px; color: #94a3b8; font-size: 0.8rem;">
+        بواسطة مشهور هب © 2026 - جميع الحقوق محفوظة
+    </footer>
+
+    <script src="../assets/js/affiliate-tracker.js"></script>
+    <script>
+        async function initiateCheckout(itemId, influencerId, price, title) {
+            const clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const ref = typeof getAffiliateRef === 'function' ? getAffiliateRef() : '';
+            
+            alert(`جاري تجهيز الطلب...\nالمنطقة الزمنية: ${clientTimezone}\nرابط التسويق: ${ref || 'مباشر'}`);
+            
+            // Call the checkout engine
+            if (typeof startPaymentFlow === 'function') {
+                startPaymentFlow({ itemId, influencerId, price, title, clientTimezone, ref });
+            }
+        }
+
+        async function loadPublicProfile() {
+            // In production, we'd get the username from the URL: mashhor-hub.com/u/salah
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username') || 'default';
+            const apiBase = window.location.origin.replace('3000', '5000');
+
+            try {
+                const res = await fetch(`${apiBase}/api/portal/profile/public/${username}`);
+                const data = await res.json();
+                if (data.success) {
+                    const p = data.profile;
+                    document.getElementById('user-name').innerText = p.pageName;
+                    document.getElementById('user-field').innerText = p.category || 'مؤثر مشهور هب';
+                    document.getElementById('user-bio').innerText = p.bio || '';
+                    if (p.avatarUrl) document.getElementById('avatar-img').src = p.avatarUrl;
+                    if (p.coverUrl) document.getElementById('cover-img').src = p.coverUrl;
+                    
+                    // Render Products
+                    const prodList = document.getElementById('product-list');
+                    if (p.products && p.products.length > 0) {
+                        prodList.innerHTML = p.products.map(prod => `
+                            <div class="product-card">
+                                <img src="${prod.coverUrl || 'https://via.placeholder.com/400x300'}" class="prod-img">
+                                <div class="prod-title">${prod.title}</div>
+                                <div class="prod-price">${prod.price} ج.م</div>
+                                <button class="btn-buy" onclick="initiateCheckout('${prod.id}', '${userId}', ${prod.price}, '${prod.title}')">
+                                    ${prod.type === 'recorded-course' ? 'شراء الآن 🛒' : 'حجز موعد 📅'}
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) { console.error('Error loading profile:', e); }
+        }
+        loadPublicProfile();
+    </script>
+    <script src="../assets/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | مشهور هب</title>
+    <link rel="stylesheet" href="assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: #0a0a0b; 
+            font-family: 'Alexandria', sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            bottom: -200px;
+            left: -200px;
+        }
+        .login-card {
+            background: rgba(20, 20, 22, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 35px;
+            width: 450px;
+            padding: 50px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .brand-logo { text-align: center; margin-bottom: 35px; }
+        .brand-logo img { height: 45px; filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3)); }
+        
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-weight: 600; font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px; }
+        .input-group input { 
+            width: 100%; padding: 16px; border-radius: 15px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background: rgba(0, 0, 0, 0.3); 
+            color: #fff; font-family: inherit; outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: #8b5cf6; background: rgba(0, 0, 0, 0.5); }
+        
+        .button-gold {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: #fff; width: 100%; padding: 18px; border-radius: 15px;
+            border: none; font-weight: 800; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            font-size: 1rem;
+        }
+        .button-gold:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4); }
+        .button-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body class="platform-page">
+    <div class="bg-glow"></div>
+    <div class="portal-login-container">
+        <div class="login-card">
+            <div class="brand-logo">
+                <img src="assets/images/icons/logo.png" alt="Logo">
+                <h2 style="color: #fff; font-weight: 800; margin-top: 15px;">مرحباً بعودتك</h2>
+                <p style="color: #94a3b8; font-size: 0.9rem;">سجل دخولك للوصول إلى لوحة التحكم</p>
+            </div>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" name="email" required placeholder="mail@mashhor-hub.com">
+                </div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+                
+                <div style="text-align: left; margin-bottom: 25px;">
+                    <a href="#" style="color: #94a3b8; font-size: 0.85rem; text-decoration: none;">نسيت كلمة المرور؟</a>
+                </div>
+
+                <button type="submit" class="button-gold" id="submit-login">تسجيل الدخول ✨</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <p style="color: #94a3b8; font-size: 0.9rem;">ليس لديك حساب؟ <a href="signup.html" style="color: #8b5cf6; font-weight: 700; text-decoration: none;">أنشئ حساباً الآن</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Use placeholder config - in production this should be your actual config
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "mashhour-hub.firebaseapp.com",
+            projectId: "mashhour-hub"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-login');
+            btn.innerText = 'جاري التحقق...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const email = formData.get('email');
+            const password = formData.get('password');
+
+            try {
+                // 1. Sign in with Firebase
+                const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const uid = userCred.user.uid;
+
+                // 2. Verify with our backend that this is a portal user (not admin)
+                const apiUrl = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1') 
+                    ? 'http://localhost:5000/api/auth/portal/login-check' 
+                    : '/api/auth/portal/login-check';
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uid })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // Store user info and redirect
+                    localStorage.setItem('portalUser', JSON.stringify(data.user));
+                    window.location.href = 'influencers/dashboard.html'; // Example redirect
+                } else {
+                    await firebase.auth().signOut();
+                    alert('خطأ: ' + data.message);
+                }
+            } catch (err) {
+                alert('فشل تسجيل الدخول: ' + err.message);
+            } finally {
+                btn.innerText = 'تسجيل الدخول';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

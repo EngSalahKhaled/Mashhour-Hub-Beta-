@@ -113,15 +113,19 @@ router.post('/webhook', express.raw({ type: 'application/json' }), asyncHandler(
                 updatedAt: new Date().toISOString()
             });
 
-            // Log Transaction
-            await db.collection(COLLECTION_PAYMENTS).add({
-                invoiceId: invoiceId,
-                paymentId: paymentId,
-                amount: verification.InvoiceValue,
-                gateway: 'MyFatoorah',
-                status: 'Success',
-                createdAt: new Date().toISOString()
-            });
+            // Trigger Notification
+            try {
+                await db.collection('notifications').add({
+                    title: 'Payment Received! 💰',
+                    message: `An amount of ${verification.InvoiceValue} KD has been paid for Invoice #${invoiceId.slice(-6).toUpperCase()}.`,
+                    type: 'payment',
+                    link: `/erp/invoices`,
+                    read: false,
+                    createdAt: new Date().toISOString(),
+                });
+            } catch (e) {
+                console.error('Payment notification failed:', e.message);
+            }
 
             return res.json({ success: true, message: 'Invoice updated to Paid.' });
         }

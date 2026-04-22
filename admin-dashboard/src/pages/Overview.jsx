@@ -8,6 +8,10 @@ import {
   TrendingUp, TrendingDown, ArrowRight,
 } from 'lucide-react';
 import { getCollection } from '../services/firebase';
+import { auth } from '../services/firebase';
+
+const API_URL = (window.MashhorAPI && window.MashhorAPI.API_BASE) || 'http://localhost:5000/api';
+const INFLUENCERS_COLLECTION = 'influencers';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 const ACCENT_MAP = {
@@ -106,13 +110,14 @@ export default function OverviewPage() {
   useEffect(() => {
     const load = async () => {
       try {
+        const token = await auth.currentUser?.getIdToken() || '';
         const [leads, subscribers, influencers, services, analytics] = await Promise.allSettled([
           getCollection('leads'),
           getCollection('subscribers'),
-          getCollection('influencer_apps'), // Corrected collection name
+          getCollection(INFLUENCERS_COLLECTION),
           getCollection('services'),
-          fetch('/api/analytics/overview', {
-              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          fetch(`${API_URL}/analytics/overview`, {
+              headers: { 'Authorization': `Bearer ${token}` }
           }).then(r => r.json())
         ]);
 

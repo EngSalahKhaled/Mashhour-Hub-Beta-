@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة خدمة جديدة | مشهور هب</title>
+    <link rel="stylesheet" href="../../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0a0a0b; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        .form-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(20,20,22,0.8); border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
+        
+        .service-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+        .type-option { padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: center; cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02); }
+        .type-option.active { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+        .type-option i { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+        
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 700; color: #94a3b8; font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; outline: none; }
+        .form-control:focus { border-color: #8b5cf6; }
+
+        .btn-submit { background: #8b5cf6; color: #fff; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1 style="font-weight: 800; text-align: center; margin-bottom: 40px;">إضافة عرض / خدمة مخصصة 🛠️</h1>
+
+        <div class="service-type-grid">
+            <div class="type-option active" data-type="event">
+                <i>📍</i> تغطية فاعلية
+            </div>
+            <div class="type-option" data-type="ad">
+                <i>📢</i> إعلان تجاري
+            </div>
+            <div class="type-option" data-type="gift">
+                <i>🎁</i> إهداء شخصي
+            </div>
+        </div>
+
+        <form id="service-form">
+            <div class="form-group">
+                <label>اسم الخدمة / العرض*</label>
+                <input type="text" class="form-control" placeholder="مثلاً: تغطية فاعلية لمدة 4 ساعات">
+            </div>
+            <div class="form-group">
+                <label>وصف الخدمة بالتفصيل</label>
+                <textarea class="form-control" rows="5" placeholder="اشرح ما سيحصل عليه العميل بالضبط..."></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>السعر (EGP)*</label>
+                    <input type="number" class="form-control" placeholder="500.00">
+                </div>
+                <div class="form-group">
+                    <label>مدة التنفيذ المتوقعة (أيام)</label>
+                    <input type="number" class="form-control" placeholder="3">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">تقديم الخدمة للمراجعة 🚀</button>
+        </form>
+    </div>
+
+    <script>
+        const types = document.querySelectorAll('.type-option');
+        types.forEach(t => {
+            t.addEventListener('click', () => {
+                types.forEach(opt => opt.classList.remove('active'));
+                t.classList.add('active');
+            });
+        });
+
+        document.getElementById('service-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('تم تقديم الخدمة بنجاح! سيقوم فريق الجودة بمراجعتها وتفعيلها في متجرك خلال ساعات.');
+            window.location.href = '../academy.html';
+        });
+    </script>
+</body>
+</html>

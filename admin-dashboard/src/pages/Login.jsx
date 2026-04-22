@@ -25,7 +25,9 @@ export default function LoginPage() {
       
       // Check if user has 2FA enabled via backend
       const token = await userCred.user.getIdToken();
-      const resp = await fetch('/api/auth/verify', {
+      localStorage.setItem('token', token); // Store token immediately for 2FA check
+      
+      const resp = await fetch(`${window.location.origin.replace('3000', '5000')}/api/auth/verify`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -50,7 +52,7 @@ export default function LoginPage() {
       e.preventDefault();
       setMfaLoading(true);
       try {
-          const resp = await fetch('/api/auth/2fa/login-check', {
+          const resp = await fetch(`${window.location.origin.replace('3000', '5000')}/api/auth/2fa/login-check`, {
               method: 'POST',
               headers: { 
                   'Authorization': `Bearer ${localStorage.getItem('token')}`,

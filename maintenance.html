@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحت الصيانة | مشهور هب</title>
+    <link rel="icon" type="image/png" href="assets/images/icons/logo-flat.png">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        :root {
+            --gold: #f4cd55;
+            --gold-dark: #b8860b;
+            --bg-deep: #041121;
+            --glass: rgba(13, 21, 40, 0.85);
+            --border: rgba(99, 179, 237, 0.15);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .background-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(244, 205, 85, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            filter: blur(80px);
+        }
+
+        .blob-1 { top: -10%; left: -10%; }
+        .blob-2 { bottom: -10%; right: -10%; }
+
+        .maintenance-container {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            padding: 3rem;
+            text-align: center;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            margin: 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        p {
+            color: #b9c7dc;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .timer-box {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 1rem;
+            min-width: 80px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timer-item span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .timer-item small {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #000;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(244, 205, 85, 0.2);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: #fff;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .social-links {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-links img {
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .social-links a:hover img {
+            opacity: 1;
+        }
+
+        [lang="en"] { display: none; }
+        
+        .lang-switch {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gold);
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blob blob-1"></div>
+    <div class="background-blob blob-2"></div>
+
+    <div class="lang-switch">
+        <button class="lang-btn" onclick="toggleLang()">English</button>
+    </div>
+
+    <div class="maintenance-container">
+        <img src="assets/images/icons/logo-flat.png" alt="Mashhor Hub" class="logo">
+        
+        <div id="ar-content" style="margin-bottom: 40px;">
+            <h1>سنعود قريباً</h1>
+            <p>نعمل حالياً على تحديث المنصة لتزويدكم بتجربة أفضل. مشهور هب سيعود للعمل قريباً جداً بميزات جديدة ومثيرة.</p>
+        </div>
+
+        <div style="width: 50px; height: 1px; background: rgba(255,255,255,0.1); margin: 0 auto 40px;"></div>
+
+        <div id="en-content" dir="ltr">
+            <h1>We'll Be Back Soon</h1>
+            <p>We are currently updating our platform to provide you with a better experience. Mashhor Hub will be back online very soon with exciting new features.</p>
+        </div>
+
+        <div class="cta-group" style="margin-top: 40px;">
+            <a href="https://wa.me/96555377309" class="btn btn-gold">تواصل معنا | Contact Us</a>
+            <a href="mailto:info@mashhor-hub.com" class="btn btn-outline">Send Email</a>
+        </div>
+
+        <div class="social-links">
+            <a href="https://www.linkedin.com/company/mashhor-hub/"><img src="assets/images/icons/social/linkedin.webp" alt="LinkedIn"></a>
+            <a href="https://www.instagram.com/mohamedr.ai"><img src="assets/images/icons/social/instagram.webp" alt="Instagram"></a>
+            <a href="https://www.facebook.com/mashhor.hub"><img src="assets/images/icons/social/fb.webp" alt="Facebook"></a>
+        </div>
+    </div>
+
+    <script>
+        function toggleLang() {
+            const ar = document.getElementById('ar-content');
+            const en = document.getElementById('en-content');
+            const btn = document.querySelector('.lang-btn');
+            
+            if (ar.style.display === 'none') {
+                ar.style.display = 'block';
+                en.style.display = 'none';
+                btn.textContent = 'English';
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else {
+                ar.style.display = 'none';
+                en.style.display = 'block';
+                btn.textContent = 'العربية';
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'en';
+            }
+        }
+    </script>
+</body>
+</html>

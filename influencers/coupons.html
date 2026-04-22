@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أكواد الخصم | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .coupon-card { background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .btn-add { background: #111; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        
+        .coupon-item { border: 1px solid #f1f5f9; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .coupon-code { font-family: monospace; background: #f0f9ff; color: #3b82f6; padding: 5px 12px; border-radius: 6px; font-weight: 800; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link"><i>🏠</i> الرئيسية</a>
+                <a href="coupons.html" class="nav-link active"><i>🏷️</i> أكواد الخصم</a>
+                <a href="orders.html" class="nav-link"><i>🛒</i> الطلبات</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h1 style="font-weight: 800;">أكواد الخصم</h1>
+                <button class="btn-add"><span>+</span> إنشاء كود جديد</button>
+            </div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">أنشئ كوبونات خصم لزيادة مبيعات دوراتك وخدماتك</p>
+
+            <div class="coupon-card">
+                <div class="coupon-item">
+                    <div>
+                        <span class="coupon-code">WELCOME10</span>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">خصم 10% لجميع المنتجات</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700;">استخدم 25 مرة</div>
+                        <div style="font-size: 0.75rem; color: #16a34a;">نشط الآن ✅</div>
+                    </div>
+                </div>
+
+                <div class="coupon-item">
+                    <div>
+                        <span class="coupon-code">LAUNCH20</span>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">خصم 20% لفترة محدودة</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700;">استخدم 0 مرة</div>
+                        <div style="font-size: 0.75rem; color: #dc2626;">متوقف ❌</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-core.js"></script>
+</body>
+</html>

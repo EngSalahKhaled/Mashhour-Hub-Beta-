@@ -22,13 +22,21 @@ const formValidation = [
     body('phone').optional().trim().escape(),
 ];
 
+const verifyRecaptcha = require('../utils/verifyRecaptcha');
+
 // ─── POST /api/leads (Public — CRM form submission) ───────────────────────────
 router.post('/', formValidation, validate, asyncHandler(async (req, res) => {
     const { 
         formType, timestamp, page_url, language, 
         utm_source, utm_medium, utm_campaign, utm_content,
-        name, email, phone, ...rest 
+        name, email, phone, recaptchaToken, ...rest 
     } = req.body;
+
+    // Verify reCAPTCHA
+    const isHuman = await verifyRecaptcha(recaptchaToken);
+    if (!isHuman) {
+        throw new AppError('reCAPTCHA verification failed. Please try again.', 400);
+    }
 
     // Determine the target collection based on formType
     let targetCollection = 'leads';
@@ -65,6 +73,23 @@ router.post('/', formValidation, validate, asyncHandler(async (req, res) => {
     };
 
     const docRef = await db.collection(targetCollection).add(leadData);
+
+    // ─── Trigger Internal Notification ───────────────────────────────────────
+    try {
+        await db.collection('notifications').add({
+            title: `New ${formType || 'Lead'}`,
+            message: `${name || 'Someone'} submitted a form from ${page_url || 'the website'}.`,
+            type: targetCollection,
+            link: `/leads?tab=${targetCollection}&id=${docRef.id}`,
+            read: false,
+            createdAt: new Date().toISOString(),
+        });
+        
+        // Automation: Send Confirmation Email
+        await emailService.sendWelcomeEmail(email, name, 'customer');
+    } catch (e) {
+        console.error('Notification trigger failed:', e.message);
+    }
 
     res.status(201).json({
         success: true,

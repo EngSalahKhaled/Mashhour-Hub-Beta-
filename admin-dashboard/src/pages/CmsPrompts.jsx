@@ -138,9 +138,22 @@ export default function CmsPrompts() {
                 </div>
               </div>
               <h3 className="font-bold mb-3 line-clamp-2">{item.title}</h3>
-              <p className="text-xs text-muted font-mono line-clamp-4 bg-black/20 p-3 rounded-lg border border-white/5">{item.text}</p>
-              <div className="mt-auto pt-4 flex justify-between items-center text-[10px] text-muted font-bold uppercase tracking-widest">
-                <span>{item.language === 'ar' ? '🇸🇦 AR' : '🇬🇧 EN'}</span>
+              
+              {/* Terminal Style Prompt Box */}
+              <div className="relative mt-auto overflow-hidden rounded-xl border border-white/10 bg-black/40 shadow-inner">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 border-b border-white/5 bg-white/5">
+                    <div className="w-2 h-2 rounded-full bg-red-500/40" />
+                    <div className="w-2 h-2 rounded-full bg-amber-500/40" />
+                    <div className="w-2 h-2 rounded-full bg-emerald-500/40" />
+                    <span className="ml-2 text-[9px] font-mono text-muted uppercase tracking-tighter opacity-50">Standard Prompt</span>
+                </div>
+                <div className="p-3">
+                    <p className="text-xs text-cyan-400/90 font-mono line-clamp-4 leading-relaxed">{item.text}</p>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-between items-center text-[10px] text-muted font-bold uppercase tracking-widest">
+                <span>{item.language === 'ar' ? '🇸🇦 Arabic' : '🇬🇧 English'}</span>
               </div>
             </div>
           ))}

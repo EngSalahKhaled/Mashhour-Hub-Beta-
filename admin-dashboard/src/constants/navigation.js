@@ -75,6 +75,13 @@ export const navItems = [
     icon:  'Settings',
     path:  '/settings',
   },
+  {
+    id:    'system-logs',
+    label: 'System Logs',
+    labelAr: 'سجل النظام',
+    icon:  'FileText',
+    path:  '/system-logs',
+  },
 ];
 
 // ─── Stat Cards ───────────────────────────────────────────────────────────

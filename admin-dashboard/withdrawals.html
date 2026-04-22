@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة طلبات السحب | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f8fafc; font-family: 'Alexandria', sans-serif; margin: 0; }
+        .admin-sidebar { width: 280px; height: 100vh; background: #1e293b; color: #fff; position: fixed; padding: 30px; }
+        .admin-main { margin-right: 280px; padding: 40px; }
+        .admin-nav { margin-top: 50px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 15px; color: #94a3b8; text-decoration: none; border-radius: 12px; transition: 0.2s; margin-bottom: 10px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: #fff; }
+        
+        .table-card { background: #fff; border-radius: 24px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { text-align: right; padding: 15px; color: #64748b; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; }
+        .admin-table td { padding: 15px; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
+
+        .btn-approve { background: #f0fdf4; color: #16a34a; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-reject { background: #fef2f2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <aside class="admin-sidebar">
+        <img src="../assets/images/icons/logo.png" style="height: 40px; margin-bottom: 50px; filter: brightness(0) invert(1);">
+        <nav class="admin-nav">
+            <a href="index.html" class="nav-item"><i>📊</i> الرئيسية (الإحصائيات)</a>
+            <a href="withdrawals.html" class="nav-item active"><i>💰</i> طلبات السحب</a>
+            <a href="verifications.html" class="nav-item"><i>✓</i> توثيق الحسابات</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <h1 style="font-weight: 800; margin-bottom: 30px;">إدارة طلبات السحب</h1>
+
+        <div class="table-card">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>المستخدم</th>
+                        <th>المبلغ</th>
+                        <th>طريقة السحب</th>
+                        <th>التفاصيل</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="withdrawals-list">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">جاري تحميل الطلبات...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        async function loadWithdrawals() {
+            try {
+                const res = await fetch(`${window.location.origin.replace('3000', '5000')}/api/super-admin/withdrawals`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const data = await res.json();
+                const container = document.getElementById('withdrawals-list');
+                
+                if (data.success && data.withdrawals.length > 0) {
+                    container.innerHTML = data.withdrawals.map(w => `
+                        <tr>
+                            <td style="font-weight: 700;">${w.user_id.substring(0,8)}...</td>
+                            <td style="font-weight: 800; color: #1e293b;">${w.amount} ج.م</td>
+                            <td>${w.method}</td>
+                            <td style="font-size: 0.8rem; color: #64748b;">${w.details}</td>
+                            <td><span class="status-pill status-${w.status}">${w.status === 'pending' ? 'معلق' : 'مكتمل'}</span></td>
+                            <td>
+                                ${w.status === 'pending' ? `
+                                    <button class="btn-approve" onclick="updateWithdrawal('${w.id}', 'approved')">موافقة ✅</button>
+                                    <button class="btn-reject" onclick="updateWithdrawal('${w.id}', 'rejected')">رفض ❌</button>
+                                ` : '<span style="color: #94a3b8;">معالج</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    container.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">لا توجد طلبات سحب حالياً</td></tr>`;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function updateWithdrawal(id, status) {
+            if (!confirm(`هل أنت متأكد من ${status === 'approved' ? 'الموافقة على' : 'رفض'} هذا الطلب؟`)) return;
+            try {
+                await fetch(`${window.location.origin.replace('3000', '5000')}/api/super-admin/withdrawals/${id}`, {
+                    method: 'PATCH',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                loadWithdrawals();
+            } catch (e) { console.error(e); }
+        }
+
+        loadWithdrawals();
+    </script>
+</body>
+</html>

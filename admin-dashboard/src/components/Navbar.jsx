@@ -4,6 +4,8 @@ import { Menu, Bell, Globe, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const getInitials = (email = '') => email.slice(0, 2).toUpperCase();
+const API_URL = (window.MashhorAPI && window.MashhorAPI.API_BASE) || 'http://localhost:5000/api';
+import { auth } from '../services/firebase';
 
 export default function Navbar({ onMenuClick, dir, onToggleDir }) {
   const { user }         = useAuth();
@@ -16,8 +18,9 @@ export default function Navbar({ onMenuClick, dir, onToggleDir }) {
     // Real-time listener for notifications
     const fetchNotifications = async () => {
         try {
-            const resp = await fetch('/api/notifications', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            const token = await auth.currentUser?.getIdToken() || '';
+            const resp = await fetch(`${API_URL}/notifications`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const result = await resp.json();
             if (result.success) {
@@ -32,9 +35,10 @@ export default function Navbar({ onMenuClick, dir, onToggleDir }) {
   }, []);
 
   const markAllRead = async () => {
-      await fetch('/api/notifications/clear-all', {
+      const token = await auth.currentUser?.getIdToken() || '';
+      await fetch(`${API_URL}/notifications/clear-all`, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          headers: { 'Authorization': `Bearer ${token}` }
       });
       setNotifications(notifications.map(n => ({...n, read: true})));
       setUnreadCount(0);

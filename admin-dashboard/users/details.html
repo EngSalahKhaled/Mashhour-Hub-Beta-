@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المستخدم | لوحة تحكم الأدمن</title>
+    <link rel="stylesheet" href="../../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .admin-layout { display: flex; min-height: 100vh; background: #f1f5f9; }
+        .admin-main { flex: 1; padding: 40px; }
+        
+        .profile-header { background: #fff; border-radius: 20px; padding: 30px; display: flex; align-items: center; gap: 25px; margin-bottom: 30px; }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 20px; background: #3b82f6; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; }
+        
+        .role-badge { padding: 5px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .role-influencer { background: #eff6ff; color: #3b82f6; }
+        .role-company { background: #fef2f2; color: #ef4444; }
+
+        .details-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
+        .data-card { background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .data-title { font-weight: 800; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        
+        .field-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
+        .field-label { color: #64748b; font-size: 0.85rem; }
+        .field-value { font-weight: 700; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <main class="admin-main">
+            <div class="profile-header">
+                <div class="profile-avatar">MR</div>
+                <div>
+                    <h1 style="font-weight: 800; margin: 0;">محمد رضا <span class="role-badge role-influencer">مؤثر / صانع محتوى</span></h1>
+                    <p style="color: #64748b; margin-top: 5px;">عضو منذ: 22 أبريل 2026</p>
+                </div>
+                <div style="margin-right: auto; display: flex; gap: 10px;">
+                    <button class="button button-gold">توثيق الحساب ✅</button>
+                    <button class="button" style="background: #ef4444;">حظر 🚫</button>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <!-- Professional Data -->
+                <div class="data-card">
+                    <h3 class="data-title">البيانات المهنية والتعليمية</h3>
+                    <div class="field-row">
+                        <span class="field-label">المؤهل العلمي</span>
+                        <span class="field-value">بكالوريوس هندسة اتصالات</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">المهنة الحالية</span>
+                        <span class="field-value">استشاري تسويق رقمي</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">الدولة</span>
+                        <span class="field-value">الكويت 🇰🇼</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">الموقع الإلكتروني</span>
+                        <span class="field-value"><a href="#">www.m-reda.com</a></span>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <span class="field-label">السيرة الذاتية (Bio)</span>
+                        <p style="font-size: 0.9rem; line-height: 1.6; margin-top: 10px;">خبير في مجال الذكاء الاصطناعي والتسويق، عملت مع كبرى الشركات في الخليج لتحويل مساراتهم الرقمية إلى أتمتة كاملة...</p>
+                    </div>
+                </div>
+
+                <!-- Stats & Financials -->
+                <div class="data-card">
+                    <h3 class="data-title">إحصائيات المنصة</h3>
+                    <div class="field-row">
+                        <span class="field-label">إجمالي المبيعات</span>
+                        <span class="field-value">4,500.00 ج.م</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">عدد الدورات</span>
+                        <span class="field-value">3 دورات</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">عدد العملاء</span>
+                        <span class="field-value">124 عميل</span>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">الرصيد المتاح</span>
+                        <span class="field-value">1,200.00 ج.م</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

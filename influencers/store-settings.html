@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات المتجر | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .settings-container { background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .tabs { display: flex; gap: 30px; border-bottom: 1px solid #f1f5f9; margin-bottom: 30px; }
+        .tab { padding: 15px 0; color: #64748b; cursor: pointer; position: relative; font-weight: 600; }
+        .tab.active { color: #1e293b; }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #1e293b; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 0.95rem; color: #1e293b; }
+        .form-group label span { color: #f43f5e; margin-right: 4px; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; transition: 0.2s;
+        }
+        .form-group input:focus { border-color: #3b82f6; background: #fff; }
+        .help-text { font-size: 0.8rem; color: #94a3b8; margin-top: 8px; }
+
+        .image-upload-box { 
+            border: 2px dashed #e2e8f0; border-radius: 20px; padding: 40px; text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .image-upload-box:hover { border-color: #3b82f6; background: #f0f9ff; }
+        
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+        .theme-card { border: 2px solid #f1f5f9; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .theme-card.active { border-color: #3b82f6; background: #f0f9ff; }
+        .theme-preview { height: 60px; border-radius: 8px; margin-bottom: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .footer-actions { border-top: 1px solid #f1f5f9; padding-top: 30px; margin-top: 40px; display: flex; justify-content: flex-end; gap: 15px; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link"><i>🏠</i> الرئيسية</a>
+                <a href="store-settings.html" class="nav-link active"><i>⚙️</i> إعدادات المتجر</a>
+                <a href="withdrawals.html" class="nav-link"><i>💰</i> إعدادات السحب</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <div class="settings-container">
+                <h1 style="font-weight: 800; font-size: 1.5rem; margin-bottom: 5px;">إعدادات المتجر</h1>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">أضف معلوماتك الشخصية أو معلومات العلامة التجارية الخاصة بك</p>
+
+                <div class="tabs">
+                    <div class="tab active" data-tab="basic">بيانات أساسية</div>
+                    <div class="tab" data-tab="appearance">الشكل والمظهر</div>
+                    <div class="tab" data-tab="social">منصات التواصل</div>
+                </div>
+
+                <form id="store-settings-form">
+                    <!-- Tab 1: Basic Data -->
+                    <div class="tab-content active" id="tab-basic">
+                        <div class="form-group">
+                            <label>اسم الصفحة <span>*</span></label>
+                            <input type="text" name="pageName" placeholder="محمد رضا">
+                            <p class="help-text">مثال: فادي ابراهيم، د/ طارق سعيد</p>
+                        </div>
+                        <div class="form-group">
+                            <label>مجال عملك <span>*</span></label>
+                            <input type="text" name="workField" placeholder="التسويق الإلكتروني، التصميم، الذكاء الإصطناعي">
+                            <p class="help-text">مثال: لايف كوتش، طبيب نفسي، مدرس، طبيب تغذية</p>
+                        </div>
+                        <div class="form-group">
+                            <label>نبذة مختصرة عنك</label>
+                            <textarea name="shortBio" rows="3"></textarea>
+                            <p class="help-text">فيما لا يزيد عن 200 حرف، أضف نبذة مختصرة عنك سوف تظهر تحت اسم صفحتك</p>
+                        </div>
+                        <div class="form-group">
+                            <label>نبذة مطولة عنك</label>
+                            <textarea name="longBio" rows="6"></textarea>
+                            <p class="help-text">فيما لا يقل عن 50 كلمة، شارك معلومات عنك وعن خبراتك الشخصية والعملية</p>
+                        </div>
+                        <div class="form-group">
+                            <label>اللغة</label>
+                            <div style="display: flex; gap: 20px;">
+                                <label style="font-weight: 400;"><input type="radio" name="language" value="ar" checked> عربي</label>
+                                <label style="font-weight: 400;"><input type="radio" name="language" value="en"> English</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>استقبال رسائل الزوار عن طريق</label>
+                            <div style="display: flex; gap: 20px;">
+                                <label style="font-weight: 400;"><input type="radio" name="contactMethod" value="disabled"> غير مفعل</label>
+                                <label style="font-weight: 400;"><input type="radio" name="contactMethod" value="whatsapp" checked> رقم واتس آب</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الواتس آب</label>
+                            <input type="text" name="whatsappNumber" placeholder="+965 65099769">
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Appearance -->
+                    <div class="tab-content" id="tab-appearance">
+                        <div class="form-group">
+                            <label>صورة الشعار</label>
+                            <div class="image-upload-box" id="logo-upload">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 80px; border-radius: 50%;">
+                                <p class="help-text">الأبعاد الموصى بها 1200 × 1200 بيكسل</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>صورة الغلاف</label>
+                            <div class="image-upload-box" id="cover-upload" style="height: 150px; display: flex; align-items: center; justify-content: center;">
+                                <p class="help-text">الأبعاد الموصى بها 1920 × 380 بيكسل</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>لون الصفحة</label>
+                            <div class="theme-grid">
+                                <div class="theme-card active" data-theme="default">
+                                    <div class="theme-preview" style="background: #3b82f6;"></div>
+                                    <p class="text-xs">افتراضي</p>
+                                </div>
+                                <div class="theme-card" data-theme="royal">
+                                    <div class="theme-preview" style="background: #1e3a8a;"></div>
+                                    <p class="text-xs">أزرق ملكي</p>
+                                </div>
+                                <div class="theme-card" data-theme="ocean">
+                                    <div class="theme-preview" style="background: #0ea5e9;"></div>
+                                    <p class="text-xs">أزرق سماوي</p>
+                                </div>
+                                <div class="theme-card" data-theme="forest">
+                                    <div class="theme-preview" style="background: #166534;"></div>
+                                    <p class="text-xs">أخضر الغابات</p>
+                                </div>
+                                <div class="theme-card" data-theme="sunset">
+                                    <div class="theme-preview" style="background: #f97316;"></div>
+                                    <p class="text-xs">برتقالي الغروب</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Social -->
+                    <div class="tab-content" id="tab-social">
+                        <div class="form-group">
+                            <label>رابط فيسبوك</label>
+                            <input type="text" name="facebook" placeholder="https://www.facebook.com/username">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط X</label>
+                            <input type="text" name="x" placeholder="https://www.x.com/username">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط انستجرام</label>
+                            <input type="text" name="instagram" placeholder="https://www.instagram.com/username">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط يوتيوب</label>
+                            <input type="text" name="youtube" placeholder="https://www.youtube.com/username">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط لينكد إن</label>
+                            <input type="text" name="linkedin" placeholder="https://www.linkedin.com/in/username">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط تيك توك</label>
+                            <input type="text" name="tiktok" placeholder="https://www.tiktok.com/@username">
+                        </div>
+                    </div>
+
+                    <div class="footer-actions">
+                        <button type="button" class="ghost-button" style="color: #64748b;">معاينة الرابط الشخصي 🔗</button>
+                        <button type="submit" class="button button-gold" style="padding: 12px 35px; border-radius: 12px;">حفظ التغييرات 💾</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tab Logic
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+        tabs.forEach(t => {
+            t.addEventListener('click', () => {
+                tabs.forEach(tab => tab.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                t.classList.add('active');
+                document.getElementById(`tab-${t.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // Theme Selection
+        const themes = document.querySelectorAll('.theme-card');
+        themes.forEach(th => {
+            th.addEventListener('click', () => {
+                themes.forEach(t => t.classList.remove('active'));
+                th.classList.add('active');
+            });
+        });
+
+        // Form Submit
+        document.getElementById('store-settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = 'جاري الحفظ...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const payload = {
+                pageName: formData.get('pageName'),
+                workField: formData.get('workField'),
+                shortBio: formData.get('shortBio'),
+                longBio: formData.get('longBio'),
+                language: formData.get('language'),
+                contactMethod: formData.get('contactMethod'),
+                whatsappNumber: formData.get('whatsappNumber'),
+                themeColor: document.querySelector('.theme-card.active').dataset.theme,
+                socialLinks: {
+                    facebook: formData.get('facebook'),
+                    x: formData.get('x'),
+                    instagram: formData.get('instagram'),
+                    youtube: formData.get('youtube'),
+                    linkedin: formData.get('linkedin'),
+                    tiktok: formData.get('tiktok')
+                }
+            };
+
+            try {
+                const res = await fetch(`${window.location.origin.replace('3000', '5000')}/api/portal/profile`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('تم حفظ الإعدادات بنجاح! 🎉');
+                } else {
+                    alert('خطأ: ' + data.message);
+                }
+            } catch (err) {
+                alert('فشل الاتصال بالسيرفر');
+            } finally {
+                btn.innerHTML = 'حفظ التغييرات 💾';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

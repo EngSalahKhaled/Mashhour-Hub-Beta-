@@ -8,6 +8,7 @@ const admin = require('firebase-admin');
 //     strings — we must convert them to real newlines before passing to the SDK.
 
 let db;
+let bucket;
 
 if (!admin.apps.length) {
     try {
@@ -23,19 +24,20 @@ if (!admin.apps.length) {
             }),
             storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
         });
-        console.log('✅ Firebase Admin initialized successfully.');
+        console.log('✅ Firebase Admin & Storage initialized successfully.');
     } catch (error) {
         console.error('❌ CRITICAL: Firebase Admin failed to initialize.');
         console.error('Reason:', error.message);
-        console.log('⚠️  The server will continue to run, but Auth/Firestore features will fail until .env is fixed.');
+        console.log('⚠️  The server will continue to run, but Auth/Firestore/Storage features will fail until .env is fixed.');
     }
 }
 
 try {
     db = admin.firestore();
+    bucket = admin.storage().bucket();
 } catch (e) {
-    console.error('❌ Could not initialize Firestore:', e.message);
+    console.error('❌ Could not initialize Services:', e.message);
 }
 
-module.exports = { admin, db };
+module.exports = { admin, db, bucket };
 

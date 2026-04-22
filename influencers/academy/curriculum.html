@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشئ المنهج | مشهور هب</title>
+    <link rel="stylesheet" href="../../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0a0a0b; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        .builder-container { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
+        
+        .section-card { 
+            background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-weight: 800; font-size: 1.2rem; border: none; background: transparent; color: #fff; outline: none; border-bottom: 1px dashed #8b5cf6; }
+
+        .lesson-item { 
+            background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; 
+            margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .lesson-title { flex: 1; background: transparent; border: none; color: #fff; outline: none; }
+        .lesson-url { flex: 2; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 8px; color: #94a3b8; font-size: 0.8rem; }
+        
+        .btn-add-lesson { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px dashed #8b5cf6; width: 100%; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; margin-top: 10px; }
+        .btn-save { background: #8b5cf6; color: #fff; padding: 15px 40px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; float: left; margin-top: 30px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); }
+        
+        .drive-hint { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 15px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 30px; border: 1px solid rgba(59, 130, 246, 0.2); }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <div>
+                <h1 style="font-weight: 800; margin: 0;">منشئ المنهج الدراسي 📚</h1>
+                <p style="color: #94a3b8; margin-top: 5px;">أضف الأقسام والدروس وروابط الفيديوهات (YouTube/Drive)</p>
+            </div>
+            <button class="button button-gold" onclick="addSection()">+ إضافة قسم جديد</button>
+        </div>
+
+        <div class="drive-hint">
+            💡 <strong>نصيحة تقنية:</strong> للحصول على أفضل أمان، تأكد من جعل روابط Google Drive "للمشاهدة فقط" أو استخدم روابط YouTube "غير مدرج" (Unlisted). المنصة ستقوم بعرض المحتوى بشكل آمن للطلاب فقط.
+        </div>
+
+        <div id="curriculum-wrapper">
+            <!-- Sections will be injected here -->
+        </div>
+
+        <button class="btn-save" onclick="saveCurriculum()">حفظ المنهج ونشر الدورة 🚀</button>
+    </div>
+
+    <script>
+        let sectionCount = 0;
+
+        function addSection() {
+            sectionCount++;
+            const sectionHTML = `
+                <div class="section-card" id="section-${sectionCount}">
+                    <div class="section-header">
+                        <input type="text" class="section-title" placeholder="اسم القسم (مثلاً: مقدمة في التسويق)">
+                        <button onclick="removeSection(${sectionCount})" style="background: none; border: none; color: #ef4444; cursor: pointer;">حذف القسم</button>
+                    </div>
+                    <div class="lessons-wrapper" id="lessons-wrapper-${sectionCount}">
+                        <!-- Lessons will be here -->
+                    </div>
+                    <button class="btn-add-lesson" onclick="addLesson(${sectionCount})">+ إضافة درس جديد</button>
+                </div>
+            `;
+            document.getElementById('curriculum-wrapper').insertAdjacentHTML('beforeend', sectionHTML);
+            addLesson(sectionCount); // Add first lesson automatically
+        }
+
+        function addLesson(sectionId) {
+            const lessonHTML = `
+                <div class="lesson-item">
+                    <span style="color: #8b5cf6;">🎥</span>
+                    <input type="text" class="lesson-title" placeholder="عنوان الدرس">
+                    <input type="text" class="lesson-url" placeholder="رابط الفيديو (YouTube, Drive, Dropbox...)">
+                    <button style="background: none; border: none; color: #64748b; cursor: pointer;" onclick="this.parentElement.remove()">✕</button>
+                </div>
+            `;
+            document.getElementById(`lessons-wrapper-${sectionId}`).insertAdjacentHTML('beforeend', lessonHTML);
+        }
+
+        function removeSection(id) {
+            document.getElementById(`section-${id}`).remove();
+        }
+
+        async function saveCurriculum() {
+            // Logic to collect all data and send to API
+            alert('تم حفظ المنهج بنجاح! سيتم مراجعة الدورة من قبل الإدارة وتفعيلها خلال 24 ساعة.');
+            window.location.href = '../academy.html';
+        }
+
+        // Initialize with one section
+        addSection();
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التطبيقات | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .app-card { background: #fff; border-radius: 16px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
+        .app-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .app-icon { width: 40px; height: 40px; border-radius: 10px; }
+        .badge-free { background: #f1f5f9; color: #64748b; font-size: 0.7rem; padding: 3px 8px; border-radius: 5px; font-weight: 700; }
+        .app-title { font-weight: 800; font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .app-desc { font-size: 0.8rem; color: #94a3b8; line-height: 1.6; margin: 15px 0; min-height: 50px; }
+        
+        .input-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; width: 100%; font-size: 0.85rem; margin-top: 10px; }
+        .app-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        .btn-connect { background: #f1f5f9; color: #1e293b; }
+        .btn-disconnect { color: #f43f5e; background: none; }
+        
+        .learn-link { font-size: 0.75rem; color: #94a3b8; text-decoration: none; display: block; text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link"><i>🏠</i> الرئيسية</a>
+                <a href="apps.html" class="nav-link active"><i>🧩</i> التطبيقات</a>
+                <a href="store-settings.html" class="nav-link"><i>⚙️</i> إعدادات المتجر</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <h1 style="font-weight: 800; margin-bottom: 5px;">التطبيقات</h1>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">تطبيقات يمكنك ربطها بحسابك لتحسين الأداء</p>
+
+            <div class="apps-grid">
+                <!-- Meta Pixel -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">Meta Pixel <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">يمكنك استخدامه لقياس فعالية الحملات الإعلانية على فيسبوك وإنستجرام وواتس آب</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">Pixel ID</label>
+                        <input type="text" class="input-box" placeholder="مثال: 123456789012345">
+                    </div>
+                    <button class="app-btn btn-connect">ربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+
+                <!-- Google Calendar -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">Google Calendar <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991102.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">أداة مؤتمرات فيديو من جوجل تتيح لك إجراء اجتماعات آمنة عبر الإنترنت.</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">البريد الإلكتروني</label>
+                        <input type="text" class="input-box" placeholder="example@gmail.com">
+                    </div>
+                    <button class="app-btn btn-disconnect">فصل الربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+
+                <!-- Zoom -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">Zoom <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/4401/4401413.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">أداة مؤتمرات فيديو تتيح لك إجراء اجتماعات آمنة عبر الإنترنت.</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">البريد الإلكتروني</label>
+                        <input type="text" class="input-box" placeholder="example@gmail.com">
+                    </div>
+                    <button class="app-btn btn-disconnect">فصل الربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+
+                <!-- Snap Pixel -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">Snap Pixel <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/889/889147.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">يمكنك استخدامه لقياس فعالية الحملات الإعلانية على سناب شات</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">Pixel ID</label>
+                        <input type="text" class="input-box" placeholder="a1b2c3d4...">
+                    </div>
+                    <button class="app-btn btn-connect">ربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+
+                <!-- TikTok Pixel -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">TikTok Pixel <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">يمكنك استخدامه لقياس فعالية الحملات الإعلانية على تيك توك</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">Pixel ID</label>
+                        <input type="text" class="input-box" placeholder="COUU1U2U...">
+                    </div>
+                    <button class="app-btn btn-connect">ربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+
+                <!-- Google Analytics -->
+                <div class="app-card">
+                    <span class="badge-free">مجاني</span>
+                    <div class="app-header">
+                        <h3 class="app-title">Google Analytics <i style="font-size: 0.8rem; opacity: 0.5;">🔗</i></h3>
+                        <img src="https://cdn-icons-png.flaticon.com/512/906/906308.png" class="app-icon">
+                    </div>
+                    <p class="app-desc">أداة تتيح لك تتبع وتحليل حركة المرور وسلوك المستخدمين.</p>
+                    <div class="form-group">
+                        <label style="font-size: 0.75rem; color: #64748b;">Measurement ID</label>
+                        <input type="text" class="input-box" placeholder="G-XXXXXXXX">
+                    </div>
+                    <button class="app-btn btn-connect">ربط</button>
+                    <a href="#" class="learn-link">طريقة ربط التطبيق بحسابك شاهد هذا الفيديو.</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-dashboard.js"></script>
+</body>
+</html>

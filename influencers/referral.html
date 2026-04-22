@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج الإحالة | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .referral-card { background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .referral-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        
+        .share-box { border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; text-align: center; }
+        .link-input-group { display: flex; gap: 10px; margin-top: 20px; }
+        .link-input { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-size: 0.85rem; color: #64748b; }
+        .copy-btn { padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; }
+        
+        .stats-box { background: #f8fafc; border-radius: 16px; padding: 30px; }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e2e8f0; }
+        .stat-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link"><i>🏠</i> الرئيسية</a>
+                <a href="referral.html" class="nav-link active"><i>🔗</i> برنامج الإحالة</a>
+                <a href="schedules.html" class="nav-link"><i>📅</i> جداول المواعيد</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <h1 style="font-weight: 800; margin-bottom: 5px;">برنامج الإحالة لمشهور</h1>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">اربح مع كل عملية بيع عند إحالة عملاء جدد إلى مشهور هب</p>
+
+            <div class="referral-card">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 12px; font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 10px;">
+                    <i>ℹ️</i> هذا البرنامج خاص بالإحالة إلى مشهور هب فقط وسيتم تحويل المبالغ المكتسبة طبقاً لسياسة السحب
+                </div>
+
+                <div class="referral-hero">
+                    <!-- Share -->
+                    <div class="share-box">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10061/10061730.png" style="width: 100px; margin-bottom: 15px;">
+                        <h3 style="font-weight: 800;">شارك مرة واربح باستمرار</h3>
+                        <p style="font-size: 0.85rem; color: #94a3b8; margin: 10px 0;">شارك رابط الإحالة الخاص بك واكسب 30% من عمولة كل عملية بيع. <a href="#" style="color: #3b82f6;">اعرف المزيد</a></p>
+                        
+                        <div class="link-input-group">
+                            <input type="text" class="link-input" value="https://mashhor-hub.com/ref/vFddghW" readonly>
+                            <button class="copy-btn">📋</button>
+                            <button class="copy-btn">📤</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="font-weight: 800;">الاحصائيات</h3>
+                            <select style="font-size: 0.75rem; border: 1px solid #e2e8f0; border-radius: 5px; padding: 5px;">
+                                <option>آخر 14 أيام</option>
+                            </select>
+                        </div>
+
+                        <div class="stat-item">
+                            <span style="color: #64748b;">جنيه مصري</span>
+                            <span style="font-weight: 800;">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span style="color: #64748b;">متجر</span>
+                            <span style="font-weight: 800;">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span style="color: #64748b;">طلب مكتمل</span>
+                            <span style="font-weight: 800;">0</span>
+                        </div>
+                        <div class="stat-item" style="border: none;">
+                            <span style="color: #64748b;">دولار أمريكي</span>
+                            <span style="font-weight: 800;">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-dashboard.js"></script>
+</body>
+</html>

@@ -6,6 +6,14 @@
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
+  /* ─── reCAPTCHA Enterprise Injection (Disabled for Domain Error Fix) ───
+  const RECAPTCHA_SITE_KEY = '6LcOBhAsAAAAAIxIpzP5txnOSfcBKHdfPG5cYAPv';
+  const recaptchaScript = document.createElement('script');
+  recaptchaScript.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_SITE_KEY}`;
+  recaptchaScript.async = true;
+  document.head.appendChild(recaptchaScript);
+  */
+
   /* ═══════════════════════════════════════════════════
      THEME SYSTEM (Color Selection)
      ═══════════════════════════════════════════════════ */
@@ -156,6 +164,29 @@
   };
 
   const prefix = getPrefix();
+
+  // ─── MAINTENANCE MODE CHECK ───
+  const checkMaintenance = async () => {
+    const isMaintenancePage = window.location.pathname.includes('maintenance.html');
+    try {
+      // Use the API_BASE if defined, otherwise fallback to local /api
+      const apiBase = (window.MashhorAPI && window.MashhorAPI.API_BASE) || (window.location.origin + '/api');
+      const response = await fetch(`${apiBase}/settings`);
+      const result = await response.json();
+      
+      if (result.success && result.settings && result.settings.maintenanceMode) {
+        if (!isMaintenancePage) {
+          window.location.href = `${prefix}maintenance.html`;
+        }
+      } else if (isMaintenancePage) {
+        window.location.href = `${prefix}`;
+      }
+    } catch (e) {
+      console.warn('[MaintenanceCheck] Failed to fetch status', e);
+    }
+  };
+  checkMaintenance();
+
   const brandSrc = `${prefix}assets/images/icons/logo-flat.png`;
   const currentPath = window.location.pathname.replace(/\\/g, "/");
 
@@ -197,10 +228,10 @@
       ]},
       explore: { text: "استكشف", children: [
         { text: "الأعمال", href: `${arBase}portfolio/` },
-        { text: "المؤثرون", href: `${arBase}influencers/` },
+        { text: "اكتشف المؤثرين", href: `${p}discover.html` },
+        { text: "الأكاديمية", href: `${arBase}academy/` },
         { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
-        { text: "الباقات", href: `${arBase}pricing/` },
-        { text: "الأكاديمية", href: `${arBase}academy/` }
+        { text: "الباقات", href: `${arBase}pricing/` }
       ]},
       blog: { text: "المدونة", href: `${arBase}blog/` },
       contact: { text: "تواصل", href: `${arBase}contact.html` },
@@ -225,10 +256,10 @@
       ]},
       explore: { text: "Explore", children: [
         { text: "Portfolio", href: `${enP}portfolio/` },
-        { text: "Influencers", href: `${enP}influencers/` },
+        { text: "Discover Influencers", href: `${enP}discover.html` },
+        { text: "Academy", href: `${enP}academy/` },
         { text: "Mashhor AI", href: `${enP}services/mashhor-ai.html` },
-        { text: "Pricing", href: `${enP}pricing/` },
-        { text: "Academy", href: `${enP}academy/` }
+        { text: "Pricing", href: `${enP}pricing/` }
       ]},
       blog: { text: "Blog", href: `${enP}blog/` },
       contact: { text: "Contact", href: `${enP}contact.html` },
@@ -1988,4 +2019,21 @@
     }, 200);
   }
 
+  // ─── Global Preloader & Branding Fix ───
+  // Remove branding text immediately and hide faster
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    const logo = preloader.querySelector('.preloader-logo');
+    if (logo) logo.style.display = 'none'; // Completely remove the letters
+  }
+
+  window.addEventListener('load', () => {
+    if (preloader) {
+      preloader.classList.add('loaded');
+      // Hide almost instantly after load
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 300); 
+    }
+  });
 })();

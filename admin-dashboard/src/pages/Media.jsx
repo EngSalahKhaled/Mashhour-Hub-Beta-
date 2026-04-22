@@ -47,23 +47,36 @@ export default function MediaPage() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > MAX_BASE64) return toast.error('File too large (max 750KB for Firestore). Use URL mode or upgrade to Firebase Storage.');
+    
+    const formData = new FormData();
+    formData.append('file', file);
+
     setUploading(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        await addDocument(COLLECTION, {
-          name: file.name, url: null,
-          base64: reader.result,
-          type: file.type.startsWith('image') ? 'image' : 'file',
-          size: file.size,
-        });
-        toast.success('File uploaded ✓');
+      const token = localStorage.getItem('token');
+      const apiBase = window.MashhorAPI?.API_BASE || 'http://localhost:5000/api';
+      
+      const response = await fetch(`${apiBase}/media/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success('File uploaded to Storage ✓');
         load();
-      };
-      reader.readAsDataURL(file);
-    } catch { toast.error('Upload failed'); }
-    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
+      } else {
+        toast.error(result.message || 'Upload failed');
+      }
+    } catch (err) {
+      toast.error('Upload failed: ' + err.message);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
   };
 
   const handleDelete = async (id) => {
@@ -73,11 +86,28 @@ export default function MediaPage() {
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     try { 
-      await deleteDocument(COLLECTION, deleteTarget); 
-      toast.success('Deleted ✓'); 
-      load(); 
-    } catch { toast.error('Delete failed'); }
-    finally { setDeleteTarget(null); }
+      const token = localStorage.getItem('token');
+      const apiBase = window.MashhorAPI?.API_BASE || 'http://localhost:5000/api';
+      
+      const response = await fetch(`${apiBase}/media/${deleteTarget}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Deleted from Storage ✓');
+        load();
+      } else {
+        toast.error(result.message || 'Delete failed');
+      }
+    } catch (err) {
+      toast.error('Delete failed: ' + err.message);
+    } finally {
+      setDeleteTarget(null);
+    }
   };
 
   const copyUrl = (item) => {

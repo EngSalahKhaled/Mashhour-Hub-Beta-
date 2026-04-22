@@ -88,4 +88,32 @@ router.post('/2fa/verify', authMiddleware, asyncHandler(async (req, res) => {
     }
 }));
 
+// ─── POST /api/auth/2fa/login-check ──────────────────────────────────────────
+// Verifies 2FA token during login process.
+router.post('/2fa/login-check', authMiddleware, asyncHandler(async (req, res) => {
+    const { token } = req.body;
+    if (!token) throw new AppError('Token is required.', 400);
+
+    const userDoc = await admin.firestore().collection('admins').doc(req.admin.uid).get();
+    
+    if (!userDoc.exists || !userDoc.data().twoFactorEnabled) {
+        // If 2FA is not enabled, technically they shouldn't even hit this endpoint, 
+        // but we return success to allow them in if it was somehow disabled mid-session.
+        return res.json({ success: true, message: '2FA not required.' });
+    }
+
+    const secret = userDoc.data().twoFactorSecret;
+    const verified = speakeasy.totp.verify({
+        secret: secret,
+        encoding: 'base32',
+        token: token
+    });
+
+    if (verified) {
+        res.json({ success: true, message: '2FA verified successfully.' });
+    } else {
+        throw new AppError('Invalid 2FA token.', 400);
+    }
+}));
+
 module.exports = router;

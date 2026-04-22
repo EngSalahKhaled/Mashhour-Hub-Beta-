@@ -117,6 +117,16 @@ const WEBSITE_SECTIONS = [
     collection: 'site_announcements',
     color: '#f43f5e',
   },
+  {
+    id: 'seo',
+    label: 'SEO & Social Share',
+    labelAr: 'الأرشفة ومشاركة الروابط',
+    icon: '🔍',
+    description: 'Meta title, description, keywords, and OG image for social media',
+    fields: ['seoTitle', 'seoDescription', 'seoKeywords', 'ogImage'],
+    collection: 'site_settings',
+    color: '#10b981',
+  },
 ];
 
 // Field labels
@@ -167,6 +177,12 @@ const FIELD_META = {
   linkedinUrl:{ label: 'LinkedIn URL',    type: 'text',     placeholder: 'https://linkedin.com/…'},
   text:       { label: 'Announcement Text (EN)', type: 'text', placeholder: 'Announcement text' },
   textAr:     { label: 'Announcement Text (AR)', type: 'text', placeholder: 'نص الإعلان'        },
+  
+  // SEO
+  seoTitle:   { label: 'Meta Title',        type: 'text',     placeholder: 'Site title for Google' },
+  seoDescription: { label: 'Meta Description', type: 'textarea', placeholder: 'Brief site summary' },
+  seoKeywords:{ label: 'Meta Keywords',     type: 'text',     placeholder: 'marketing, agency, kuwait' },
+  ogImage:    { label: 'OG Share Image URL', type: 'image',    placeholder: 'https://…' },
 };
 
 // ─── Brand Preview Badge ──────────────────────────────────────────────────────

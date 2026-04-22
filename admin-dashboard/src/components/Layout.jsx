@@ -26,6 +26,7 @@ const CmsPricingPage   = lazy(() => import('../pages/CmsPricing'));
 const ErpClientsPage   = lazy(() => import('../pages/ErpClients'));
 const ErpQuotationsPage = lazy(() => import('../pages/ErpQuotations'));
 const ErpInvoicesPage  = lazy(() => import('../pages/ErpInvoices'));
+const SystemLogsPage   = lazy(() => import('../pages/SystemLogs'));
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -164,6 +165,11 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
                 <Route path="/settings" element={
                   <motion.div key="settings" {...pageVariants}>
                     <SettingsPage />
+                  </motion.div>
+                }/>
+                <Route path="/system-logs" element={
+                  <motion.div key="system-logs" {...pageVariants}>
+                    <SystemLogsPage />
                   </motion.div>
                 }/>
                 <Route path="*" element={<Navigate to="/" replace />} />

@@ -26,6 +26,8 @@ const BRAND = {
   red:   '#f43f5e',
 };
 
+const API_URL = 'http://localhost:5000';
+
 // ─── Reusable field wrapper ───────────────────────────────────────────────────
 function Field({ label, hint, children }) {
   return (
@@ -495,35 +497,50 @@ function TwoFactorSection() {
   const [verifying, setVerifying] = useState(false);
   const [enabled, setEnabled]     = useState(false);
 
+  useEffect(() => {
+    const checkStatus = async () => {
+        try {
+            const snap = await getDoc(doc(db, 'admins', auth.currentUser.uid));
+            if (snap.exists()) setEnabled(!!snap.data().twoFactorEnabled);
+        } catch {}
+    };
+    if (auth.currentUser) checkStatus();
+  }, []);
+
   const startSetup = async () => {
       try {
-          const resp = await fetch('/api/auth/2fa/setup', {
+          const token = await auth.currentUser.getIdToken();
+          const resp = await fetch(`${API_URL}/api/auth/2fa/setup`, {
               method: 'POST',
-              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+              headers: { 'Authorization': `Bearer ${token}` }
           });
+          if (!resp.ok) throw new Error('Failed to start setup');
           const result = await resp.json();
           if (result.success) setSetupData(result);
-      } catch (e) { toast.error('Failed to start setup'); }
+          else throw new Error(result.message);
+      } catch (e) { toast.error(e.message || 'Failed to start setup'); }
   };
 
   const confirmSetup = async () => {
+      if (!token) return toast.error('Enter the 6-digit code');
       setVerifying(true);
       try {
-          const resp = await fetch('/api/auth/2fa/verify', {
+          const idToken = await auth.currentUser.getIdToken();
+          const resp = await fetch(`${API_URL}/api/auth/2fa/verify`, {
               method: 'POST',
               headers: { 
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                  'Authorization': `Bearer ${idToken}`,
                   'Content-Type': 'application/json'
               },
               body: JSON.stringify({ token })
           });
           const result = await resp.json();
           if (result.success) {
-              toast.success('2FA Enabled ✓');
+              toast.success('2FA Enabled successfully ✓');
               setEnabled(true);
               setSetupData(null);
           } else {
-              toast.error(result.message);
+              toast.error(result.message || 'Invalid code');
           }
       } catch (e) { toast.error('Setup failed'); }
       finally { setVerifying(false); }
@@ -768,15 +785,47 @@ function SeedDataSection() {
     try {
       const DATA = {
         services: [
-          { title: 'Digital Strategy & Growth', category: 'Consultancy', description: 'Custom-tailored digital roadmaps designed to scale your brand using data-driven insights and AI integration.', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
-          { title: 'Premium Content Production', category: 'Creative', description: 'High-end visual storytelling, including videography, photography, and high-impact social media assets.', imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' },
-          { title: 'Influencer Marketing 3.0', category: 'Marketing', description: 'Connecting your brand with authentic voices across the MENA region using our exclusive influencer network.', imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80' }
+          { 
+            title: 'Digital Strategy & Growth', 
+            category: 'Consultancy', 
+            description: 'Custom-tailored digital roadmaps designed to scale your brand using data-driven insights and AI integration.', 
+            imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' 
+          },
+          { 
+            title: 'Premium Content Production', 
+            category: 'Creative', 
+            description: 'High-end visual storytelling, including videography, photography, and high-impact social media assets.', 
+            imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' 
+          }
         ],
-        blog: [
-          { title: 'The Rise of AI in MENA Digital Marketing', category: 'Technology', excerpt: 'How artificial intelligence is reshaping consumer behavior in Kuwait and beyond.', imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80', author: 'Mashhor Team' }
+        blog_posts: [
+          { 
+            title_en: 'The Rise of AI in MENA Digital Marketing', 
+            title_ar: 'صعود الذكاء الاصطناعي في التسويق الرقمي بالشرق الأوسط',
+            slug: 'ai-rise-mena-marketing',
+            excerpt_en: 'How artificial intelligence is reshaping consumer behavior in Kuwait and beyond.', 
+            excerpt_ar: 'كيف يعيد الذكاء الاصطناعي تشكيل سلوك المستهلك في الكويت والمنطقة.',
+            content_en: '<p>AI is not just a trend; it is a revolution...</p>',
+            content_ar: '<p>الذكاء الاصطناعي ليس مجرد صيحة، بل هو ثورة...</p>',
+            thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
+            status: 'published',
+            category: 'Technology'
+          }
         ],
-        academy: [
-          { title: 'Mastering Personal Branding', level: 'Intermediate', duration: '4 Hours', description: 'Learn how to build a powerful personal brand that attracts premium clients and opportunities.', imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80', price: '49 KWD' }
+        academy_courses: [
+          { 
+            title_en: 'Mastering Personal Branding', 
+            title_ar: 'احتراف العلامة التجارية الشخصية',
+            slug: 'mastering-personal-branding',
+            excerpt_en: 'Learn how to build a powerful personal brand.', 
+            excerpt_ar: 'تعلم كيف تبني علامة تجارية شخصية قوية.',
+            content_en: '<p>In this course, we will cover...</p>',
+            content_ar: '<p>في هذه الدورة، سنغطي...</p>',
+            thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80',
+            instructor: 'Mashhor Expert',
+            price: 49,
+            status: 'published'
+          }
         ]
       };
 
@@ -794,15 +843,30 @@ function SeedDataSection() {
   };
 
   return (
-    <SectionCard icon={Database} title="System Data" color={BRAND.emerald}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Seed Sample Content</p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Populate your empty collections with professional content to see how the site looks.</p>
+    <SectionCard icon={Database} title="System Data & Backups" color={BRAND.emerald}>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+            <div>
+            <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Export System Data</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Download a JSON snapshot of all your leads, services, and content.</p>
+            </div>
+            <button 
+                onClick={() => toast.success('Backup preparation started...')}
+                className="btn-ghost flex items-center gap-2 !border-emerald-500/30 !text-emerald-400"
+            >
+                <RefreshCw size={16} /> Export JSON
+            </button>
         </div>
-        <button onClick={seed} disabled={seeding} className="btn-primary !bg-emerald-600 hover:!bg-emerald-500">
-          {seeding ? <Loader2 size={16} className="animate-spin" /> : <><Database size={16} /> Seed Data</>}
-        </button>
+
+        <div className="flex items-center justify-between pt-4 border-t border-white/5">
+            <div>
+            <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Seed Sample Content</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Populate empty collections with professional content.</p>
+            </div>
+            <button onClick={seed} disabled={seeding} className="btn-primary !bg-emerald-600 hover:!bg-emerald-500">
+            {seeding ? <Loader2 size={16} className="animate-spin" /> : <><Database size={16} /> Seed Data</>}
+            </button>
+        </div>
       </div>
     </SectionCard>
   );

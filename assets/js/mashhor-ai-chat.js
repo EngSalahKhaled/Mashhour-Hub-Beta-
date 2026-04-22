@@ -281,18 +281,35 @@
     });
   }
 
-  function handleUserMessage(text, body, suggestionsEl) {
+  async function handleUserMessage(text, body, suggestionsEl) {
     if (!text.trim()) return;
     appendMessage(body, text, 'user');
     suggestionsEl.innerHTML = '';
 
     const indicator = showTypingIndicator(body);
-    const answer = findAnswer(text);
 
-    setTimeout(() => {
-      indicator.remove();
-      appendMessage(body, answer, 'bot');
-    }, BOT_REPLY_DELAY + Math.random() * 600);
+    try {
+        const endpoint = currentMode === 'analyze' ? '/api/ai/analyze' : '/api/ai/chat';
+        const response = await fetch(`${window.location.origin.replace('3000', '5000')}${endpoint}`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ prompt: text })
+        });
+        const data = await response.json();
+        indicator.remove();
+        
+        if (data.success) {
+            appendMessage(body, data.response, 'bot');
+        } else {
+            appendMessage(body, FALLBACK, 'bot');
+        }
+    } catch (err) {
+        indicator.remove();
+        appendMessage(body, FALLBACK, 'bot');
+    }
   }
 
   /* ========================================================================
@@ -350,10 +367,20 @@
     sendBtn.addEventListener('click', sendMessage);
     chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
+    window.addEventListener('open-ai-assistant', (e) => {
+      currentMode = e.detail?.mode || 'chat';
+      openChat();
+      if (currentMode === 'analyze') {
+          appendMessage(chatBody, isRTL ? 'مرحباً! أنا المحلل الذكي الخاص بك. لقد قمت بمراجعة بياناتك للتو. كيف يمكنني مساعدتك في تطوير عملك اليوم؟' : 'Hello! I am your AI Analyst. I have just reviewed your dashboard data. How can I help you grow today?', 'bot');
+      }
+    });
+
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('active')) closeChat();
     });
   }
+
+  let currentMode = 'chat';
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

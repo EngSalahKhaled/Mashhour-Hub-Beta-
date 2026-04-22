@@ -98,6 +98,7 @@
         crmForms.forEach(form => {
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
                 
                 // Change button to loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
@@ -111,6 +112,22 @@
                 const formData = new FormData(this);
                 const payload = {};
                 
+                // --- reCAPTCHA Enterprise Execution ---
+                const RECAPTCHA_SITE_KEY = '6LcOBhAsAAAAAIxIpzP5txnOSfcBKHdfPG5cYAPv';
+                try {
+                    const token = await new Promise((resolve) => {
+                        grecaptcha.enterprise.ready(() => {
+                            grecaptcha.enterprise.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then(resolve);
+                        });
+                    });
+                    payload.recaptchaToken = token;
+                } catch (err) {
+                    console.error('reCAPTCHA Enterprise execution failed', err);
+                    showPromtToast(isAr ? "فشل التحقق من الأمان. يرجى إعادة المحاولة." : "Security verification failed. Please try again.", "error");
+                    if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
+                    return;
+                }
+
                 // Add base fields
                 for (const [key, value] of formData.entries()) {
                     payload[key] = value;
@@ -135,7 +152,6 @@
                 const success = await submitToApi(API_URL, payload);
 
                 if (success) {
-                    const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
                     if (formType === 'Subscribers') {
                         showPromtToast(isAr ? "تم الاشتراك بنجاح" : "Successfully subscribed", "success");
                         e.target.reset();
@@ -156,7 +172,6 @@
                         window.location.href = "thank-you.html";
                     }
                 } else {
-                    const isAr = document.documentElement.lang && document.documentElement.lang.startsWith("ar");
                     showPromtToast(isAr ? "حدث خطأ أثناء إرسال النموذج. يرجى المحاولة مرة أخرى." : "There was an error submitting the form. Please try again.", "error");
                     if(submitBtn) { submitBtn.innerText = originalBtnText; submitBtn.disabled = false; }
                 }

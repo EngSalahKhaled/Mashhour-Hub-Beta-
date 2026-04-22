@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات الملف الشخصي | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; background: #07152b; }
+        .portal-sidebar { background: rgba(10, 25, 47, 0.8); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); padding: 30px; }
+        .portal-main { padding: 40px; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 15px; color: #94a3b8; text-decoration: none; border-radius: 12px; transition: 0.3s; margin-bottom: 5px; }
+        .nav-item:hover, .nav-item.active { background: rgba(244,205,85,0.1); color: #f4cd55; }
+        
+        .profile-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; max-width: 800px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 0.9rem; }
+        .input-group input, .input-group textarea { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; outline: none; }
+        .input-group input:focus { border-color: #f4cd55; }
+    </style>
+</head>
+<body class="platform-page">
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="text-center mb-10">
+                <img src="../assets/images/icons/logo.png" alt="Logo" style="height: 40px;">
+            </div>
+            <nav>
+                <a href="dashboard.html" class="nav-item"><i>🏠</i> الرئيسية</a>
+                <a href="projects.html" class="nav-item"><i>📁</i> مشاريعي</a>
+                <a href="profile-settings.html" class="nav-item active"><i>⚙️</i> الإعدادات</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="portal-main">
+            <h2 style="color: #fff; margin-bottom: 30px;">إعدادات الملف الشخصي</h2>
+
+            <div class="profile-card">
+                <form id="profile-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>الاسم الكامل</label>
+                            <input type="text" name="name" id="field-name" required>
+                        </div>
+                        <div class="input-group">
+                            <label>رقم الهاتف</label>
+                            <input type="text" name="phone" id="field-phone">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>نبذة تعريفية (Bio)</label>
+                        <textarea name="bio" id="field-bio" rows="4" placeholder="اكتب نبذة عنك أو عن شركتك..."></textarea>
+                    </div>
+
+                    <div id="influencer-fields" style="display: none;">
+                        <h4 style="color: #f4cd55; margin: 20px 0;">روابط التواصل الاجتماعي</h4>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label>إنستقرام</label>
+                                <input type="text" name="instagram" placeholder="@username">
+                            </div>
+                            <div class="input-group">
+                                <label>سناب شات</label>
+                                <input type="text" name="snapchat" placeholder="@username">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="client-fields" style="display: none;">
+                        <h4 style="color: #f4cd55; margin: 20px 0;">بيانات الشركة</h4>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label>اسم الشركة</label>
+                                <input type="text" name="companyName">
+                            </div>
+                            <div class="input-group">
+                                <label>الموقع الإلكتروني</label>
+                                <input type="text" name="website" placeholder="https://example.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button type="submit" class="button button-gold" style="width: 200px;">حفظ التغييرات</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/portal-dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const portalUser = JSON.parse(localStorage.getItem('portalUser'));
+            if (portalUser) {
+                document.getElementById('field-name').value = portalUser.name || '';
+                if (portalUser.role === 'influencer') {
+                    document.getElementById('influencer-fields').style.display = 'block';
+                } else {
+                    document.getElementById('client-fields').style.display = 'block';
+                }
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alert('جاري حفظ البيانات...');
+            // API Call logic here
+        });
+    </script>
+</body>
+</html>

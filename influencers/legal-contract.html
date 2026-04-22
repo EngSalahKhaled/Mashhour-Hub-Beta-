@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اتفاقية الشراكة والتعاقد | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0a0a0b; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        .contract-container { max-width: 900px; margin: 50px auto; padding: 50px; background: rgba(20,20,22,0.8); border-radius: 35px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
+        
+        .contract-body { 
+            height: 500px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 20px; padding: 30px; 
+            margin-bottom: 30px; font-size: 0.9rem; line-height: 2; color: #94a3b8; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .contract-body h2 { color: #fff; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top: 30px; }
+        
+        .signature-box { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; }
+        .check-group { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 25px; }
+        .check-group input { width: 22px; height: 22px; cursor: pointer; accent-color: #8b5cf6; }
+
+        .btn-sign { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: #fff; width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); font-size: 1.1rem; }
+        .btn-sign:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+    </style>
+</head>
+<body>
+    <div class="contract-container">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <img src="../assets/images/icons/logo.png" style="height: 45px; margin-bottom: 15px;">
+            <h1 style="font-weight: 800; margin: 0;">اتفاقية تقديم خدمات (مشهور هب)</h1>
+            <p style="color: #8b5cf6; font-weight: 700; margin-top: 10px;">عقد إلكتروني ملزم قانونياً</p>
+        </div>
+
+        <div class="contract-body">
+            <p>يتم إبرام هذا العقد بين منصة **مشهور هب** (المشار إليها بـ "المنصة") وبين **المؤثر / صانع المحتوى** (المشار إليه بـ "الطرف الثاني")، وفقاً للشروط والأحكام التالية:</p>
+
+            <h2>1. طبيعة العلاقة</h2>
+            <p>تعمل المنصة كوسيط تقني وتجاري يربط الطرف الثاني بالعملاء والشركات. الطرف الثاني مسؤول مسؤولية كاملة عن جودة ومصداقية المحتوى المقدم.</p>
+
+            <h2>2. عمولة المنصة</h2>
+            <p>يقر الطرف الثاني ويوافق على استقطاع نسبة **15%** من إجمالي قيمة كل عملية بيع (دورة، استشارة، تغطية، أو إعلان) تتم من خلال المنصة كرسوم إدارية وتقنية.</p>
+
+            <h2>3. تحصيل الأرباح</h2>
+            <p>لا يتم تحرير الأرباح للطرف الثاني إلا بعد تأكيد "إتمام التنفيذ" من قبل العميل أو الإدارة. يحق للمنصة تجميد الأرباح في حال وجود شكاوى جدية قيد التحقيق.</p>
+
+            <h2>4. النزاهة والخصوصية</h2>
+            <p>يتعهد الطرف الثاني بالحفاظ على خصوصية بيانات العملاء وعدم التواصل معهم خارج المنصة لإتمام عمليات تجارية بديلة. أي إخلال بذلك يعرض الحساب للإغلاق النهائي والملاحقة.</p>
+
+            <h2>5. الاختصاص القضائي</h2>
+            <p>تخضع هذه الاتفاقية وتفسر وفقاً للقوانين المعمول بها في **دولة الكويت**. وتختص **محاكم الكويت** حصرياً بالنظر في أي نزاع قد ينشأ عن تنفيذ أو تفسير هذا العقد.</p>
+
+            <h2>6. الموافقة الإلكترونية</h2>
+            <p>يعد النقر على زر "أوافق وأوقع" بمثابة توقيع إلكتروني ملزم قانونياً للطرفين وله ذات الأثر القانوني للتوقيع اليدوي.</p>
+        </div>
+
+        <div class="signature-box">
+            <div class="check-group">
+                <input type="checkbox" id="agree-all">
+                <label for="agree-all">أقر بصفتي الطرف الثاني أنني قرأت كافة الشروط والأحكام وأوافق على عمولة المنصة والالتزام بالقوانين المعمول بها في دولة الكويت.</label>
+            </div>
+            <button class="btn-sign" id="sign-btn" disabled onclick="signContract()">أوافق وأوقع العقد إلكترونياً ✍️</button>
+        </div>
+    </div>
+
+    <script>
+        const check = document.getElementById('agree-all');
+        const btn = document.getElementById('sign-btn');
+        
+        check.addEventListener('change', () => {
+            btn.disabled = !check.checked;
+        });
+
+        function signContract() {
+            btn.innerHTML = 'جاري التوثيق الرقمي...';
+            btn.disabled = true;
+            setTimeout(() => {
+                alert('تم توقيع العقد بنجاح! مرحباً بك كشريك رسمي في مشهور هب. سيتم توجيهك الآن للوحة التحكم.');
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

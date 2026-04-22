@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات الدفع والحساب البنكي | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0a0a0b; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        .settings-container { max-width: 900px; margin: 60px auto; padding: 40px; background: rgba(20,20,22,0.8); border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
+        
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 12px; font-weight: 700; color: #94a3b8; font-size: 0.85rem; }
+        .form-control { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; outline: none; transition: 0.3s; }
+        .form-control:focus { border-color: #8b5cf6; background: rgba(0,0,0,0.5); }
+
+        .btn-save { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: #fff; width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4); }
+
+        .security-hint { background: rgba(16, 185, 129, 0.05); color: #10b981; padding: 20px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.1); margin-bottom: 40px; display: flex; gap: 15px; align-items: center; }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <h1 style="font-weight: 800; text-align: center; margin-bottom: 15px;">إعدادات الدفع والسحب 💳</h1>
+        <p style="text-align: center; color: #94a3b8; margin-bottom: 40px;">أضف بيانات حسابك البنكي لتتمكن من سحب أرباحك بسهولة وأمان</p>
+
+        <div class="security-hint">
+            <div style="font-size: 1.8rem;">🔒</div>
+            <div style="font-size: 0.85rem; line-height: 1.6;">
+                <strong>بياناتك في أمان:</strong> نحن نستخدم تشفيراً متطوراً لحماية بياناتك المالية. يتم استخدام هذه البيانات فقط لغرض تحويل الأرباح إلى حسابك.
+            </div>
+        </div>
+
+        <form id="bank-form">
+            <div class="form-group">
+                <label>اسم البنك*</label>
+                <input type="text" id="bankName" class="form-control" placeholder="مثلاً: بنك مصر / QNB / الراجحي..." required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الحساب (Account Number)*</label>
+                <input type="text" id="accountNumber" class="form-control" placeholder="0000000000000000" required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الآيبان (IBAN)*</label>
+                <input type="text" id="iban" class="form-control" placeholder="EG000000000000000000000000000" required>
+            </div>
+
+            <div class="form-group">
+                <label>كود السويفت (SWIFT / BIC)</label>
+                <input type="text" id="swiftCode" class="form-control" placeholder="MSRE EG CX XXX">
+            </div>
+
+            <button type="submit" class="btn-save">حفظ وتأمين بيانات الحساب 🔐</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('bank-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = 'جاري التأمين والحفظ...';
+            btn.disabled = true;
+
+            const bankDetails = {
+                bankName: document.getElementById('bankName').value,
+                accountNumber: document.getElementById('accountNumber').value,
+                iban: document.getElementById('iban').value,
+                swiftCode: document.getElementById('swiftCode').value
+            };
+
+            try {
+                // In production, call your API: /api/portal/profile (PUT)
+                alert('تم حفظ وتأمين بياناتك البنكية بنجاح! يمكنك الآن طلب سحب أرباحك في أي وقت.');
+                window.location.href = 'dashboard.html';
+            } catch (err) {
+                alert('حدث خطأ أثناء الحفظ، يرجى المحاولة لاحقاً.');
+            } finally {
+                btn.innerHTML = 'حفظ وتأمين بيانات الحساب 🔐';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

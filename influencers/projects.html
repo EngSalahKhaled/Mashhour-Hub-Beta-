@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاريعي | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; background: #07152b; }
+        .portal-sidebar { background: rgba(10, 25, 47, 0.8); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); padding: 30px; }
+        .portal-main { padding: 40px; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 15px; color: #94a3b8; text-decoration: none; border-radius: 12px; transition: 0.3s; margin-bottom: 5px; }
+        .nav-item:hover, .nav-item.active { background: rgba(244,205,85,0.1); color: #f4cd55; }
+        
+        .project-row { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
+        .status-pending { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .status-active { background: rgba(16,185,129,0.1); color: #10b981; }
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; width: 100px; margin-top: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #f4cd55; }
+    </style>
+</head>
+<body class="platform-page">
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="text-center mb-10">
+                <img src="../assets/images/icons/logo.png" alt="Logo" style="height: 40px;">
+            </div>
+            <nav>
+                <a href="dashboard.html" class="nav-item"><i>🏠</i> الرئيسية</a>
+                <a href="projects.html" class="nav-item active"><i>📁</i> مشاريعي</a>
+                <a href="profile-settings.html" class="nav-item"><i>⚙️</i> الإعدادات</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="portal-main">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="color: #fff;">إدارة المشاريع</h2>
+                <button class="button button-gold" style="padding: 10px 20px;">+ مشروع جديد</button>
+            </header>
+
+            <div id="projects-list">
+                <!-- Sample Project -->
+                <div class="project-row">
+                    <div>
+                        <h4 style="color: #fff; margin: 0 0 5px 0;">حملة تسويقية - رمضان 2026</h4>
+                        <p style="color: #64748b; font-size: 0.85rem; margin: 0;">العميل: شركة التقنية الحديثة</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <span class="status-badge status-active">قيد التنفيذ</span>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 65%;"></div></div>
+                        <span style="font-size: 0.7rem; color: #94a3b8;">65% مكتمل</span>
+                    </div>
+                    <div>
+                        <button class="ghost-button" style="padding: 8px 15px;">عرض التفاصيل</button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 60px; text-align: center; color: #94a3b8; border-style: dashed;">
+                    <i>📁</i>
+                    <p>لا توجد مشاريع أخرى حالياً. ابدأ مشروعاً جديداً للتعاون مع المشاهير.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-dashboard.js"></script>
+</body>
+</html>

@@ -72,6 +72,19 @@ app.use('/api/analytics',     require('./routes/analytics'));
 app.use('/api/users',     require('./routes/users'));
 app.use('/api/settings',  require('./routes/settings'));
 app.use('/api/media',     require('./routes/media'));
+app.use('/api/logs',      require('./routes/logs'));
+app.use('/api/influencers', require('./routes/influencers'));
+app.use('/api/services',    require('./routes/services'));
+app.use('/api/sitemap',     require('./routes/sitemap'));
+app.use('/api/auth/portal', require('./routes/portalAuth'));
+app.use('/api/portal/profile', require('./routes/portalProfiles'));
+app.use('/api/portal/projects', require('./routes/portalProjects'));
+app.use('/api/portal/sales', require('./routes/portalSales'));
+app.use('/api/portal/apps',  require('./routes/portalApps'));
+app.use('/api/portal/academy', require('./routes/portalAcademy'));
+app.use('/api/ai',             require('./routes/ai'));
+app.use('/api/portal/notifications', require('./routes/portalNotifications'));
+app.use('/api/super-admin',          require('./routes/superAdmin'));
 
 // ERP Modules
 app.use('/api/erp/clients',    require('./routes/erp/clients'));

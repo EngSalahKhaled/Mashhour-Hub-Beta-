@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>باقات الأكاديمية | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        :root {
+            --gold: #f4cd55;
+            --gold-dark: #c79e2c;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body { background: #07070a; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        
+        .pricing-section { padding: 140px 20px 100px; position: relative; overflow: hidden; }
+        .pricing-section::before {
+            content: ''; position: absolute; top: -10%; left: -10%; width: 40%; height: 40%;
+            background: radial-gradient(circle, rgba(244, 205, 85, 0.05) 0%, transparent 70%);
+            filter: blur(100px); z-index: 0;
+        }
+
+        .pricing-header { text-align: center; margin-bottom: 80px; position: relative; z-index: 1; }
+        .pricing-header h1 { font-weight: 800; font-size: 3.5rem; margin-bottom: 24px; letter-spacing: -1px; }
+        .pricing-header p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .pricing-grid { 
+            display: grid !important; 
+            grid-template-columns: repeat(4, 1fr) !important; 
+            gap: 20px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 1;
+        }
+
+        @media (max-width: 1100px) {
+            .pricing-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        @media (max-width: 600px) {
+            .pricing-grid { grid-template-columns: 1fr !important; }
+        }
+        
+        .price-card { 
+            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 40px; padding: 50px 35px; border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); position: relative;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .price-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(244, 205, 85, 0.05) 0%, transparent 100%);
+            opacity: 0; transition: 0.5s;
+        }
+        .price-card:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            border-color: rgba(244, 205, 85, 0.3);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+        }
+        .price-card:hover::before { opacity: 1; }
+
+        .price-card.popular { 
+            border: 2px solid var(--gold);
+            background: rgba(244, 205, 85, 0.02);
+        }
+        .popular-badge { 
+            position: absolute; top: 25px; left: 35px; 
+            background: var(--gold); color: #000; padding: 6px 16px; 
+            border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+            box-shadow: 0 10px 20px rgba(244, 205, 85, 0.2);
+        }
+
+        .plan-name { font-weight: 800; font-size: 1.8rem; margin-bottom: 30px; margin-top: 20px; }
+        
+        .feature-list { list-style: none; padding: 0; margin: 0 0 50px; flex: 1; }
+        .feature-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; font-size: 0.95rem; color: #cbd5e1; line-height: 1.4; }
+        .feature-item i { color: var(--gold); font-size: 1.1rem; }
+
+        .price-box { margin-bottom: 40px; }
+        .old-price { text-decoration: line-through; color: #64748b; font-size: 1.1rem; display: block; margin-bottom: 4px; }
+        .current-price { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1; }
+        .price-suffix { font-size: 0.95rem; color: #64748b; margin-top: 8px; display: block; }
+
+        .btn-subscribe { 
+            display: block; text-align: center; text-decoration: none;
+            width: 100%; padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);
+            font-weight: 800; cursor: pointer; transition: 0.4s;
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .price-card:hover .btn-subscribe { 
+            background: var(--gold); color: #000; 
+            border-color: var(--gold);
+            box-shadow: 0 15px 30px rgba(244, 205, 85, 0.3);
+        }
+        .price-card.popular .btn-subscribe { background: rgba(244, 205, 85, 0.1); border-color: var(--gold); color: var(--gold); }
+
+        .free-tag { 
+            color: var(--gold); font-size: 0.85rem; font-weight: 700; 
+            margin-top: 15px; display: flex; align-items: center; gap: 8px;
+            background: rgba(244, 205, 85, 0.1); padding: 8px 16px; border-radius: 12px; width: fit-content;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-header h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div data-platform-header></div>
+    
+    <main class="pricing-section">
+        <header class="pricing-header" data-aos="fade-up">
+            <h1>باقات مشهور أكاديمي</h1>
+            <p>استثمر في مستقبلك مع أفضل الدورات التدريبية المعتمدة بأسعار تنافسية عالمية.</p>
+        </header>
+
+        <div class="pricing-grid" data-cms="pricing-grid">
+            <!-- Free Plan -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-name">المجانية</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> الوصول لـ 10 دورات مجانية</li>
+                    <li class="feature-item"><i>✦</i> مشاهدة درس واحد يومياً</li>
+                    <li class="feature-item"><i>✦</i> مجتمع مشهور العام</li>
+                </ul>
+                <div class="price-box">
+                    <div class="current-price">0.0</div>
+                    <div class="price-suffix">ج.م / للأبد</div>
+                </div>
+                <a href="https://wa.me/96555377309?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D9%85%D8%AC%D8%A7%D9%86%D9%8A%D8%A9%20%D8%A8%D8%A3%D9%83%D8%A7%D8%AF%D9%8A%D9%85%D9%8A%D8%A9%20%D9%85%D8%B4%D9%87%D9%88%D8%B1." target="_blank" class="btn-subscribe">ابدأ الآن مجاناً</a>
+            </div>
+
+            <!-- Monthly -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-name">الشهري</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> الوصول لأكثر من 500 دورة</li>
+                    <li class="feature-item"><i>✦</i> شهادات معتمدة</li>
+                    <li class="feature-item"><i>✦</i> مشاهدة 5 دورات شهرياً</li>
+                    <li class="feature-item"><i>✦</i> التعلم في أي وقت وأي مكان</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">19.9 KWD</div>
+                    <div class="current-price">9.9</div>
+                    <div class="price-suffix">KWD / شهرياً</div>
+                    <span class="free-tag">🎁 7 أيام تجربة مجانية</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%D9%8A%D8%A9%20%D8%A8%D8%A3%D9%83%D8%A7%D8%AF%D9%8A%D9%85%D9%8A%D8%A9%20%D9%85%D8%B4%D9%87%D9%88%D8%B1." target="_blank" class="btn-subscribe">اشترك الآن</a>
+            </div>
+
+            <!-- Yearly (Popular) -->
+            <div class="price-card popular" data-aos="fade-up" data-aos-delay="300">
+                <div class="popular-badge">الأكثر توفيراً ✨</div>
+                <div class="plan-name">السنوي</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> الوصول لأكثر من 500 دورة</li>
+                    <li class="feature-item"><i>✦</i> شهادات معتمدة</li>
+                    <li class="feature-item"><i>✦</i> مشاهدة 10 دورات شهرياً</li>
+                    <li class="feature-item"><i>✦</i> التعلم في أي وقت وأي مكان</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">7 KWD</div>
+                    <div class="current-price">3.5</div>
+                    <div class="price-suffix">KWD / شهرياً (فاتورة سنوية)</div>
+                    <span class="free-tag">🎁 شهرين مجاناً</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B3%D9%86%D9%88%D9%8A%D8%A9%20%D8%A8%D8%A3%D9%83%D8%A7%D8%AF%D9%8A%D9%85%D9%8A%D8%A9%20%D9%85%D8%B4%D9%87%D9%88%D8%B1." target="_blank" class="btn-subscribe">اشترك الآن</a>
+            </div>
+
+            <!-- Unlimited -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="plan-name">غير محدود</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> الوصول لجميع الدورات</li>
+                    <li class="feature-item"><i>✦</i> شهادات معتمدة لا محدودة</li>
+                    <li class="feature-item"><i>✦</i> مشاهدة بلا حدود طوال العام</li>
+                    <li class="feature-item"><i>✦</i> أولوية الدعم الفني</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">10 KWD</div>
+                    <div class="current-price">5.5</div>
+                    <div class="price-suffix">KWD / شهرياً (فاتورة سنوية)</div>
+                    <span class="free-tag">🎁 4 أشهر مجاناً</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%BA%D9%8A%D8%B1%20%D8%A7%D9%84%D9%85%D8%AD%D8%AF%D9%88%D8%AF%D8%A9%20%D8%A8%D8%A3%D9%83%D8%A7%D8%AF%D9%8A%D9%85%D9%8A%D8%A9%20%D9%85%D8%B4%D9%87%D9%88%D8%B1." target="_blank" class="btn-subscribe">اشترك الآن</a>
+            </div>
+        </div>
+    </main>
+
+    <div data-platform-footer></div>
+
+    <script src="../assets/js/cms-bridge.js"></script>
+    <script src="../assets/js/mashhor-platform.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+    </script>
+</body>
+</html>

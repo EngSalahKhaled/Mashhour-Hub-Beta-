@@ -8,12 +8,14 @@ const AppError = require('../utils/AppError');
 
 // ─── GET /api/settings (Public — get global settings) ──────────────────────────
 router.get('/', asyncHandler(async (req, res) => {
-    const snapshot = await db.collection('site_settings').limit(1).get();
-    if (snapshot.empty) {
+    const docRef = db.collection('site_settings').doc('global');
+    const docSnap = await docRef.get();
+    
+    if (!docSnap.exists) {
         return res.json({ success: true, settings: {} });
     }
-    const doc = snapshot.docs[0];
-    res.json({ success: true, settings: { id: doc.id, ...doc.data() } });
+    
+    res.json({ success: true, settings: { id: docSnap.id, ...docSnap.data() } });
 }));
 
 // ─── PUT /api/settings/:id (Admin — update global settings) ───────────────────

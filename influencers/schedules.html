@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جداول المواعيد | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .schedule-card { background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .alert-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+        .alert-icon { color: #f97316; font-size: 1.2rem; }
+        
+        .table-res { width: 100%; border-collapse: collapse; }
+        .table-res th { text-align: right; padding: 12px; color: #64748b; font-size: 0.8rem; border-bottom: 1px solid #f1f5f9; }
+        .table-res td { padding: 15px 12px; font-size: 0.9rem; border-bottom: 1px solid #f8fafc; }
+        
+        .action-btn { background: none; border: none; cursor: pointer; opacity: 0.6; transition: 0.2s; padding: 5px; }
+        .action-btn:hover { opacity: 1; color: #3b82f6; }
+        .btn-delete:hover { color: #f43f5e; }
+        
+        .btn-add { background: #111; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link"><i>🏠</i> الرئيسية</a>
+                <a href="schedules.html" class="nav-link active"><i>📅</i> جداول المواعيد</a>
+                <a href="apps.html" class="nav-link"><i>🧩</i> التطبيقات</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h1 style="font-weight: 800;">جداول المواعيد</h1>
+                <button class="btn-add"><span>+</span> أضف جديد</button>
+            </div>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">جداول المواعيد تساعدك على تحديد مواعيد مختلفة لكل خدمة</p>
+
+            <div class="schedule-card">
+                <div class="alert-box">
+                    <span class="alert-icon">⚠️</span>
+                    <p style="font-size: 0.85rem; color: #9a3412;">لتحديد مواعيد مختلفة (مثلاً جلسات أونلاين وأخرى حضور شخصي)، يمكنك إنشاء جدول مواعيد واختياره في إعدادات المنتج أو الخدمة</p>
+                </div>
+
+                <table class="table-res">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>الاسم</th>
+                            <th>أيام العمل</th>
+                            <th>التوقيت الزمني</th>
+                            <th>خيارات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="font-weight: 600;">Default Schedule</td>
+                            <td>2</td>
+                            <td>آسيا / الكويت</td>
+                            <td>
+                                <button class="action-btn"><i>✏️</i></button>
+                                <button class="action-btn btn-delete"><i>🗑️</i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-dashboard.js"></script>
+</body>
+</html>

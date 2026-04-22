@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy Pricing | Mashhor Hub</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        :root {
+            --gold: #f4cd55;
+            --gold-dark: #c79e2c;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body { background: #07070a; font-family: 'Alexandria', sans-serif; color: #fff; margin: 0; }
+        
+        .pricing-section { padding: 140px 20px 100px; position: relative; overflow: hidden; }
+        .pricing-section::before {
+            content: ''; position: absolute; top: -10%; left: -10%; width: 40%; height: 40%;
+            background: radial-gradient(circle, rgba(244, 205, 85, 0.05) 0%, transparent 70%);
+            filter: blur(100px); z-index: 0;
+        }
+
+        .pricing-header { text-align: center; margin-bottom: 80px; position: relative; z-index: 1; }
+        .pricing-header h1 { font-weight: 800; font-size: 3.5rem; margin-bottom: 24px; letter-spacing: -1px; }
+        .pricing-header p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .pricing-grid { 
+            display: grid !important; 
+            grid-template-columns: repeat(4, 1fr) !important; 
+            gap: 20px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 1;
+        }
+
+        @media (max-width: 1100px) {
+            .pricing-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        @media (max-width: 600px) {
+            .pricing-grid { grid-template-columns: 1fr !important; }
+        }
+        
+        .price-card { 
+            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 40px; padding: 50px 35px; border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); position: relative;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .price-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(244, 205, 85, 0.05) 0%, transparent 100%);
+            opacity: 0; transition: 0.5s;
+        }
+        .price-card:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            border-color: rgba(244, 205, 85, 0.3);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+        }
+        .price-card:hover::before { opacity: 1; }
+
+        .price-card.popular { 
+            border: 2px solid var(--gold);
+            background: rgba(244, 205, 85, 0.02);
+        }
+        .popular-badge { 
+            position: absolute; top: 25px; left: 35px; 
+            background: var(--gold); color: #000; padding: 6px 16px; 
+            border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+            box-shadow: 0 10px 20px rgba(244, 205, 85, 0.2);
+        }
+
+        .plan-name { font-weight: 800; font-size: 1.8rem; margin-bottom: 30px; margin-top: 20px; }
+        
+        .feature-list { list-style: none; padding: 0; margin: 0 0 50px; flex: 1; }
+        .feature-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; font-size: 0.95rem; color: #cbd5e1; line-height: 1.4; }
+        .feature-item i { color: var(--gold); font-size: 1.1rem; }
+
+        .price-box { margin-bottom: 40px; }
+        .old-price { text-decoration: line-through; color: #64748b; font-size: 1.1rem; display: block; margin-bottom: 4px; }
+        .current-price { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1; }
+        .price-suffix { font-size: 0.95rem; color: #64748b; margin-top: 8px; display: block; }
+
+        .btn-subscribe { 
+            display: block; text-align: center; text-decoration: none;
+            width: 100%; padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);
+            font-weight: 800; cursor: pointer; transition: 0.4s;
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .price-card:hover .btn-subscribe { 
+            background: var(--gold); color: #000; 
+            border-color: var(--gold);
+            box-shadow: 0 15px 30px rgba(244, 205, 85, 0.3);
+        }
+        .price-card.popular .btn-subscribe { background: rgba(244, 205, 85, 0.1); border-color: var(--gold); color: var(--gold); }
+
+        .free-tag { 
+            color: var(--gold); font-size: 0.85rem; font-weight: 700; 
+            margin-top: 15px; display: flex; align-items: center; gap: 8px;
+            background: rgba(244, 205, 85, 0.1); padding: 8px 16px; border-radius: 12px; width: fit-content;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-header h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div data-platform-header></div>
+    
+    <main class="pricing-section">
+        <header class="pricing-header" data-aos="fade-up">
+            <h1>Academy Plans</h1>
+            <p>Invest in your future with the best certified training courses at globally competitive prices.</p>
+        </header>
+
+        <div class="pricing-grid" data-cms="pricing-grid">
+            <!-- Free Plan -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-name">Free</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> Access to 10 free courses</li>
+                    <li class="feature-item"><i>✦</i> Watch 1 lesson daily</li>
+                    <li class="feature-item"><i>✦</i> Mashhor General Community</li>
+                </ul>
+                <div class="price-box">
+                    <div class="current-price">0.0</div>
+                    <div class="price-suffix">KWD / Forever</div>
+                </div>
+                <a href="https://wa.me/96555377309?text=Hello%2C%20I%20would%20like%20to%20subscribe%20to%20the%20Free%20plan%20at%20Mashhor%20Academy." target="_blank" class="btn-subscribe">Start for Free</a>
+            </div>
+
+            <!-- Monthly -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-name">Monthly</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> Access to 500+ courses</li>
+                    <li class="feature-item"><i>✦</i> Certified certificates</li>
+                    <li class="feature-item"><i>✦</i> Watch 5 courses monthly</li>
+                    <li class="feature-item"><i>✦</i> Learn anytime, anywhere</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">19.9 KWD</div>
+                    <div class="current-price">9.9</div>
+                    <div class="price-suffix">KWD / month</div>
+                    <span class="free-tag">🎁 7 days free trial</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=Hello%2C%20I%20would%20like%20to%20subscribe%20to%20the%20Monthly%20plan%20at%20Mashhor%20Academy." target="_blank" class="btn-subscribe">Subscribe Now</a>
+            </div>
+
+            <!-- Yearly (Popular) -->
+            <div class="price-card popular" data-aos="fade-up" data-aos-delay="300">
+                <div class="popular-badge">Best Value ✨</div>
+                <div class="plan-name">Yearly</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> Access to 500+ courses</li>
+                    <li class="feature-item"><i>✦</i> Certified certificates</li>
+                    <li class="feature-item"><i>✦</i> Watch 10 courses monthly</li>
+                    <li class="feature-item"><i>✦</i> Learn anytime, anywhere</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">7 KWD</div>
+                    <div class="current-price">3.5</div>
+                    <div class="price-suffix">KWD / month (billed annually)</div>
+                    <span class="free-tag">🎁 2 months free</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=Hello%2C%20I%20would%20like%20to%20subscribe%20to%20the%20Yearly%20plan%20at%20Mashhor%20Academy." target="_blank" class="btn-subscribe">Subscribe Now</a>
+            </div>
+
+            <!-- Unlimited -->
+            <div class="price-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="plan-name">Unlimited</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i>✦</i> Full access to all courses</li>
+                    <li class="feature-item"><i>✦</i> Unlimited certificates</li>
+                    <li class="feature-item"><i>✦</i> Unlimited watching all year</li>
+                    <li class="feature-item"><i>✦</i> Priority support</li>
+                </ul>
+                <div class="price-box">
+                    <div class="old-price">10 KWD</div>
+                    <div class="current-price">5.5</div>
+                    <div class="price-suffix">KWD / month (billed annually)</div>
+                    <span class="free-tag">🎁 4 months free</span>
+                </div>
+                <a href="https://wa.me/96555377309?text=Hello%2C%20I%20would%20like%20to%20subscribe%20to%20the%20Unlimited%20plan%20at%20Mashhor%20Academy." target="_blank" class="btn-subscribe">Subscribe Now</a>
+            </div>
+        </div>
+    </main>
+
+    <div data-platform-footer></div>
+
+    <script src="../assets/js/cms-bridge.js"></script>
+    <script src="../assets/js/mashhor-platform.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+    </script>
+</body>
+</html>

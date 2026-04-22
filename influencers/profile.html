@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Profile | Mashhor Hub</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .profile-header { padding: 120px 0 60px; background: linear-gradient(to bottom, #0d1528, transparent); }
+        .profile-container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .profile-card-large { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 40px; padding: 60px; display: grid; grid-template-columns: 300px 1fr; gap: 60px; backdrop-filter: blur(20px); }
+        .profile-image-wrap img { width: 300px; height: 300px; object-fit: cover; border-radius: 30px; border: 4px solid var(--gold); }
+        .profile-content h1 { font-size: 3.5rem; margin-bottom: 8px; }
+        .profile-handle { color: var(--gold); font-size: 1.2rem; margin-bottom: 24px; font-family: var(--fs); }
+        .profile-bio { font-size: 1.1rem; line-height: 1.8; color: var(--muted); margin-bottom: 40px; }
+        @media (max-width: 800px) {
+            .profile-card-large { grid-template-columns: 1fr; text-align: center; padding: 40px 20px; }
+            .profile-image-wrap img { width: 200px; height: 200px; margin: 0 auto; }
+            .profile-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div data-platform-header></div>
+    
+    <main>
+        <section class="profile-header">
+            <div class="profile-container">
+                <a href="index.html" class="ghost-button" style="margin-bottom: 40px; display: inline-flex;">← Back to Directory</a>
+                <div class="profile-card-large">
+                    <div class="profile-image-wrap">
+                        <img id="inf-image" src="../assets/images/placeholder.jpg" alt="Profile Image">
+                    </div>
+                    <div class="profile-content">
+                        <h1 id="inf-name">Loading...</h1>
+                        <p id="inf-handle" class="profile-handle">@username</p>
+                        <p id="inf-bio" class="profile-bio">Fetching profile details...</p>
+                        <div class="hero-actions">
+                            <a href="../contact.html" class="button button-gold">Book this Creator</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div data-platform-footer></div>
+
+    <script src="../assets/js/mashhor-platform.js"></script>
+    <script src="../assets/js/cms-bridge.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id) {
+                CMSBridge.renderSingleInfluencer(id);
+            }
+        });
+    </script>
+</body>
+</html>

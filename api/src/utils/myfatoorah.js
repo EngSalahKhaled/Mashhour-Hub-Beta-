@@ -1,7 +1,5 @@
 const AppError = require('./AppError');
-
 const { db } = require('../config/firebase');
-const AppError = require('./AppError');
 
 let BASE_URL = process.env.MYFATOORAH_BASE_URL || 'https://apitest.myfatoorah.com';
 let API_KEY = process.env.MYFATOORAH_API_KEY;

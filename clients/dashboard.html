@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم العميل | مشهور هب</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-layout { display: flex; min-height: 100vh; background: #f8f9fa; }
+        .portal-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; }
+        .portal-main { flex: 1; padding: 40px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px; color: #1e293b; text-decoration: none; border-radius: 10px; transition: 0.2s; }
+        .nav-link.active { background: #f1f5f9; color: #3b82f6; font-weight: 600; }
+
+        .courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .course-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .course-banner { height: 150px; background: #0f172a; position: relative; }
+        .course-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .course-body { padding: 20px; }
+        .course-title { font-weight: 800; font-size: 1rem; margin-bottom: 10px; }
+        .course-meta { font-size: 0.8rem; color: #94a3b8; margin-bottom: 15px; }
+        .btn-watch { width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="portal-layout">
+        <!-- Sidebar -->
+        <aside class="portal-sidebar">
+            <div class="mb-8"><img src="../assets/images/icons/logo.png" alt="Logo" style="height: 35px;"></div>
+            <nav>
+                <a href="dashboard.html" class="nav-link active"><i>📺</i> دوراتي التعليمية</a>
+                <a href="sessions.html" class="nav-link"><i>📅</i> مواعيدي</a>
+                <a href="settings.html" class="nav-link"><i>👤</i> حسابي</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="portal-main">
+            <h1 style="font-weight: 800; margin-bottom: 5px;">مرحباً بك في مشهور هب</h1>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">هنا تجد كافة الدورات والخدمات التي قمت بشرائها</p>
+
+            <div class="courses-grid" id="purchased-list">
+                <!-- Example Course -->
+                <div class="course-card">
+                    <div class="course-banner">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3">
+                    </div>
+                    <div class="course-body">
+                        <div class="course-title">دورة الذكاء الاصطناعي الشاملة</div>
+                        <div class="course-meta">بواسطة: صلاح خالد • 24 درس</div>
+                        <button class="btn-watch">بدء المشاهدة ▶️</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/portal-core.js"></script>
+</body>
+</html>

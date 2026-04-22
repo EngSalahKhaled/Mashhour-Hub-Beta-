@@ -65,6 +65,36 @@ const DATA = {
       imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80',
       price: '49 KWD'
     }
+  ],
+  influencers: [
+    {
+      name: 'Nora Al-Sabah',
+      handle: '@nora.alsabah',
+      category: 'lifestyle',
+      country: 'Kuwait',
+      followers: '1.2M',
+      engagement: '4.8',
+      bio: 'Premium lifestyle and luxury brand ambassador in Kuwait.',
+      imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      name: 'Ahmed Hassan',
+      handle: '@ahmed.tech',
+      category: 'tech',
+      country: 'Kuwait',
+      followers: '890K',
+      engagement: '5.2',
+      bio: 'Leading tech reviewer and gadget unboxer in the GCC.',
+      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80'
+    }
+  ],
+  site_settings: [
+    {
+      id: 'global',
+      maintenanceMode: false,
+      siteTitle: 'Mashhor Hub | The Elite Creator Network',
+      announcementText: '🚀 Welcome to the new Mashhor Hub! Explore our vetted influencers.'
+    }
   ]
 };
 
@@ -83,11 +113,20 @@ async function seed() {
     }
 
     for (const item of items) {
-      await collectionRef.add({
-        ...item,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+      const { id, ...data } = item;
+      if (id) {
+        await collectionRef.doc(id).set({
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      } else {
+        await collectionRef.add({
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
     }
   }
   

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مراجعة المحتوى | مشهور هب الأدمن</title>
+    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f8fafc; font-family: 'Alexandria', sans-serif; margin: 0; }
+        .admin-sidebar { width: 280px; height: 100vh; background: #1e293b; color: #fff; position: fixed; padding: 30px; }
+        .admin-main { margin-right: 280px; padding: 40px; }
+        .admin-nav { margin-top: 50px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 15px; color: #94a3b8; text-decoration: none; border-radius: 12px; transition: 0.2s; margin-bottom: 10px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: #fff; }
+        
+        .moderation-card { background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; gap: 20px; align-items: center; border: 1px solid #f1f5f9; }
+        .course-thumb { width: 120px; height: 80px; border-radius: 12px; background: #f1f5f9; overflow: hidden; }
+        .course-info { flex: 1; }
+        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .status-pending { background: #fff7ed; color: #c2410c; }
+        
+        .btn-approve { background: #16a34a; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        .btn-reject { background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <aside class="admin-sidebar">
+        <img src="../assets/images/icons/logo.png" style="height: 40px; margin-bottom: 50px; filter: brightness(0) invert(1);">
+        <nav class="admin-nav">
+            <a href="index.html" class="nav-item"><i>📊</i> الرئيسية</a>
+            <a href="withdrawals.html" class="nav-item"><i>💰</i> طلبات السحب</a>
+            <a href="moderation.html" class="nav-item active"><i>🛡️</i> مراجعة المحتوى</a>
+            <a href="verifications.html" class="nav-item"><i>✓</i> توثيق الحسابات</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <h1 style="font-weight: 800; margin-bottom: 30px;">قائمة مراجعة المحتوى الجديد</h1>
+
+        <div id="moderation-list">
+            <!-- Mock Content for Demo -->
+            <div class="moderation-card">
+                <div class="course-thumb"><img src="https://via.placeholder.com/120x80" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="course-info">
+                    <h3 style="margin: 0 0 5px; font-weight: 800;">دورة احتراف التصميم بالفوتوشوب</h3>
+                    <div style="font-size: 0.85rem; color: #64748b;">بواسطة: أحمد الرفاعي | القسم: جرافيك ديزاين</div>
+                    <div style="margin-top: 10px;"><span class="status-badge status-pending">في انتظار المراجعة ⏳</span></div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="button button-outline" onclick="viewCurriculum()">معاينة المنهج 📖</button>
+                    <button class="btn-approve" onclick="approve('course_123')">موافقة ✅</button>
+                    <button class="btn-reject" onclick="reject('course_123')">رفض ❌</button>
+                </div>
+            </div>
+
+            <div class="moderation-card">
+                <div class="course-thumb"><img src="https://via.placeholder.com/120x80" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="course-info">
+                    <h3 style="margin: 0 0 5px; font-weight: 800;">أساسيات العملات الرقمية</h3>
+                    <div style="font-size: 0.85rem; color: #64748b;">بواسطة: محمد رضا | القسم: تداول</div>
+                    <div style="margin-top: 10px;"><span class="status-badge status-pending">في انتظار المراجعة ⏳</span></div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="button button-outline">معاينة المنهج 📖</button>
+                    <button class="btn-approve">موافقة ✅</button>
+                    <button class="btn-reject">رفض ❌</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function approve(id) {
+            if(confirm('هل أنت متأكد من الموافقة على نشر هذه الدورة؟')) {
+                alert('تم تفعيل الدورة ونشرها في المتجر العام بنجاح! سيتم إخطار المؤثر عبر البريد.');
+            }
+        }
+        function viewCurriculum() {
+            alert('فتح معاينة المنهج الدراسي...');
+        }
+    </script>
+</body>
+</html>
