@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   User, Lock, Bell, Palette, Globe, Shield, Save,
   Loader2, Eye, EyeOff, Check, ChevronRight, Sun, Moon,
-  Mail, Phone, Building2, AlertCircle, Construction, RefreshCw,
+  Mail, Phone, Building2, AlertCircle, Construction, RefreshCw, CreditCard, Database,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -705,6 +705,109 @@ function CacheBusterSection() {
   );
 }
 
+// ─── MyFatoorah Payment Gateway Section ───────────────────────────────────────
+function MyFatoorahSection() {
+  const [form, setForm] = useState({
+    baseUrl: '', apiKey: '', webhookSecret: ''
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving]   = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'site_settings', 'payment_gateway'));
+        if (snap.exists()) setForm(snap.data());
+      } catch {} finally { setLoading(false); }
+    }; load();
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await setDoc(doc(db, 'site_settings', 'payment_gateway'), form, { merge: true });
+      toast.success('Payment settings updated ✓');
+    } catch { toast.error('Failed to save settings'); }
+    finally { setSaving(false); }
+  };
+
+  if (loading) return null;
+
+  return (
+    <SectionCard icon={CreditCard} title="Payment Gateway (MyFatoorah)" color={BRAND.purple}>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>API Base URL</label>
+          <input className="input-field" value={form.baseUrl} onChange={e => setForm(p => ({...p, baseUrl: e.target.value}))} placeholder="https://apitest.myfatoorah.com" />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>API Key</label>
+          <input className="input-field" type="password" value={form.apiKey} onChange={e => setForm(p => ({...p, apiKey: e.target.value}))} placeholder="Your MyFatoorah API Key" />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Webhook Secret</label>
+          <input className="input-field" type="password" value={form.webhookSecret} onChange={e => setForm(p => ({...p, webhookSecret: e.target.value}))} placeholder="For signature verification" />
+        </div>
+        <div className="pt-2">
+          <button onClick={handleSave} disabled={saving} className="btn-primary w-full">
+            {saving ? <><Loader2 size={16} className="animate-spin" /> Saving…</> : <><Save size={16} /> Save Payment Config</>}
+          </button>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
+// ─── Seed Sample Data Section ────────────────────────────────────────────────
+function SeedDataSection() {
+  const [seeding, setSeeding] = useState(false);
+
+  const seed = async () => {
+    if (!confirm('This will add professional sample data to your services, blog, and academy collections. Continue?')) return;
+    setSeeding(true);
+    try {
+      const DATA = {
+        services: [
+          { title: 'Digital Strategy & Growth', category: 'Consultancy', description: 'Custom-tailored digital roadmaps designed to scale your brand using data-driven insights and AI integration.', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
+          { title: 'Premium Content Production', category: 'Creative', description: 'High-end visual storytelling, including videography, photography, and high-impact social media assets.', imageUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' },
+          { title: 'Influencer Marketing 3.0', category: 'Marketing', description: 'Connecting your brand with authentic voices across the MENA region using our exclusive influencer network.', imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80' }
+        ],
+        blog: [
+          { title: 'The Rise of AI in MENA Digital Marketing', category: 'Technology', excerpt: 'How artificial intelligence is reshaping consumer behavior in Kuwait and beyond.', imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80', author: 'Mashhor Team' }
+        ],
+        academy: [
+          { title: 'Mastering Personal Branding', level: 'Intermediate', duration: '4 Hours', description: 'Learn how to build a powerful personal brand that attracts premium clients and opportunities.', imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80', price: '49 KWD' }
+        ]
+      };
+
+      for (const [col, items] of Object.entries(DATA)) {
+        for (const item of items) {
+          await addDocument(col, item);
+        }
+      }
+      toast.success('Sample data seeded successfully ✓');
+    } catch (e) {
+      toast.error('Seeding failed: ' + e.message);
+    } finally {
+      setSeeding(false);
+    }
+  };
+
+  return (
+    <SectionCard icon={Database} title="System Data" color={BRAND.emerald}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Seed Sample Content</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Populate your empty collections with professional content to see how the site looks.</p>
+        </div>
+        <button onClick={seed} disabled={seeding} className="btn-primary !bg-emerald-600 hover:!bg-emerald-500">
+          {seeding ? <Loader2 size={16} className="animate-spin" /> : <><Database size={16} /> Seed Data</>}
+        </button>
+      </div>
+    </SectionCard>
+  );
+}
+
 export default function SettingsPage() {
   const { user } = useAuth();
 
@@ -721,8 +824,10 @@ export default function SettingsPage() {
       {/* Sections */}
       <ProfileSection user={user} />
       <CompanyDetailsSection />
+      <MyFatoorahSection />
       <MaintenanceSection />
       <CacheBusterSection />
+      <SeedDataSection />
       <TwoFactorSection />
       <PasswordSection />
       <AppearanceSection />

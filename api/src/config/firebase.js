@@ -8,18 +8,24 @@ const admin = require('firebase-admin');
 //     strings — we must convert them to real newlines before passing to the SDK.
 
 if (!admin.apps.length) {
-    if (!process.env.FIREBASE_STORAGE_BUCKET) {
-        console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env. Storage bucket operations may fail.');
-    }
+    try {
+        if (!process.env.FIREBASE_STORAGE_BUCKET) {
+            console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env. Storage bucket operations may fail.');
+        }
 
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId:   process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-        }),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    });
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId:   process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            }),
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+        });
+        console.log('✅ Firebase Admin initialized successfully.');
+    } catch (error) {
+        console.error('❌ CRITICAL: Firebase Admin failed to initialize. Some features (Auth, RBAC) will be disabled.');
+        console.error('Reason:', error.message);
+    }
 }
 
 const db = admin.firestore();

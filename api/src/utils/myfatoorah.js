@@ -1,14 +1,30 @@
 const AppError = require('./AppError');
 
-const BASE_URL = process.env.MYFATOORAH_BASE_URL || 'https://apitest.myfatoorah.com';
-const API_KEY = process.env.MYFATOORAH_API_KEY;
+const { db } = require('../config/firebase');
+const AppError = require('./AppError');
+
+let BASE_URL = process.env.MYFATOORAH_BASE_URL || 'https://apitest.myfatoorah.com';
+let API_KEY = process.env.MYFATOORAH_API_KEY;
+
+// Helper to refresh config from Firestore
+const refreshConfig = async () => {
+    try {
+        const snap = await db.collection('site_settings').doc('payment_gateway').get();
+        if (snap.exists()) {
+            const data = snap.data();
+            if (data.baseUrl) BASE_URL = data.baseUrl;
+            if (data.apiKey) API_KEY = data.apiKey;
+        }
+    } catch (e) {
+        console.error('[MyFatoorah Config Error]', e.message);
+    }
+};
 
 /**
  * Initiates a payment session with MyFatoorah
- * @param {Object} paymentData - Invoice data
- * @returns {Object} Response from MyFatoorah containing InvoiceURL
  */
 const sendPayment = async (paymentData) => {
+    if (!API_KEY) await refreshConfig();
     if (!API_KEY) {
         throw new AppError('MyFatoorah API Key is not configured. Payments are currently unavailable.', 503);
     }
@@ -44,6 +60,7 @@ const sendPayment = async (paymentData) => {
  * @returns {Object} Verification response
  */
 const getPaymentStatus = async (paymentId) => {
+    if (!API_KEY) await refreshConfig();
     if (!API_KEY) {
         throw new AppError('MyFatoorah API Key is not configured.', 503);
     }

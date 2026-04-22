@@ -13,11 +13,24 @@ function ClientModal({ item, onClose, onSave }) {
     name: '', email: '', phone: '', company: '', taxId: '', address: '', notes: ''
   });
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+  const set = (k) => (e) => {
+    setForm((p) => ({ ...p, [k]: e.target.value }));
+    if (errors[k]) setErrors(prev => ({ ...prev, [k]: null }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim() || form.name.trim().length < 2) errs.name = 'Name must be at least 2 characters';
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Invalid email format';
+    if (form.phone && !/^[\d\s\+\-\(\)]{7,20}$/.test(form.phone)) errs.phone = 'Invalid phone number';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   const handleSave = async () => {
-    if (!form.name.trim()) return toast.error('Client name is required');
+    if (!validate()) return;
     setSaving(true);
     try {
       item?.id
@@ -80,7 +93,8 @@ function ClientModal({ item, onClose, onSave }) {
                 <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>
                   Client Name <span className="text-rose-500">*</span>
                 </label>
-                <input className="input-field" value={form.name} onChange={set('name')} placeholder="e.g. Ahmed Al-Rashidi" />
+                <input className={`input-field ${errors.name ? 'border-rose-500/50 bg-rose-500/5' : ''}`} value={form.name} onChange={set('name')} placeholder="e.g. Ahmed Al-Rashidi" />
+                {errors.name && <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1.5"><X size={12} /> {errors.name}</p>}
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Company</label>
@@ -91,11 +105,13 @@ function ClientModal({ item, onClose, onSave }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Email</label>
-                <input className="input-field" type="email" value={form.email} onChange={set('email')} placeholder="client@example.com" />
+                <input className={`input-field ${errors.email ? 'border-rose-500/50 bg-rose-500/5' : ''}`} type="email" value={form.email} onChange={set('email')} placeholder="client@example.com" />
+                {errors.email && <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1.5"><X size={12} /> {errors.email}</p>}
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Phone</label>
-                <input className="input-field" value={form.phone} onChange={set('phone')} placeholder="+965 ..." />
+                <input className={`input-field ${errors.phone ? 'border-rose-500/50 bg-rose-500/5' : ''}`} value={form.phone} onChange={set('phone')} placeholder="+965 ..." />
+                {errors.phone && <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1.5"><X size={12} /> {errors.phone}</p>}
               </div>
             </div>
 
