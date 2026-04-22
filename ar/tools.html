@@ -121,6 +121,7 @@
 </style>
 
 <script charset="UTF-8" src="../assets/js/mashhor-platform.js"></script>
+<script src="../assets/js/api-fetcher.js"></script>
 <script src="../assets/js/tools-data-ar.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -145,6 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'Productivity': 'var(--blue)',
         'Development': '#a371f7'
     };
+
+    // --- Dynamic Sync ---
+    if (window.MashhorAPI) {
+        MashhorAPI.sync('tools', 'ar', 'TOOLS_DATA_AR').then(synced => {
+            if (synced) renderGrid();
+        });
+    }
+
 
     // To display categories in Arabic but keep logic
     const uniqueCategories = [];

@@ -809,6 +809,7 @@
   <div data-platform-footer></div>
 </div>
 <script charset="UTF-8" src="../assets/js/mashhor-platform.js"></script>
+<script src="../assets/js/api-fetcher.js"></script>
 <script>
 function quickSearch(term) {
   const input = document.getElementById("platform-search-input");
@@ -841,7 +842,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 (() => {
-  const items = [
+  let items = [
     { title: "Services Hub", desc: "Overview of the full Mashhor Hub delivery stack across marketing, design, and AI.", href: "../services/index.html", tags: ["services", "marketing", "design", "growth"], cat: "services", icon: "⚙️", iconClass: "icon-services" },
     { title: "Mashhor AI", desc: "The ultimate Artificial Intelligence hub for integrated marketing and automation.", href: "../services/mashhor-ai.html", tags: ["ai", "artificial intelligence", "tech", "bots"], cat: "ai", icon: "🤖", iconClass: "icon-ai" },
     { title: "AI Agents & Chatbots", desc: "Autonomous language learning bots for customer support and engagement.", href: "../services/mashhor-ai/ai-chatbots.html", tags: ["bot", "agents", "support", "ai"], cat: "ai", icon: "💬", iconClass: "icon-ai" },
@@ -861,6 +862,14 @@ document.addEventListener('keydown', (e) => {
     { title: "AI & Automation", desc: "Smart workflows, AI systems, and process acceleration.", href: "../services/smart-automation.html", tags: ["ai", "automation", "systems", "workflow"], cat: "ai", icon: "⚡", iconClass: "icon-ai" },
     { title: "Contact", desc: "Reach Mashhor Hub directly for the next step.", href: "../contact.html", tags: ["contact", "whatsapp", "team", "email"], cat: "contact", icon: "📬", iconClass: "icon-contact" }
   ];
+
+  // Sync Search items from API
+  if (window.MashhorAPI) {
+    MashhorAPI.sync('search_items', (data) => {
+      if (data && data.length > 0) items = data;
+      render();
+    });
+  }
 
   const input = document.getElementById("platform-search-input");
   const results = document.getElementById("search-results");

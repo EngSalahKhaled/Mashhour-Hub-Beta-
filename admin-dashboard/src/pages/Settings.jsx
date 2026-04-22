@@ -13,7 +13,9 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from 'firebase/auth';
-import { auth } from '../services/firebase';
+import { auth, db } from '../services/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useEffect } from 'react';
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const BRAND = {
@@ -424,6 +426,144 @@ function NotificationsSection() {
   );
 }
 
+// ─── Company Details Section ──────────────────────────────────────────────────
+function CompanyDetailsSection() {
+  const [form, setForm] = useState({
+      name: 'Mashhor Hub',
+      email: 'hello@mashhor-hub.com',
+      phone: '+965 5537 7309',
+      hq: 'Kuwait City, Kuwait',
+      whatsapp: 'https://wa.me/96555377309'
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+      const load = async () => {
+          const snap = await getDoc(doc(db, 'settings', 'site_details'));
+          if (snap.exists()) setForm(snap.data());
+          setLoading(false);
+      };
+      load();
+  }, []);
+
+  const save = async () => {
+      setSaving(true);
+      try {
+          await setDoc(doc(db, 'settings', 'site_details'), form);
+          toast.success('Site details updated ✓');
+      } catch (e) { toast.error('Update failed'); }
+      finally { setSaving(false); }
+  };
+
+  if (loading) return null;
+
+  return (
+    <SectionCard icon={Building2} title="Global Site Details" color={BRAND.blue}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Field label="Agency Name">
+                <input className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+            </Field>
+            <Field label="Primary Email">
+                <input className="input-field" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+            </Field>
+            <Field label="Contact Phone">
+                <input className="input-field" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+            </Field>
+            <Field label="WhatsApp Link">
+                <input className="input-field" value={form.whatsapp} onChange={e => setForm({...form, whatsapp: e.target.value})} />
+            </Field>
+            <div className="md:col-span-2">
+                <Field label="HQ Location">
+                    <input className="input-field" value={form.hq} onChange={e => setForm({...form, hq: e.target.value})} />
+                </Field>
+            </div>
+        </div>
+        <div className="flex justify-end pt-2">
+            <button onClick={save} disabled={saving} className="btn-primary">
+                {saving ? <Loader2 className="animate-spin" /> : 'Update Details'}
+            </button>
+        </div>
+    </SectionCard>
+  );
+}
+
+// ─── Two-Factor Security Section ──────────────────────────────────────────────
+function TwoFactorSection() {
+  const [setupData, setSetupData] = useState(null);
+  const [token, setToken]       = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [enabled, setEnabled]     = useState(false);
+
+  const startSetup = async () => {
+      try {
+          const resp = await fetch('/api/auth/2fa/setup', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+          const result = await resp.json();
+          if (result.success) setSetupData(result);
+      } catch (e) { toast.error('Failed to start setup'); }
+  };
+
+  const confirmSetup = async () => {
+      setVerifying(true);
+      try {
+          const resp = await fetch('/api/auth/2fa/verify', {
+              method: 'POST',
+              headers: { 
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ token })
+          });
+          const result = await resp.json();
+          if (result.success) {
+              toast.success('2FA Enabled ✓');
+              setEnabled(true);
+              setSetupData(null);
+          } else {
+              toast.error(result.message);
+          }
+      } catch (e) { toast.error('Setup failed'); }
+      finally { setVerifying(false); }
+  };
+
+  return (
+    <SectionCard icon={Shield} title="Two-Factor Authentication (2FA)" color={BRAND.green}>
+      <div className="space-y-4">
+        {!enabled ? (
+            <>
+                <p className="text-sm text-muted">Protect your account with a second security layer. Use an app like Google Authenticator or Authy.</p>
+                {!setupData ? (
+                    <button onClick={startSetup} className="btn-primary">Enable 2FA</button>
+                ) : (
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
+                        <p className="text-xs font-semibold text-cyan-400">Step 1: Scan this QR Code</p>
+                        <img src={setupData.qrCode} alt="QR Code" className="mx-auto rounded-xl w-40 h-40" />
+                        <p className="text-[10px] text-center text-muted">Or enter manually: <code className="text-silver">{setupData.secret}</code></p>
+                        
+                        <p className="text-xs font-semibold text-cyan-400 pt-2">Step 2: Enter the 6-digit code</p>
+                        <div className="flex gap-2">
+                            <input className="input-field text-center text-lg tracking-[0.5em]" maxLength={6} value={token} onChange={e => setToken(e.target.value)} placeholder="000000" />
+                            <button onClick={confirmSetup} disabled={verifying} className="btn-primary">
+                                {verifying ? <Loader2 className="animate-spin" /> : 'Confirm'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </>
+        ) : (
+            <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                <Check size={20} className="text-emerald-500" />
+                <p className="text-sm font-semibold text-emerald-500">2FA is active on your account</p>
+            </div>
+        )}
+      </div>
+    </SectionCard>
+  );
+}
+
 // ─── System Info Section ──────────────────────────────────────────────────────
 function SystemInfoSection({ user }) {
   const info = [
@@ -478,6 +618,8 @@ export default function SettingsPage() {
 
       {/* Sections */}
       <ProfileSection user={user} />
+      <CompanyDetailsSection />
+      <TwoFactorSection />
       <PasswordSection />
       <AppearanceSection />
       <NotificationsSection />

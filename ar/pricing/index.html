@@ -185,6 +185,34 @@
   <div data-platform-footer></div>
 </div>
 <script charset="UTF-8" src="../../assets/js/mashhor-platform.js"></script>
+<script src="../../assets/js/api-fetcher.js"></script>
+<script>
+  if (window.MashhorAPI) {
+    MashhorAPI.sync('pricing', 'ar', 'PRICING_PACKAGES_AR').then(() => {
+        const data = window.PRICING_PACKAGES_AR;
+        if (!data || data.length === 0) return;
+
+        const grid = document.querySelector('.pricing-grid');
+        if (!grid) return;
+
+        grid.innerHTML = data.map(item => `
+            <article class="pricing-card ${item.isHighlighted ? 'highlight' : ''} reveal">
+                <span class="mini-label">${item.badge}</span>
+                <h3>${item.title}</h3>
+                <span class="price">${item.price}</span>
+                <ul class="list">
+                    ${item.features.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+                <a class="button ${item.isHighlighted ? 'button-gold' : ''}" href="../contact.html" style="margin-top: auto; text-align: center;">
+                    ${item.buttonText || 'ابدأ الآن'}
+                </a>
+            </article>
+        `).join('');
+
+        if (window.Reveal) window.Reveal.sync();
+    });
+  }
+</script>
 
 <script src="../../assets/js/protection.js"></script>
 </body>

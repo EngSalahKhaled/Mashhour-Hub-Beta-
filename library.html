@@ -181,14 +181,40 @@
       <article class="bento-card reveal" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(255,180,30,0.05) 0%, rgba(0,0,0,0) 100%); flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap;">
         <div class="b-content" style="max-width: 600px;">
           <div class="bento-icon" style="color: var(--gold); border-color: rgba(255,180,30,0.2);">📚</div>
-          <h3 style="margin-bottom: 10px;">Marketing Books Library</h3>
-          <p style="margin-bottom: 0;">Access our curated collection of fundamental marketing, strategy, psychology, and copywriting books directly from our cloud drive.</p>
+          <h3 style="margin-bottom: 10px;">Execution Resource Explorer</h3>
+          <p style="margin-bottom: 0;">Browse our full collection of 300+ operational guides, strategy PDFs, and technical references synced from the cloud.</p>
         </div>
         <div class="bento-actions" style="margin-top: 15px;">
-          <a href="https://drive.google.com/drive/folders/1WkZ8ehxBRaiHQpmGBii4wQt44HRLwJum" target="_blank" rel="noopener noreferrer" class="button" style="background: rgba(255,180,30,0.1); color: var(--gold); border: 1px solid rgba(255,180,30,0.3); border-radius: 100px; font-weight: 500; font-family: var(--fm); transition: all 0.3s ease;">Access Full Library ↗</a>
+           <button onclick="scrollToResources()" class="button" style="background: rgba(255,180,30,0.1); color: var(--gold); border: 1px solid rgba(255,180,30,0.3); border-radius: 100px; font-weight: 500; font-family: var(--fm); transition: all 0.3s ease;">Explore Below ↓</button>
         </div>
       </article>
     </div>
+
+    <!-- ═════ Dynamic Resource Explorer ═════ -->
+    <section id="resource-explorer" class="section reveal" style="padding-top: 40px; border-top: 1px solid var(--border);">
+      <div class="wrap">
+          <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+              <p class="eyebrow">Cloud Sync</p>
+              <h2>The Mashhor <span>Knowledge Base.</span></h2>
+          </div>
+          
+          <div class="lib-filters" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px;">
+              <button class="filter-chip active" data-group="all">All Assets</button>
+              <button class="filter-chip" data-group="strategy">Strategy</button>
+              <button class="filter-chip" data-group="tools">Tools</button>
+              <button class="filter-chip" data-group="content">Content</button>
+              <button class="filter-chip" data-group="foundation">Foundation</button>
+          </div>
+
+          <div id="lib-grid" class="resource-grid">
+              <!-- Dynamically populated -->
+          </div>
+          
+          <div id="lib-loader" style="text-align: center; padding: 40px;">
+              <div class="spinner" style="margin: 0 auto;"></div>
+          </div>
+      </div>
+    </section>
 
     <!-- Additional Inline Custom CSS for Library -->
     <style>
@@ -289,11 +315,120 @@
         opacity: 0.8; 
         transform: translateX(6px); 
       }
+
+      /* Resource Grid Styles */
+      .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .resource-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: 0.3s;
+        text-decoration: none;
+        color: inherit;
+      }
+      .resource-card:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: var(--gold);
+        transform: translateY(-4px);
+      }
+      .res-tag {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--gold);
+        background: rgba(255,180,30,0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: fit-content;
+      }
+      .res-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+      .res-lang {
+        margin-top: auto;
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+      .filter-chip {
+        padding: 8px 16px;
+        border-radius: 100px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--fm);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .filter-chip:hover, .filter-chip.active {
+        background: var(--gold);
+        color: #000;
+        border-color: var(--gold);
+      }
     </style>
   </main>
   <div data-platform-footer></div>
 </div>
 <script charset="UTF-8" src="assets/js/mashhor-platform.js"></script>
+<script src="assets/js/api-fetcher.js"></script>
+<script>
+  let resources = [];
+  let currentGroup = 'all';
+
+  function scrollToResources() {
+    document.getElementById('resource-explorer').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function renderResources() {
+    const grid = document.getElementById('lib-grid');
+    const filtered = resources.filter(r => currentGroup === 'all' || r.group === currentGroup);
+    
+    grid.innerHTML = filtered.map(r => `
+      <a href="${r.url}" target="_blank" class="resource-card reveal">
+        <span class="res-tag">${r.badgeEn || 'Reference'}</span>
+        <div class="res-title">${r.title}</div>
+        <div class="res-lang">🌐 ${r.languageEn || 'Arabic'}</div>
+      </a>
+    `).join('');
+    
+    document.getElementById('lib-loader').style.display = 'none';
+  }
+
+  // Sync from API
+  if (window.MashhorAPI) {
+    MashhorAPI.sync('library_items', (data) => {
+      // If we have API data, use it. Otherwise api-fetcher handles fallback to window.MR_LIBRARY_RESOURCES
+      if (data && data.length > 0) resources = data;
+      else resources = window.MR_LIBRARY_RESOURCES || [];
+      renderResources();
+    });
+  } else {
+    // Immediate fallback if API disabled
+    resources = window.MR_LIBRARY_RESOURCES || [];
+    renderResources();
+  }
+
+  // Filter Logic
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentGroup = btn.dataset.group;
+      renderResources();
+    });
+  });
+</script>
 
 <script src="./assets/js/protection.js"></script>
 <script src="./assets/js/crm.js"></script>

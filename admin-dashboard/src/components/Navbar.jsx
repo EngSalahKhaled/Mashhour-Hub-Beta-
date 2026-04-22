@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Bell, Globe, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,37 @@ const getInitials = (email = '') => email.slice(0, 2).toUpperCase();
 export default function Navbar({ onMenuClick, dir, onToggleDir }) {
   const { user }         = useAuth();
   const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // Real-time listener for notifications
+    const fetchNotifications = async () => {
+        try {
+            const resp = await fetch('/api/notifications', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            const result = await resp.json();
+            if (result.success) {
+                setNotifications(result.data);
+                setUnreadCount(result.data.filter(n => !n.read).length);
+            }
+        } catch (e) { console.error('Notify fail', e); }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000); // Polling every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const markAllRead = async () => {
+      await fetch('/api/notifications/clear-all', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNotifications(notifications.map(n => ({...n, read: true})));
+      setUnreadCount(0);
+  };
 
   return (
     <header
@@ -96,23 +127,56 @@ export default function Navbar({ onMenuClick, dir, onToggleDir }) {
         )}
 
         {/* Notification Bell */}
-        <button
-          className="relative flex items-center justify-center rounded-xl transition-all duration-200"
-          style={{
-            width: 38, height: 38,
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(99,179,237,0.1)',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-          }}
-        >
-          <Bell size={18} />
-          {/* Red dot */}
-          <span
-            className="absolute top-2 right-2 rounded-full"
-            style={{ width: 6, height: 6, background: '#f43f5e' }}
-          />
-        </button>
+        <div className="relative">
+            <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="relative flex items-center justify-center rounded-xl transition-all duration-200"
+            style={{
+                width: 38, height: 38,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(99,179,237,0.1)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+            }}
+            >
+            <Bell size={18} />
+            {unreadCount > 0 && (
+                <span
+                    className="absolute top-2 right-2 rounded-full"
+                    style={{ width: 8, height: 8, background: '#f43f5e', border: '2px solid #0d1528' }}
+                />
+            )}
+            </button>
+
+            {/* Notifications Dropdown */}
+            <AnimatePresence>
+                {showNotifications && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-80 glass-card p-4 shadow-2xl z-50 overflow-hidden"
+                        style={{ background: 'rgba(13, 21, 40, 0.98)', border: '1px solid rgba(99,179,237,0.15)' }}
+                    >
+                        <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                            <h4 className="text-sm font-bold">Notifications</h4>
+                            <button onClick={markAllRead} className="text-[10px] text-cyan-400 hover:underline">Mark all as read</button>
+                        </div>
+                        <div className="max-h-64 overflow-y-auto no-scrollbar space-y-3">
+                            {notifications.length === 0 ? (
+                                <p className="text-xs text-center py-4 text-muted">No new alerts</p>
+                            ) : notifications.map(notify => (
+                                <div key={notify.id} className={`p-3 rounded-lg text-xs transition-colors ${notify.read ? 'opacity-50' : 'bg-white/5 border border-white/5'}`}>
+                                    <p className="font-semibold mb-1">{notify.title}</p>
+                                    <p className="text-muted leading-relaxed">{notify.message}</p>
+                                    <p className="text-[9px] mt-2 text-cyan-500/50">{new Date(notify.createdAt).toLocaleDateString()}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
 
         {/* User Avatar */}
         <div className="flex items-center gap-2.5">

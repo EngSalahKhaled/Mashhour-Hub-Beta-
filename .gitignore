@@ -24,3 +24,5 @@ desktop.ini
 # Temp
 tmp_archive/
 _dev_tools_backup/
+tmp_extract/
+tmp_extract_2/

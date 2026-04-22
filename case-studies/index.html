@@ -204,6 +204,30 @@
   <div data-platform-footer></div>
 </div>
 <script charset="UTF-8" src="../assets/js/mashhor-platform.js"></script>
+<script src="../assets/js/api-fetcher.js"></script>
+<script>
+  if (window.MashhorAPI) {
+    MashhorAPI.sync('case_studies', (data) => {
+      if (!data || data.length === 0) return;
+      const grid = document.querySelector('.project-grid');
+      if (!grid) return;
+      
+      grid.innerHTML = data.map((item, idx) => `
+        <article class="project-card ${idx === 0 ? 'featured' : ''} reveal">
+          <div class="project-kicker">${item.kicker}</div>
+          <h3>${item.title}</h3>
+          <div class="case-metrics" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            ${(item.metrics || []).map(m => `<span class="case-chip">${m}</span>`).join('')}
+          </div>
+          <p>${item.desc}</p>
+          <a class="text-link" href="${item.url}">Read case study</a>
+        </article>
+      `).join('');
+      
+      if (window.Reveal) window.Reveal.sync();
+    });
+  }
+</script>
 
 <script src="../assets/js/protection.js"></script>
 </body>

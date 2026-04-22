@@ -17,6 +17,12 @@ const CmsAcademyPage  = lazy(() => import('../pages/CmsAcademy'));
 const UsersPage       = lazy(() => import('../pages/Users'));
 const SettingsPage    = lazy(() => import('../pages/Settings'));
 const WebsiteEditor   = lazy(() => import('../pages/WebsiteEditor'));
+const CmsToolsPage    = lazy(() => import('../pages/CmsTools'));
+const CmsLibraryPage  = lazy(() => import('../pages/CmsLibrary'));
+const CmsPromptsPage  = lazy(() => import('../pages/CmsPrompts'));
+const CmsVaultPage    = lazy(() => import('../pages/CmsVault'));
+const CmsPortfolioPage = lazy(() => import('../pages/CmsPortfolio'));
+const CmsPricingPage   = lazy(() => import('../pages/CmsPricing'));
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -95,6 +101,36 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
                 <Route path="/cms/academy" element={
                   <motion.div key="cms-academy" {...pageVariants}>
                     <CmsAcademyPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/tools" element={
+                  <motion.div key="cms-tools" {...pageVariants}>
+                    <CmsToolsPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/library" element={
+                  <motion.div key="cms-library" {...pageVariants}>
+                    <CmsLibraryPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/prompts" element={
+                  <motion.div key="cms-prompts" {...pageVariants}>
+                    <CmsPromptsPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/vault" element={
+                  <motion.div key="cms-vault" {...pageVariants}>
+                    <CmsVaultPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/portfolio" element={
+                  <motion.div key="cms-portfolio" {...pageVariants}>
+                    <CmsPortfolioPage />
+                  </motion.div>
+                }/>
+                <Route path="/cms/pricing" element={
+                  <motion.div key="cms-pricing" {...pageVariants}>
+                    <CmsPricingPage />
                   </motion.div>
                 }/>
                 <Route path="/users" element={

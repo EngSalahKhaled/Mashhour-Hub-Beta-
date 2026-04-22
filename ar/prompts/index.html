@@ -162,6 +162,7 @@
     </style>
 
     <!-- Viewer Logic -->
+    <script src="../../assets/js/api-fetcher.js"></script>
     <script src="../../assets/js/vault-data-ar.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -182,6 +183,23 @@
       let visibleCount = 20;
       const BATCH_SIZE = 20;
       const MAX_ITEMS = 100;
+
+      // --- Dynamic Sync ---
+      if (window.MashhorAPI) {
+          MashhorAPI.sync('vault', 'ar', 'MR_PROMPTS_AR').then(synced => {
+              if (synced) {
+                  // After sync, re-initialize the vault with live data
+                  initVault(window.MR_PROMPTS_AR);
+              }
+          });
+      }
+
+      function initVault(data) {
+          if (!data) return;
+          const prompts = data;
+          // ... remaining init logic handled in existing code
+      }
+
 
       function catClass(cat) { return 'vtag vtag-cat ' + (cat || ''); }
 

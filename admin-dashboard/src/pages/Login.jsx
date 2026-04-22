@@ -12,25 +12,61 @@ export default function LoginPage() {
   const [loading,  setLoading]  = useState(false);
   const { login }               = useAuth();
   const navigate                = useNavigate();
+  const [show2FA, setShow2FA]   = useState(false);
+  const [mfaCode, setMfaCode]   = useState('');
+  const [mfaLoading, setMfaLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) return toast.error('Please fill in all fields');
     setLoading(true);
     try {
-      await login(email, password);
-      toast.success('Welcome back! 👋');
-      navigate('/');
+      const userCred = await login(email, password);
+      
+      // Check if user has 2FA enabled via backend
+      const token = await userCred.user.getIdToken();
+      const resp = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await resp.json();
+      
+      if (result.user.customClaims?.twoFactorEnabled) {
+          setShow2FA(true);
+          toast.success('Credential valid. Enter 2FA code.');
+      } else {
+          toast.success('Welcome back! 👋');
+          navigate('/');
+      }
     } catch (err) {
-      const msg = err.code === 'auth/invalid-credential'
-        ? 'Invalid email or password'
-        : err.code === 'auth/too-many-requests'
-          ? 'Too many attempts. Try again later.'
-          : 'Login failed. Check your credentials.';
+      const msg = err.code === 'auth/invalid-credential' ? 'Invalid email or password' : 'Login failed.';
       toast.error(msg);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerify2FA = async (e) => {
+      e.preventDefault();
+      setMfaLoading(true);
+      try {
+          const resp = await fetch('/api/auth/2fa/login-check', {
+              method: 'POST',
+              headers: { 
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ token: mfaCode })
+          });
+          const result = await resp.json();
+          if (result.success) {
+              toast.success('Security check passed ✓');
+              navigate('/');
+          } else {
+              toast.error('Invalid security code');
+          }
+      } catch (e) { toast.error('Verification failed'); }
+      finally { setMfaLoading(false); }
   };
 
   return (
@@ -108,82 +144,110 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail
-                  size={16}
-                  className="absolute top-1/2 -translate-y-1/2"
-                  style={{ left: 14, color: 'var(--text-muted)' }}
-                />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@mashhorbhub.com"
-                  className="input-field pl-10"
-                  autoComplete="email"
-                  required
-                />
-              </div>
-            </div>
+          {!show2FA ? (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail
+                      size={16}
+                      className="absolute top-1/2 -translate-y-1/2"
+                      style={{ left: 14, color: 'var(--text-muted)' }}
+                    />
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="admin@mashhorbhub.com"
+                      className="input-field pl-10"
+                      autoComplete="email"
+                      required
+                    />
+                  </div>
+                </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
-                Password
-              </label>
-              <div className="relative">
-                <Lock
-                  size={16}
-                  className="absolute top-1/2 -translate-y-1/2"
-                  style={{ left: 14, color: 'var(--text-muted)' }}
-                />
-                <input
-                  id="password"
-                  type={showPw ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••"
-                  className="input-field pl-10 pr-12"
-                  autoComplete="current-password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
-                  style={{ color: 'var(--text-muted)', cursor: 'pointer', background: 'none', border: 'none' }}
+                {/* Password */}
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock
+                      size={16}
+                      className="absolute top-1/2 -translate-y-1/2"
+                      style={{ left: 14, color: 'var(--text-muted)' }}
+                    />
+                    <input
+                      id="password"
+                      type={showPw ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••"
+                      className="input-field pl-10 pr-12"
+                      autoComplete="current-password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPw(!showPw)}
+                      className="absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
+                      style={{ color: 'var(--text-muted)', cursor: 'pointer', background: 'none', border: 'none' }}
+                    >
+                      {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: loading ? 1 : 0.98 }}
+                  className="btn-primary w-full py-3 mt-2"
+                  style={{ opacity: loading ? 0.75 : 1 }}
                 >
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Submit */}
-            <motion.button
-              type="submit"
-              disabled={loading}
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: loading ? 1 : 0.98 }}
-              className="btn-primary w-full py-3 mt-2"
-              style={{ opacity: loading ? 0.75 : 1 }}
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Signing in…
-                </>
-              ) : (
-                'Sign In to Dashboard'
-              )}
-            </motion.button>
-          </form>
+                  {loading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Signing in…
+                    </>
+                  ) : (
+                    'Sign In to Dashboard'
+                  )}
+                </motion.button>
+              </form>
+          ) : (
+              <form onSubmit={handleVerify2FA} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-3 text-center" style={{ color: 'var(--text-secondary)' }}>
+                    Enter 6-Digit Authenticator Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={mfaCode}
+                    onChange={(e) => setMfaCode(e.target.value)}
+                    placeholder="000000"
+                    className="input-field text-center text-2xl tracking-[0.5em] font-bold py-4"
+                    autoFocus
+                    required
+                  />
+                </div>
+                <motion.button
+                    type="submit"
+                    disabled={mfaLoading}
+                    className="btn-primary w-full py-3"
+                >
+                    {mfaLoading ? <Loader2 className="animate-spin" /> : 'Verify & Continue'}
+                </motion.button>
+                <button type="button" onClick={() => setShow2FA(false)} className="w-full text-xs text-muted hover:text-white">Go Back</button>
+              </form>
+          )}
 
           {/* Security note */}
           <p className="text-center text-xs mt-6" style={{ color: 'var(--text-muted)' }}>

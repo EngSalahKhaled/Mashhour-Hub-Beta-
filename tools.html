@@ -120,6 +120,7 @@
 </style>
 
 <script charset="UTF-8" src="assets/js/mashhor-platform.js"></script>
+<script src="assets/js/api-fetcher.js"></script>
 <script src="assets/js/tools-data-en.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -144,6 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'Productivity': 'var(--blue)',
         'Development': '#a371f7'
     };
+
+    // --- Dynamic Sync ---
+    if (window.MashhorAPI) {
+        MashhorAPI.sync('tools', 'en', 'TOOLS_DATA_EN').then(synced => {
+            if (synced) renderGrid();
+        });
+    }
+
 
     const categories = ['All', ...new Set(TOOLS_DATA_EN.map(t => t.category))];
 

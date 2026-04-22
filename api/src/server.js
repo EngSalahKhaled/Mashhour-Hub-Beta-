@@ -58,6 +58,12 @@ app.use('/api/leads',     require('./routes/leads'));
 app.use('/api/blog',      require('./routes/blog'));
 app.use('/api/portfolio', require('./routes/portfolio'));
 app.use('/api/academy',   require('./routes/academy'));
+app.use('/api/prompts',   require('./routes/prompts'));
+app.use('/api/tools',     require('./routes/tools'));
+app.use('/api/library',   require('./routes/library'));
+app.use('/api/pricing',   require('./routes/pricing'));
+app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/analytics',     require('./routes/analytics'));
 app.use('/api/users',     require('./routes/users'));
 app.use('/api/settings',  require('./routes/settings'));
 

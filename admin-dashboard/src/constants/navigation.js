@@ -34,6 +34,12 @@ export const navItems = [
       { id: 'case-studies', label: 'Case Studies',  labelAr: 'دراسات الحالة', path: '/cms/case-studies' },
       { id: 'blog',         label: 'Blog',          labelAr: 'المدونة',       path: '/cms/blog'         },
       { id: 'academy',      label: 'Academy',       labelAr: 'الأكاديمية',      path: '/cms/academy'      },
+      { id: 'tools',        label: 'Tools Vault',   labelAr: 'خزانة الأدوات',   path: '/cms/tools'        },
+      { id: 'library',      label: 'Resource Lib',  labelAr: 'مكتبة الموارد',   path: '/cms/library'      },
+      { id: 'prompts',      label: 'Std Prompts',   labelAr: 'البرومبتات',     path: '/cms/prompts'      },
+      { id: 'vault',        label: 'Premium Vault', labelAr: 'الخزانة المميزة',  path: '/cms/vault'        },
+      { id: 'portfolio',    label: 'Portfolio',     labelAr: 'المعرض',         path: '/cms/portfolio'    },
+      { id: 'pricing',      label: 'Pricing Hub',   labelAr: 'الباقات',         path: '/cms/pricing'      },
     ],
   },
   {

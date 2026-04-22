@@ -106,31 +106,45 @@ export default function OverviewPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [leads, subscribers, influencers, services] = await Promise.allSettled([
+        const [leads, subscribers, influencers, services, analytics] = await Promise.allSettled([
           getCollection('leads'),
           getCollection('subscribers'),
-          getCollection('influencers'),
+          getCollection('influencer_apps'), // Corrected collection name
           getCollection('services'),
+          fetch('/api/analytics/overview', {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          }).then(r => r.json())
         ]);
 
         const leadsData = leads.status === 'fulfilled' ? leads.value : [];
         const subsData = subscribers.status === 'fulfilled' ? subscribers.value : [];
         const inflData = influencers.status === 'fulfilled' ? influencers.value : [];
         const svcData = services.status === 'fulfilled' ? services.value : [];
+        const anaData = analytics.status === 'fulfilled' ? analytics.value : { success: false };
 
         setStats({
           leads: leadsData.length,
           subscribers: subsData.length,
           influencers: inflData.length,
           services: svcData.length,
+          activeUsers: anaData.success ? anaData.data.activeUsers : '—',
+          topSource: anaData.success ? anaData.data.topSource : '—'
         });
 
         // Recent leads — last 5
         setRecentLeads(leadsData.slice(0, 5));
 
-        // Build chart from real data
-        setChartData(buildChartData(leadsData));
-      } catch {
+        // Build chart from Analytics data or Fallback to Leads
+        if (anaData.success && anaData.data.dailyVisits) {
+            setChartData(anaData.data.dailyVisits.map(v => ({ 
+                name: v.date.slice(-2) + '/' + v.date.slice(4, 6), 
+                leads: v.sessions 
+            })));
+        } else {
+            setChartData(buildChartData(leadsData));
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
         setStats({ leads: 0, subscribers: 0, influencers: 0, services: 0 });
       }
     };
@@ -140,8 +154,8 @@ export default function OverviewPage() {
   const CARDS = [
     { label: 'Total Leads',       icon: 'Users',     accent: 'cyan',    value: stats.leads     },
     { label: 'Subscribers',       icon: 'Mail',      accent: 'purple',  value: stats.subscribers },
-    { label: 'Influencer Apps',   icon: 'Briefcase', accent: 'emerald', value: stats.influencers },
-    { label: 'Services Listed',   icon: 'Layers',    accent: 'amber',   value: stats.services   },
+    { label: 'Active Visitors',   icon: 'Users',     accent: 'emerald', value: stats.activeUsers },
+    { label: 'Top Traffic Source', icon: 'Briefcase', accent: 'amber',   value: stats.topSource   },
   ];
 
   return (

@@ -2,7 +2,7 @@
   "name": "mashhor-backend",
   "version": "1.0.0",
   "description": "Mashhor Hub API Backend — Firebase + Express on Vercel",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js"
@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google-analytics/data": "^5.2.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -19,6 +20,8 @@
     "express-validator": "^7.3.2",
     "firebase-admin": "^12.1.0",
     "helmet": "^8.1.0",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0"
   }
 }
