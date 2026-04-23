@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" style="overflow-x: hidden;">
+<html lang="ar" dir="rtl" style="overflow-x: hidden;">
 <head>
 <meta charset="UTF-8">
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-T6ZLQZ4G');</script>
@@ -7,18 +7,18 @@
 <meta name="color-scheme" content="dark">
 <meta name="supported-color-schemes" content="dark">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title id="page-title">Creator Profile | Mashhor Hub</title>
+<title id="page-title">ملف المبدع | مشهور هب</title>
 <link rel="icon" type="image/jpeg" href="../assets/images/icons/favicon.jpg">
 <link rel="apple-touch-icon" href="../assets/images/icons/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
 
 <style>
 /* ═══ PROFILE PREMIUM STYLES ═══ */
 :root { --p-gold: #f4cd55; --p-bg: #0a0a0b; }
-body { background: var(--p-bg); color: #fff; font-family: 'Space Grotesk', sans-serif; }
+body { background: var(--p-bg); color: #fff; font-family: 'Alexandria', sans-serif; }
 
 .profile-hero { position: relative; height: 400px; overflow: hidden; }
 .profile-cover { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; filter: blur(2px); }
@@ -93,18 +93,21 @@ body { background: var(--p-bg); color: #fff; font-family: 'Space Grotesk', sans-
                 <div class="profile-main">
                     <div class="profile-content">
                         <div class="glass-panel">
-                            <h2 class="panel-title">About the Creator</h2>
+                            <h2 class="panel-title">نبذة عن المبدع</h2>
                             <div class="bio-content" id="user-bio">...</div>
                         </div>
+                        
+                        <!-- Dynamic Section for Products if any -->
+                        <div id="additional-content"></div>
                     </div>
 
                     <aside>
                         <div class="booking-card">
-                            <h3>Book Now</h3>
-                            <p>For events, advertisements, or special gifts, contact us directly via WhatsApp.</p>
+                            <h3>احجز الآن</h3>
+                            <p>للحجز لفعالية، إعلان، أو إهداء خاص، تواصل معنا مباشرة عبر الواتساب.</p>
                             <a href="#" class="btn-whatsapp" id="whatsapp-link">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.309 1.656zm6.29-4.171c1.589.945 3.554 1.443 5.548 1.444 5.279 0 9.574-4.294 9.577-9.573.002-2.556-1.002-4.959-2.826-6.786-1.827-1.825-4.229-2.827-6.791-2.827-5.277 0-9.572 4.295-9.575 9.574-.001 2.107.549 4.161 1.591 5.959l-1.019 3.725 3.815-.999zm12.446-5.733c-.275-.137-1.63-.805-1.885-.899-.255-.094-.439-.137-.624.137-.185.276-.713.899-.873 1.082-.159.184-.319.206-.594.069-.275-.137-1.16-.427-2.209-1.363-.816-.728-1.368-1.626-1.528-1.899-.161-.274-.017-.423.121-.559.124-.123.275-.319.412-.479.137-.16.183-.274.275-.457.091-.183.045-.343-.023-.479-.068-.137-.624-1.503-.853-2.057-.224-.543-.466-.467-.624-.475-.162-.007-.346-.009-.531-.009-.185 0-.486.069-.74.343-.254.274-.97 1.01-.97 2.459s1.056 2.857 1.203 3.051c.147.194 2.078 3.174 5.034 4.453.703.304 1.252.486 1.68.622.705.224 1.345.193 1.851.117.565-.084 1.63-.666 1.859-1.303.23-.637.23-1.185.161-1.303-.069-.117-.253-.183-.529-.319z"/></svg>
-                                Contact to Book
+                                التواصل للحجز
                             </a>
                         </div>
 
@@ -142,10 +145,10 @@ body { background: var(--p-bg); color: #fff; font-family: 'Space Grotesk', sans-
                 
                 if (data.success) {
                     const p = data.profile;
-                    document.getElementById('page-title').innerText = `${p.pageName} | Creator Profile`;
+                    document.getElementById('page-title').innerText = `${p.pageName} | ملف المبدع`;
                     document.getElementById('user-name').innerText = p.pageName;
-                    document.getElementById('user-field').innerText = p.workField || p.category || 'Mashhor Hub Creator';
-                    document.getElementById('user-bio').innerText = p.longBio || p.bio || 'No biography available yet.';
+                    document.getElementById('user-field').innerText = p.workField || p.category || 'مبدع مشهور هب';
+                    document.getElementById('user-bio').innerText = p.longBio || p.bio || 'لا يوجد نبذة تعريفية حالياً.';
                     
                     if (p.logoUrl) document.getElementById('avatar-img').src = p.logoUrl;
                     if (p.coverUrl) document.getElementById('cover-img').src = p.coverUrl;
@@ -154,8 +157,8 @@ body { background: var(--p-bg); color: #fff; font-family: 'Space Grotesk', sans-
                     document.getElementById('tier-badge').src = VERIFICATION_ICONS[tier] || VERIFICATION_ICONS.blue;
 
                     // Booking Link
-                    const waNum = p.whatsappNumber || '96555377309'; 
-                    const msg = encodeURIComponent(`Hello ${p.pageName}, I'm interested in booking for an event/ad via Mashhor Hub.`);
+                    const waNum = p.whatsappNumber || '96555377309'; // Fallback to agency
+                    const msg = encodeURIComponent(`مرحباً ${p.pageName}، أود الاستفسار عن حجز لفعالية/إعلان عبر مشهور هب.`);
                     document.getElementById('whatsapp-link').href = `https://wa.me/${waNum}?text=${msg}`;
 
                     // Socials

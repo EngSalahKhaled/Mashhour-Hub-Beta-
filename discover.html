@@ -168,6 +168,11 @@
         <p style="color:var(--muted)">Loading creators...</p>
       </div>
       <div class="discover-grid" id="discover-grid" style="display:none"></div>
+      
+      <div id="load-more-container" style="text-align:center; padding: 40px 0; display:none;">
+          <button class="ghost-button" id="btn-load-more" style="padding: 12px 40px;">Show More Creators</button>
+      </div>
+
       <div class="discover-empty" id="discover-empty" style="display:none">
         <h3>No creators found</h3>
         <p>Try adjusting your search or filter criteria.</p>
@@ -195,41 +200,46 @@
     const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:5000' : window.location.origin;
 
-    // Fallback seed data (used when API has no data or is unreachable)
-    const SEED = [
-      { name:'Salah Khaled', field:'Technology & AI', category:'tech', tags:['AI','Tech','Development'], img:null, social:{instagram:'#',linkedin:'#'} },
-      { name:'Ahmed Al-Refaei', field:'Graphic Design', category:'tech', tags:['Design','Art','Branding'], img:null, social:{instagram:'#'} },
-      { name:'Noura Al-Abdullah', field:'Beauty & Fashion', category:'fashion', tags:['Fashion','Beauty','Lifestyle'], img:null, social:{instagram:'#',tiktok:'#'} },
-      { name:'Fahad Al-Mutairi', field:'Travel & Tourism', category:'travel', tags:['Travel','Adventure','GCC'], img:null, social:{instagram:'#'} },
-      { name:'Layla Al-Qahtani', field:'Business & Finance', category:'business', tags:['Business','Investing','Startups'], img:null, social:{linkedin:'#'} },
-      { name:'Yousef Al-Heron', field:'Gaming & Streaming', category:'gaming', tags:['Gaming','Streaming','YouTube'], img:null, social:{tiktok:'#'} },
-      { name:'Sara Al-Enezi', field:'Food & Lifestyle', category:'food', tags:['Food','Recipes','Lifestyle'], img:null, social:{instagram:'#',tiktok:'#'} },
-      { name:'Omar Fitness', field:'Sports & Fitness', category:'sports', tags:['Fitness','Training','Health'], img:null, social:{instagram:'#'} }
-    ];
-
     const grid = document.getElementById('discover-grid');
     const loading = document.getElementById('discover-loading');
     const empty = document.getElementById('discover-empty');
     const searchInput = document.getElementById('discover-search');
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const btnLoadMore = document.getElementById('btn-load-more');
+
     let allCreators = [];
     let activeCategory = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 9;
+
+    const VERIFICATION_ICONS = {
+      gold: 'assets/images/verification/Verified_Badge_Gold.svg',
+      blue: 'assets/images/verification/Verified_Badge.svg',
+      green: 'assets/images/verification/verified-symbol-green.svg'
+    };
 
     function renderCard(c) {
       const initials = (c.name || 'MH').split(' ').map(w => w[0]).join('').substring(0,2);
       const imgHtml = c.img
         ? `<img src="${c.img}" alt="${c.name}" onerror="this.parentElement.innerHTML='<div class=\\'avatar-placeholder\\'>${initials}</div>'">`
         : `<div class="avatar-placeholder">${initials}</div>`;
+      
+      const tier = c.verificationTier || (c.isGold ? 'gold' : c.isVerified ? 'blue' : 'green');
+      const badgeIcon = VERIFICATION_ICONS[tier] || VERIFICATION_ICONS.blue;
+
       const tags = (c.tags || []).map(t => `<span class="creator-tag">${t}</span>`).join('');
       const socials = [];
       if (c.social) {
-        if (c.social.instagram) socials.push(`<a href="${c.social.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>`);
-        if (c.social.tiktok) socials.push(`<a href="${c.social.tiktok}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.01.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.5-.32 3.03-1.05 4.38-1.05 1.94-2.89 3.32-4.99 3.82-1.89.44-3.95.27-5.71-.56-2.02-.95-3.56-2.71-4.22-4.81-.62-1.94-.49-4.14.37-5.96 1.07-2.28 3.25-3.92 5.68-4.32 1.06-.18 2.14-.14 3.19.06V11.7c-.55-.07-1.12-.04-1.66.08a4.92 4.92 0 0 0-3.32 2.37c-.7 1.12-.99 2.52-.77 3.83.21 1.23.86 2.37 1.84 3.12.98.74 2.23 1.08 3.45 1.01 1.48-.09 2.92-.85 3.8-2.05.74-1.02 1.14-2.3 1.14-3.58V.02z"/></svg></a>`);
-        if (c.social.linkedin) socials.push(`<a href="${c.social.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>`);
+        if (c.social.instagram) socials.push(`<a href="${c.social.instagram}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>`);
+        if (c.social.tiktok) socials.push(`<a href="${c.social.tiktok}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.01.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.5-.32 3.03-1.05 4.38-1.05 1.94-2.89 3.32-4.99 3.82-1.89.44-3.95.27-5.71-.56-2.02-.95-3.56-2.71-4.22-4.81-.62-1.94-.49-4.14.37-5.96 1.07-2.28 3.25-3.92 5.68-4.32 1.06-.18 2.14-.14 3.19.06V11.7c-.55-.07-1.12-.04-1.66.08a4.92 4.92 0 0 0-3.32 2.37c-.7 1.12-.99 2.52-.77 3.83.21 1.23.86 2.37 1.84 3.12.98.74 2.23 1.08 3.45 1.01 1.48-.09 2.92-.85 3.8-2.05.74-1.02 1.14-2.3 1.14-3.58V.02z"/></svg></a>`);
+        if (c.social.linkedin) socials.push(`<a href="${c.social.linkedin}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>`);
       }
-      const profileUrl = c.username ? `u/profile.html?username=${c.username}` : 'contact.html';
-      return `<div class="creator-card" data-category="${c.category || 'all'}" data-name="${(c.name||'').toLowerCase()}" data-field="${(c.field||'').toLowerCase()}" data-tags="${(c.tags||[]).join(' ').toLowerCase()}">
+
+      const profileUrl = c.username ? `u/profile.html?username=${c.username}` : `contact.html`;
+
+      return `<div class="creator-card">
         <div class="creator-avatar">${imgHtml}</div>
-        <div class="creator-name">${c.name} <span class="badge-v">✓</span></div>
+        <div class="creator-name">${c.name} <img src="${badgeIcon}" style="width:18px; height:18px;" alt="Verified"></div>
         <div class="creator-field">${c.field}</div>
         <div class="creator-tags">${tags}</div>
         ${socials.length ? '<div class="creator-socials">' + socials.join('') + '</div>' : ''}
@@ -237,49 +247,36 @@
       </div>`;
     }
 
-    function filterAndRender() {
-      const query = (searchInput.value || '').toLowerCase().trim();
-      const filtered = allCreators.filter(c => {
-        const matchCat = activeCategory === 'all' || c.category === activeCategory;
-        if (!matchCat) return false;
-        if (!query) return true;
-        return (c.name||'').toLowerCase().includes(query)
-          || (c.field||'').toLowerCase().includes(query)
-          || (c.tags||[]).some(t => t.toLowerCase().includes(query));
-      });
-      if (filtered.length === 0) {
+    async function fetchCreators() {
+        loading.style.display = 'block';
         grid.style.display = 'none';
-        empty.style.display = 'block';
-      } else {
-        grid.innerHTML = filtered.map(renderCard).join('');
-        grid.style.display = 'grid';
-        empty.style.display = 'none';
-      }
+        
+        try {
+            const res = await fetch(`${API_URL}/api/influencers?limit=${itemsPerPage}&page=${currentPage}&category=${activeCategory}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                allCreators = data.data;
+                renderCreators();
+                loadMoreContainer.style.display = data.hasMore ? 'block' : 'none';
+            }
+        } catch (e) {
+            console.error('Fetch failed', e);
+            empty.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+        }
     }
 
-    async function init() {
-      try {
-        const res = await fetch(`${API_URL}/api/influencers`);
-        const data = await res.json();
-        if (data.success && data.data && data.data.length > 0) {
-          allCreators = data.data.map(inf => ({
-            name: inf.name || inf.pageName || 'Creator',
-            field: inf.workField || inf.field || 'Content Creator',
-            category: (inf.category || 'all').toLowerCase(),
-            tags: inf.tags || [],
-            img: inf.logoUrl || inf.avatar || inf.profileImage || null,
-            social: inf.socialLinks || {},
-            username: inf.pageName || inf.username || null
-          }));
+    function renderCreators() {
+        if (allCreators.length === 0) {
+            grid.style.display = 'none';
+            empty.style.display = 'block';
         } else {
-          allCreators = SEED;
+            grid.innerHTML = allCreators.map(renderCard).join('');
+            grid.style.display = 'grid';
+            empty.style.display = 'none';
         }
-      } catch (e) {
-        console.warn('Discover: API unavailable, using seed data', e);
-        allCreators = SEED;
-      }
-      loading.style.display = 'none';
-      filterAndRender();
     }
 
     // Filter pills
@@ -288,18 +285,37 @@
         document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         activeCategory = pill.dataset.category;
-        filterAndRender();
+        currentPage = 1;
+        fetchCreators();
       });
+    });
+
+    btnLoadMore.addEventListener('click', () => {
+        currentPage++;
+        fetchCreators();
     });
 
     // Search
     let searchTimeout;
     searchInput.addEventListener('input', () => {
       clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(filterAndRender, 250);
+      searchTimeout = setTimeout(() => {
+          // Local search if query exists
+          const query = searchInput.value.toLowerCase().trim();
+          if (query) {
+              const filtered = allCreators.filter(c => 
+                  c.name.toLowerCase().includes(query) || 
+                  c.field.toLowerCase().includes(query)
+              );
+              grid.innerHTML = filtered.map(renderCard).join('');
+              loadMoreContainer.style.display = 'none';
+          } else {
+              fetchCreators();
+          }
+      }, 300);
     });
 
-    init();
+    fetchCreators();
   })();
   </script>
   <script src="./assets/js/protection.js"></script>

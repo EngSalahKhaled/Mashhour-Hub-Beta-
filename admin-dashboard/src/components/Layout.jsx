@@ -29,7 +29,8 @@ const ErpQuotationsPage = lazy(() => import('../pages/ErpQuotations'));
 const ErpInvoicesPage  = lazy(() => import('../pages/ErpInvoices'));
 const ErpExpensesPage  = lazy(() => import('../pages/ErpExpenses'));
 const MarketingPage    = lazy(() => import('../pages/Marketing'));
-const PortalActivityPage = lazy(() => import('../pages/PortalActivity')); // [NEW] Phase 4
+const CmsInfluencersPage = lazy(() => import('../pages/CmsInfluencers'));
+const PortalActivityPage = lazy(() => import('../pages/PortalActivity')); 
 const SystemLogsPage   = lazy(() => import('../pages/SystemLogs'));
 
 const pageVariants = {
@@ -157,6 +158,11 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
                 <Route path="/cms/portfolio" element={
                   <ProtectedRoute allowedRoles={['admin', 'editor']}>
                     <motion.div key="cms-portfolio" {...pageVariants}><CmsPortfolioPage /></motion.div>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/cms/influencers" element={
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-influencers" {...pageVariants}><CmsInfluencersPage /></motion.div>
                   </ProtectedRoute>
                 }/>
                 <Route path="/cms/pricing" element={

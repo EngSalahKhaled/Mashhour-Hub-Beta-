@@ -146,6 +146,11 @@
         <p style="color:var(--muted)">جاري تحميل المبدعين...</p>
       </div>
       <div class="discover-grid" id="discover-grid" style="display:none"></div>
+      
+      <div id="load-more-container" style="text-align:center; padding: 40px 0; display:none;">
+          <button class="ghost-button" id="btn-load-more" style="padding: 12px 40px;">عرض المزيد من المبدعين</button>
+      </div>
+
       <div class="discover-empty" id="discover-empty" style="display:none">
         <h3>لم يتم العثور على مبدعين</h3>
         <p>حاول تعديل البحث أو معايير التصفية.</p>
@@ -172,77 +177,76 @@
     const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:5000' : window.location.origin;
 
-    const SEED = [
-      { name:'صلاح خالد', field:'تكنولوجيا وذكاء اصطناعي', category:'tech', tags:['AI','تقنية'], img:null, social:{} },
-      { name:'أحمد الرفاعي', field:'جرافيك ديزاين', category:'tech', tags:['تصميم','فن'], img:null, social:{} },
-      { name:'نورة العبدالله', field:'جمال وموضة', category:'fashion', tags:['أزياء','جمال'], img:null, social:{} },
-      { name:'فهد المطيري', field:'سياحة وسفر', category:'travel', tags:['سفر','مغامرة'], img:null, social:{} },
-      { name:'ليلى القحطاني', field:'أعمال واقتصاد', category:'business', tags:['أعمال','استثمار'], img:null, social:{} },
-      { name:'يوسف الهيرون', field:'جيمنج وبث مباشر', category:'gaming', tags:['ألعاب','بث'], img:null, social:{} },
-      { name:'سارة العنزي', field:'طعام وأسلوب حياة', category:'food', tags:['طبخ','وصفات'], img:null, social:{} },
-      { name:'عمر فتنس', field:'رياضة ولياقة', category:'sports', tags:['لياقة','تدريب'], img:null, social:{} }
-    ];
-
     const grid = document.getElementById('discover-grid');
     const loading = document.getElementById('discover-loading');
     const empty = document.getElementById('discover-empty');
     const searchInput = document.getElementById('discover-search');
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const btnLoadMore = document.getElementById('btn-load-more');
+
     let allCreators = [];
     let activeCategory = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 9;
+
+    const VERIFICATION_ICONS = {
+      gold: '../assets/images/verification/Verified_Badge_Gold.svg',
+      blue: '../assets/images/verification/Verified_Badge.svg',
+      green: '../assets/images/verification/verified-symbol-green.svg'
+    };
 
     function renderCard(c) {
       const initials = (c.name || 'مه').split(' ').map(w => w[0]).join('').substring(0,2);
       const imgHtml = c.img
         ? `<img src="${c.img}" alt="${c.name}" onerror="this.parentElement.innerHTML='<div class=\\'avatar-placeholder\\'>${initials}</div>'">`
         : `<div class="avatar-placeholder">${initials}</div>`;
+      
+      const tier = c.verificationTier || (c.isGold ? 'gold' : c.isVerified ? 'blue' : 'green');
+      const badgeIcon = VERIFICATION_ICONS[tier] || VERIFICATION_ICONS.blue;
+
       const tags = (c.tags || []).map(t => `<span class="creator-tag">${t}</span>`).join('');
-      return `<div class="creator-card" data-category="${c.category || 'all'}" data-name="${(c.name||'').toLowerCase()}" data-field="${(c.field||'').toLowerCase()}" data-tags="${(c.tags||[]).join(' ').toLowerCase()}">
+      
+      const profileUrl = c.username ? `../u/profile.html?username=${c.username}` : `../contact.html`;
+
+      return `<div class="creator-card">
         <div class="creator-avatar">${imgHtml}</div>
-        <div class="creator-name">${c.name} <span class="badge-v">✓</span></div>
+        <div class="creator-name">${c.name} <img src="${badgeIcon}" style="width:18px; height:18px;" alt="Verified"></div>
         <div class="creator-field">${c.field}</div>
         <div class="creator-tags">${tags}</div>
-        <a href="contact.html" class="btn-profile">زيارة الملف ←</a>
+        <a href="${profileUrl}" class="btn-profile">زيارة الملف ←</a>
       </div>`;
     }
 
-    function filterAndRender() {
-      const query = (searchInput.value || '').toLowerCase().trim();
-      const filtered = allCreators.filter(c => {
-        const matchCat = activeCategory === 'all' || c.category === activeCategory;
-        if (!matchCat) return false;
-        if (!query) return true;
-        return (c.name||'').toLowerCase().includes(query)
-          || (c.field||'').toLowerCase().includes(query)
-          || (c.tags||[]).some(t => t.toLowerCase().includes(query));
-      });
-      if (filtered.length === 0) {
+    async function fetchCreators() {
+        loading.style.display = 'block';
         grid.style.display = 'none';
-        empty.style.display = 'block';
-      } else {
-        grid.innerHTML = filtered.map(renderCard).join('');
-        grid.style.display = 'grid';
-        empty.style.display = 'none';
-      }
+        
+        try {
+            const res = await fetch(`${API_URL}/api/influencers?limit=${itemsPerPage}&page=${currentPage}&category=${activeCategory}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                allCreators = data.data;
+                renderCreators();
+                loadMoreContainer.style.display = data.hasMore ? 'block' : 'none';
+            }
+        } catch (e) {
+            console.error('Fetch failed', e);
+            empty.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+        }
     }
 
-    async function init() {
-      try {
-        const res = await fetch(`${API_URL}/api/influencers`);
-        const data = await res.json();
-        if (data.success && data.data && data.data.length > 0) {
-          allCreators = data.data.map(inf => ({
-            name: inf.name || inf.pageName || 'مبدع',
-            field: inf.workField || inf.field || 'صانع محتوى',
-            category: (inf.category || 'all').toLowerCase(),
-            tags: inf.tags || [],
-            img: inf.logoUrl || inf.avatar || inf.profileImage || null,
-            social: inf.socialLinks || {},
-            username: inf.pageName || inf.username || null
-          }));
-        } else { allCreators = SEED; }
-      } catch (e) { allCreators = SEED; }
-      loading.style.display = 'none';
-      filterAndRender();
+    function renderCreators() {
+        if (allCreators.length === 0) {
+            grid.style.display = 'none';
+            empty.style.display = 'block';
+        } else {
+            grid.innerHTML = allCreators.map(renderCard).join('');
+            grid.style.display = 'grid';
+            empty.style.display = 'none';
+        }
     }
 
     document.querySelectorAll('.filter-pill').forEach(pill => {
@@ -250,17 +254,35 @@
         document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         activeCategory = pill.dataset.category;
-        filterAndRender();
+        currentPage = 1;
+        fetchCreators();
       });
+    });
+
+    btnLoadMore.addEventListener('click', () => {
+        currentPage++;
+        fetchCreators();
     });
 
     let searchTimeout;
     searchInput.addEventListener('input', () => {
       clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(filterAndRender, 250);
+      searchTimeout = setTimeout(() => {
+          const query = searchInput.value.toLowerCase().trim();
+          if (query) {
+              const filtered = allCreators.filter(c => 
+                  c.name.toLowerCase().includes(query) || 
+                  c.field.toLowerCase().includes(query)
+              );
+              grid.innerHTML = filtered.map(renderCard).join('');
+              loadMoreContainer.style.display = 'none';
+          } else {
+              fetchCreators();
+          }
+      }, 300);
     });
 
-    init();
+    fetchCreators();
   })();
   </script>
   <script src="../assets/js/protection.js"></script>

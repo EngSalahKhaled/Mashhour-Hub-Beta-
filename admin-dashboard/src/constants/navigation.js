@@ -73,6 +73,7 @@ export const navItems = [
       { id: 'prompts',      label: 'Std Prompts',   labelAr: 'البرومبتات',     path: '/cms/prompts'      },
       { id: 'vault',        label: 'Premium Vault', labelAr: 'الخزانة المميزة',  path: '/cms/vault'        },
       { id: 'portfolio',    label: 'Portfolio',     labelAr: 'المعرض',         path: '/cms/portfolio'    },
+      { id: 'influencers',  label: 'Influencers',   labelAr: 'المؤثرين والمبدعين', path: '/cms/influencers' },
       { id: 'pricing',      label: 'Pricing Hub',   labelAr: 'الباقات',         path: '/cms/pricing'      },
     ],
   },
