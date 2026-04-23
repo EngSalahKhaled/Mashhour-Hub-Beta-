@@ -16,11 +16,18 @@ if (!admin.apps.length) {
             console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env.');
         }
 
+        let rawKey = process.env.FIREBASE_PRIVATE_KEY || '';
+        // Remove surrounding quotes (single or double) if Vercel added them
+        if (rawKey.startsWith('"') && rawKey.endsWith('"')) rawKey = rawKey.slice(1, -1);
+        if (rawKey.startsWith("'") && rawKey.endsWith("'")) rawKey = rawKey.slice(1, -1);
+        // Replace literal \n with actual newline characters
+        const parsedKey = rawKey.replace(/\\n/g, '\n');
+
         admin.initializeApp({
             credential: admin.credential.cert({
                 projectId:   process.env.FIREBASE_PROJECT_ID,
                 clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n').replace(/"/g, ''),
+                privateKey:  parsedKey,
             }),
             storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
         });
