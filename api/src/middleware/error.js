@@ -35,7 +35,8 @@ const globalErrorHandler = (err, req, res, next) => {
     return res.status(500).json({
         success: false,
         status: 'error',
-        message: 'Something went very wrong. Internal Server Error.'
+        message: err.message || 'Something went very wrong. Internal Server Error.',
+        stack: err.stack
     });
 };
 
