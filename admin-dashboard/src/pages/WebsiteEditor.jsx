@@ -874,6 +874,8 @@ function SectionPanel({ section }) {
   );
 }
 
+import CmsSiteElements from './CmsSiteElements';
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function WebsiteEditorPage() {
   return (
@@ -936,6 +938,11 @@ export default function WebsiteEditorPage() {
           </motion.div>
         ))}
       </div>
+
+      <div className="pt-8 border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+        <CmsSiteElements />
+      </div>
     </div>
   );
 }
+

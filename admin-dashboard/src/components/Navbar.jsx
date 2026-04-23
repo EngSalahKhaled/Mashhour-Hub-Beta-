@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Bell, Globe, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 
 const getInitials = (email = '') => email.slice(0, 2).toUpperCase();
-const API_URL = (window.MashhorAPI && window.MashhorAPI.API_BASE) || 'http://localhost:5000/api';
-import { auth } from '../services/firebase';
 
 export default function Navbar({ onMenuClick, dir, onToggleDir }) {
   const { user }         = useAuth();
@@ -18,30 +17,32 @@ export default function Navbar({ onMenuClick, dir, onToggleDir }) {
     // Real-time listener for notifications
     const fetchNotifications = async () => {
         try {
-            const token = await auth.currentUser?.getIdToken() || '';
-            const resp = await fetch(`${API_URL}/notifications`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const result = await resp.json();
+            const result = await api.get('/notifications');
             if (result.success) {
-                setNotifications(result.data);
-                setUnreadCount(result.data.filter(n => !n.read).length);
+                setNotifications(result.data || []);
+                setUnreadCount((result.data || []).filter(n => !n.read).length);
             }
-        } catch (e) { console.error('Notify fail', e); }
+        } catch (e) { 
+            // Silent error for polling
+            console.error('Notify fail', e.message); 
+        }
     };
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Polling every minute
-    return () => clearInterval(interval);
-  }, []);
+    
+    if (user) {
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 60000); // Polling every minute
+        return () => clearInterval(interval);
+    }
+  }, [user]);
 
   const markAllRead = async () => {
-      const token = await auth.currentUser?.getIdToken() || '';
-      await fetch(`${API_URL}/notifications/clear-all`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` }
-      });
-      setNotifications(notifications.map(n => ({...n, read: true})));
-      setUnreadCount(0);
+      try {
+          await api.post('/notifications/clear-all', {});
+          setNotifications(notifications.map(n => ({...n, read: true})));
+          setUnreadCount(0);
+      } catch (e) {
+          console.error('Failed to clear notifications', e);
+      }
   };
 
   return (

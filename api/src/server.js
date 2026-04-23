@@ -44,7 +44,7 @@ const allowedOrigins = process.env.CORS_ORIGIN
     : '*';
 
 const corsOptions = {
-    origin: allowedOrigins,
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200,
@@ -76,7 +76,8 @@ app.use('/api/academy',   require('./routes/academy'));
 app.use('/api/prompts',   require('./routes/prompts'));
 app.use('/api/tools',     require('./routes/tools'));
 app.use('/api/library',   require('./routes/library'));
-app.use('/api/pricing',   require('./routes/pricing'));
+app.use('/api/pricing',       require('./routes/pricing'));
+app.use('/api/site-elements', require('./routes/siteElements'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/analytics',     require('./routes/analytics'));
 app.use('/api/users',     require('./routes/users'));

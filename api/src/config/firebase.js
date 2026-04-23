@@ -16,11 +16,38 @@ if (!admin.apps.length) {
             console.warn('⚠️ WARNING: FIREBASE_STORAGE_BUCKET is undefined in process.env.');
         }
 
+        let rawKey = process.env.FIREBASE_PRIVATE_KEY || '';
+        
+        // 1. Try parsing as JSON string (handles quotes and \n unescaping automatically)
+        try {
+            if (rawKey.trim().startsWith('"')) {
+                rawKey = JSON.parse(rawKey);
+            }
+        } catch (e) { /* ignore */ }
+
+        // 2. Manual fallback replacements
+        rawKey = rawKey.replace(/\\n/g, '\n')
+                       .replace(/"/g, '')
+                       .replace(/'/g, '')
+                       .trim();
+
+        // 3. Reconstruct newlines if Vercel collapsed them into spaces
+        if (rawKey && !rawKey.includes('\n')) {
+            rawKey = rawKey.replace(/-----BEGIN PRIVATE KEY-----/g, '-----BEGIN PRIVATE KEY-----\n');
+            rawKey = rawKey.replace(/-----END PRIVATE KEY-----/g, '\n-----END PRIVATE KEY-----');
+            const parts = rawKey.split('\n');
+            if (parts.length === 3) {
+                // The base64 part might have spaces instead of newlines, replace them
+                parts[1] = parts[1].replace(/\s+/g, '\n');
+                rawKey = parts.join('\n');
+            }
+        }
+
         admin.initializeApp({
             credential: admin.credential.cert({
                 projectId:   process.env.FIREBASE_PROJECT_ID,
                 clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n').replace(/"/g, ''),
+                privateKey:  rawKey,
             }),
             storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
         });
