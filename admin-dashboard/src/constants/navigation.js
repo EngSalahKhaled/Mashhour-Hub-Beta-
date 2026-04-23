@@ -8,6 +8,7 @@ export const navItems = [
     labelAr: 'نظرة عامة',
     icon:  'LayoutDashboard',
     path:  '/',
+    allowedRoles: ['superadmin', 'admin', 'editor', 'marketer', 'accountant'],
   },
   {
     id:    'leads',
@@ -15,6 +16,23 @@ export const navItems = [
     labelAr: 'العملاء المحتملون',
     icon:  'Users',
     path:  '/leads',
+    allowedRoles: ['superadmin', 'admin', 'marketer'],
+  },
+  {
+    id:    'marketing',
+    label: 'Marketing',
+    labelAr: 'التسويق والنشرات',
+    icon:  'Mail', // Needs to be added to ICON_MAP in Sidebar if Mail is used! Or use FileText? Wait, in Sidebar Mail is not imported. I'll use FileText or add Mail.
+    path:  '/marketing',
+    allowedRoles: ['superadmin', 'admin', 'marketer'],
+  },
+  {
+    id:    'portal-activity',
+    label: 'Portal Activity',
+    labelAr: 'نشاط العملاء',
+    icon:  'Activity', // Need to add to Sidebar ICON_MAP
+    path:  '/portal-activity',
+    allowedRoles: ['superadmin', 'admin', 'marketer'],
   },
   {
     id:    'erp',
@@ -22,10 +40,12 @@ export const navItems = [
     labelAr: 'المحاسبة والفوترة',
     icon:  'Receipt',
     path:  '/erp',
+    allowedRoles: ['superadmin', 'admin', 'accountant'],
     children: [
       { id: 'erp-clients',    label: 'Clients',     labelAr: 'العملاء',        path: '/erp/clients'    },
       { id: 'erp-quotations', label: 'Quotations',  labelAr: 'عروض الأسعار',   path: '/erp/quotations' },
       { id: 'erp-invoices',   label: 'Invoices',    labelAr: 'الفواتير',       path: '/erp/invoices'   },
+      { id: 'erp-expenses',   label: 'Expenses',    labelAr: 'المصروفات',      path: '/erp/expenses'   },
     ],
   },
   {
@@ -34,6 +54,7 @@ export const navItems = [
     labelAr: 'مكتبة الوسائط',
     icon:  'Image',
     path:  '/media',
+    allowedRoles: ['superadmin', 'admin', 'editor', 'marketer'],
   },
   {
     id:    'cms',
@@ -41,6 +62,7 @@ export const navItems = [
     labelAr: 'إدارة المحتوى',
     icon:  'FileText',
     path:  '/cms',
+    allowedRoles: ['superadmin', 'admin', 'editor'],
     children: [
       { id: 'services',     label: 'Services',      labelAr: 'الخدمات',       path: '/cms/services'     },
       { id: 'case-studies', label: 'Case Studies',  labelAr: 'دراسات الحالة', path: '/cms/case-studies' },
@@ -60,6 +82,7 @@ export const navItems = [
     labelAr: 'إدارة المشرفين',
     icon:  'Users',
     path:  '/users',
+    allowedRoles: ['superadmin'],
   },
   {
     id:    'website-editor',
@@ -67,6 +90,7 @@ export const navItems = [
     labelAr: 'محرر الموقع',
     icon:  'Globe',
     path:  '/website-editor',
+    allowedRoles: ['superadmin', 'admin', 'editor'],
   },
   {
     id:    'settings',
@@ -74,6 +98,7 @@ export const navItems = [
     labelAr: 'الإعدادات',
     icon:  'Settings',
     path:  '/settings',
+    allowedRoles: ['superadmin'],
   },
   {
     id:    'system-logs',
@@ -81,6 +106,7 @@ export const navItems = [
     labelAr: 'سجل النظام',
     icon:  'FileText',
     path:  '/system-logs',
+    allowedRoles: ['superadmin'],
   },
 ];
 

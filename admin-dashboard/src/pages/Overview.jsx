@@ -103,7 +103,7 @@ function StatusChip({ status }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function OverviewPage() {
-  const [stats, setStats] = useState({ leads: null, subscribers: null, influencers: null, services: null });
+  const [stats, setStats] = useState({ leads: null, subscribers: null, influencers: null, services: null, revenue: null, expenses: null, netProfit: null });
   const [recentLeads, setRecentLeads] = useState([]);
   const [chartData, setChartData] = useState([]);
 
@@ -111,12 +111,18 @@ export default function OverviewPage() {
     const load = async () => {
       try {
         const token = await auth.currentUser?.getIdToken() || '';
-        const [leads, subscribers, influencers, services, analytics] = await Promise.allSettled([
+        const [leads, subscribers, influencers, services, analytics, invoicesRes, expensesRes] = await Promise.allSettled([
           getCollection('leads'),
           getCollection('subscribers'),
           getCollection(INFLUENCERS_COLLECTION),
           getCollection('services'),
           fetch(`${API_URL}/analytics/overview`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+          }).then(r => r.json()),
+          fetch(`${API_URL}/erp/invoices`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+          }).then(r => r.json()),
+          fetch(`${API_URL}/erp/expenses`, {
               headers: { 'Authorization': `Bearer ${token}` }
           }).then(r => r.json())
         ]);
@@ -126,6 +132,14 @@ export default function OverviewPage() {
         const inflData = influencers.status === 'fulfilled' ? influencers.value : [];
         const svcData = services.status === 'fulfilled' ? services.value : [];
         const anaData = analytics.status === 'fulfilled' ? analytics.value : { success: false };
+        
+        // Financials
+        const invData = invoicesRes.status === 'fulfilled' && invoicesRes.value.success ? invoicesRes.value.invoices : [];
+        const expData = expensesRes.status === 'fulfilled' && expensesRes.value.success ? expensesRes.value.expenses : [];
+        
+        const totalRevenue = invData.filter(i => i.status === 'paid').reduce((sum, i) => sum + parseFloat(i.total || 0), 0);
+        const totalExpenses = expData.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+        const netProfit = totalRevenue - totalExpenses;
 
         setStats({
           leads: leadsData.length,
@@ -133,7 +147,9 @@ export default function OverviewPage() {
           influencers: inflData.length,
           services: svcData.length,
           activeUsers: anaData.success ? anaData.data.activeUsers : '—',
-          topSource: anaData.success ? anaData.data.topSource : '—'
+          topSource: anaData.success ? anaData.data.topSource : '—',
+          revenue: `$${totalRevenue.toFixed(2)}`,
+          netProfit: `$${netProfit.toFixed(2)}`
         });
 
         // Recent leads — last 5
@@ -150,7 +166,7 @@ export default function OverviewPage() {
         }
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
-        setStats({ leads: 0, subscribers: 0, influencers: 0, services: 0 });
+        setStats({ leads: 0, subscribers: 0, influencers: 0, services: 0, revenue: '$0.00', netProfit: '$0.00' });
       }
     };
     load();
@@ -158,9 +174,9 @@ export default function OverviewPage() {
 
   const CARDS = [
     { label: 'Total Leads',       icon: 'Users',     accent: 'cyan',    value: stats.leads     },
-    { label: 'Subscribers',       icon: 'Mail',      accent: 'purple',  value: stats.subscribers },
     { label: 'Active Visitors',   icon: 'Users',     accent: 'emerald', value: stats.activeUsers },
-    { label: 'Top Traffic Source', icon: 'Briefcase', accent: 'amber',   value: stats.topSource   },
+    { label: 'Total Revenue',     icon: 'Briefcase', accent: 'amber',   value: stats.revenue   },
+    { label: 'Net Profit',        icon: 'Layers',    accent: 'purple',  value: stats.netProfit },
   ];
 
   return (

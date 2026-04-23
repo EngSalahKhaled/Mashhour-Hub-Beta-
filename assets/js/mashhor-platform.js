@@ -165,27 +165,41 @@
 
   const prefix = getPrefix();
 
-  // ─── MAINTENANCE MODE CHECK ───
-  const checkMaintenance = async () => {
+  // ─── MAINTENANCE MODE CHECK & THEME CONFIG ───
+  const fetchGlobalSettings = async () => {
     const isMaintenancePage = window.location.pathname.includes('maintenance.html');
     try {
-      // Use the API_BASE if defined, otherwise fallback to local /api
       const apiBase = (window.MashhorAPI && window.MashhorAPI.API_BASE) || (window.location.origin + '/api');
       const response = await fetch(`${apiBase}/settings`);
       const result = await response.json();
       
-      if (result.success && result.settings && result.settings.maintenanceMode) {
-        if (!isMaintenancePage) {
-          window.location.href = `${prefix}maintenance.html`;
+      if (result.success && result.settings) {
+        // Maintenance Mode
+        if (result.settings.maintenanceMode) {
+          if (!isMaintenancePage) {
+            window.location.href = `${prefix}maintenance.html`;
+          }
+        } else if (isMaintenancePage) {
+          window.location.href = `${prefix}`;
         }
-      } else if (isMaintenancePage) {
-        window.location.href = `${prefix}`;
+
+        // Apply Global Theme Colors
+        if (result.settings.theme) {
+          if (result.settings.theme.primaryColor) {
+            html.style.setProperty('--color-primary', result.settings.theme.primaryColor);
+            html.style.setProperty('--color-gold', result.settings.theme.primaryColor);
+          }
+          if (result.settings.theme.secondaryColor) {
+            html.style.setProperty('--color-secondary', result.settings.theme.secondaryColor);
+            html.style.setProperty('--color-cyan', result.settings.theme.secondaryColor);
+          }
+        }
       }
     } catch (e) {
-      console.warn('[MaintenanceCheck] Failed to fetch status', e);
+      console.warn('[GlobalSettingsCheck] Failed to fetch settings', e);
     }
   };
-  checkMaintenance();
+  fetchGlobalSettings();
 
   const brandSrc = `${prefix}assets/images/icons/logo-flat.png`;
   const currentPath = window.location.pathname.replace(/\\/g, "/");

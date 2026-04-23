@@ -32,7 +32,7 @@ function UserModal({ onClose, onSave }) {
     setSaving(true);
     try {
       const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/api/users`, {
+      const res = await fetch(`${API_URL}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ export default function Users() {
     try {
       setLoading(true);
       const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/api/users`, {
+      const res = await fetch(`${API_URL}/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -158,7 +158,7 @@ export default function Users() {
     if (!deleteTarget) return;
     try {
       const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/api/users/${deleteTarget}`, {
+      const res = await fetch(`${API_URL}/users/${deleteTarget}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

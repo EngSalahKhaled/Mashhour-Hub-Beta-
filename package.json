@@ -1,0 +1,12 @@
+{
+  "name": "mashhour-hub-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run install:all && concurrently \"npm run dev --prefix api\" \"npm run dev --prefix admin-dashboard\"",
+    "install:all": "npm install --prefix api && npm install --prefix admin-dashboard --legacy-peer-deps"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

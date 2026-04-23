@@ -490,6 +490,80 @@ function CompanyDetailsSection() {
   );
 }
 
+// ─── Global Theme Customizer (Branding) ───────────────────────────────────────
+function GlobalThemeSection() {
+  const [form, setForm] = useState({
+      primaryColor: '#f4cd55',
+      secondaryColor: '#36daf5'
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+      const load = async () => {
+          try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/settings`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok && data.settings?.theme) {
+                setForm(data.settings.theme);
+            }
+          } catch (e) {}
+          setLoading(false);
+      };
+      load();
+  }, []);
+
+  const save = async () => {
+      setSaving(true);
+      try {
+          const token = localStorage.getItem('token');
+          const res = await fetch(`${API_URL}/settings/global`, {
+              method: 'PUT',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify({ theme: form })
+          });
+          if (res.ok) {
+              toast.success('Theme colors updated ✓');
+          } else {
+              throw new Error('Update failed');
+          }
+      } catch (e) { toast.error('Update failed'); }
+      finally { setSaving(false); }
+  };
+
+  if (loading) return null;
+
+  return (
+    <SectionCard icon={Palette} title="Global Theme Customizer" color={BRAND.purple}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Field label="Primary Color" hint="Used for main buttons and highlights">
+                <div className="flex items-center gap-3">
+                    <input type="color" value={form.primaryColor} onChange={e => setForm({...form, primaryColor: e.target.value})} className="h-10 w-10 cursor-pointer rounded bg-transparent border-0" />
+                    <input type="text" className="input-field uppercase" value={form.primaryColor} onChange={e => setForm({...form, primaryColor: e.target.value})} />
+                </div>
+            </Field>
+            <Field label="Secondary Color" hint="Used for gradients and secondary elements">
+                <div className="flex items-center gap-3">
+                    <input type="color" value={form.secondaryColor} onChange={e => setForm({...form, secondaryColor: e.target.value})} className="h-10 w-10 cursor-pointer rounded bg-transparent border-0" />
+                    <input type="text" className="input-field uppercase" value={form.secondaryColor} onChange={e => setForm({...form, secondaryColor: e.target.value})} />
+                </div>
+            </Field>
+        </div>
+        <div className="flex justify-end pt-2">
+            <button onClick={save} disabled={saving} className="btn-primary">
+                {saving ? <Loader2 className="animate-spin" /> : 'Save Theme'}
+            </button>
+        </div>
+    </SectionCard>
+  );
+}
+
 // ─── Two-Factor Security Section ──────────────────────────────────────────────
 function TwoFactorSection() {
   const [setupData, setSetupData] = useState(null);
@@ -510,7 +584,7 @@ function TwoFactorSection() {
   const startSetup = async () => {
       try {
           const token = await auth.currentUser.getIdToken();
-          const resp = await fetch(`${API_URL}/api/auth/2fa/setup`, {
+          const resp = await fetch(`${API_URL}/auth/2fa/setup`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -526,7 +600,7 @@ function TwoFactorSection() {
       setVerifying(true);
       try {
           const idToken = await auth.currentUser.getIdToken();
-          const resp = await fetch(`${API_URL}/api/auth/2fa/verify`, {
+          const resp = await fetch(`${API_URL}/auth/2fa/verify`, {
               method: 'POST',
               headers: { 
                   'Authorization': `Bearer ${idToken}`,
@@ -888,6 +962,7 @@ export default function SettingsPage() {
       {/* Sections */}
       <ProfileSection user={user} />
       <CompanyDetailsSection />
+      <GlobalThemeSection />
       <MyFatoorahSection />
       <MaintenanceSection />
       <CacheBusterSection />

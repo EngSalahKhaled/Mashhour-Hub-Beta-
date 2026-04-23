@@ -27,6 +27,9 @@ const CmsSiteElements  = lazy(() => import('../pages/CmsSiteElements'));
 const ErpClientsPage   = lazy(() => import('../pages/ErpClients'));
 const ErpQuotationsPage = lazy(() => import('../pages/ErpQuotations'));
 const ErpInvoicesPage  = lazy(() => import('../pages/ErpInvoices'));
+const ErpExpensesPage  = lazy(() => import('../pages/ErpExpenses'));
+const MarketingPage    = lazy(() => import('../pages/Marketing'));
+const PortalActivityPage = lazy(() => import('../pages/PortalActivity')); // [NEW] Phase 4
 const SystemLogsPage   = lazy(() => import('../pages/SystemLogs'));
 
 const pageVariants = {
@@ -43,8 +46,26 @@ function PageLoader() {
   );
 }
 
+function ProtectedRoute({ allowedRoles, children }) {
+  const { userRole } = useAuth();
+  if (!allowedRoles.includes(userRole) && userRole !== 'superadmin') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+          <span className="text-2xl text-red-500">🛡️</span>
+        </div>
+        <h2 className="text-xl font-bold text-slate-200 mb-2">Access Denied</h2>
+        <p className="text-slate-400 max-w-sm">
+          Your current role ({userRole}) does not have permission to view this page.
+        </p>
+      </div>
+    );
+  }
+  return children;
+}
+
 export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
 
   return (
@@ -74,109 +95,124 @@ export default function Layout({ isSidebarOpen, setIsSidebarOpen, dir }) {
             <AnimatePresence mode="wait">
               <Routes>
                 <Route path="/" element={
-                  <motion.div key="overview" {...pageVariants}>
-                    <OverviewPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor', 'marketer', 'accountant']}>
+                    <motion.div key="overview" {...pageVariants}><OverviewPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/leads" element={
-                  <motion.div key="leads" {...pageVariants}>
-                    <LeadsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'marketer']}>
+                    <motion.div key="leads" {...pageVariants}><LeadsPage /></motion.div>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/marketing" element={
+                  <ProtectedRoute allowedRoles={['admin', 'marketer']}>
+                    <motion.div key="marketing" {...pageVariants}><MarketingPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/media" element={
-                  <motion.div key="media" {...pageVariants}>
-                    <MediaPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor', 'marketer']}>
+                    <motion.div key="media" {...pageVariants}><MediaPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/services" element={
-                  <motion.div key="cms-services" {...pageVariants}>
-                    <CmsServicesPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-services" {...pageVariants}><CmsServicesPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/case-studies" element={
-                  <motion.div key="cms-cases" {...pageVariants}>
-                    <CmsCasesPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-cases" {...pageVariants}><CmsCasesPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/blog" element={
-                  <motion.div key="cms-blog" {...pageVariants}>
-                    <CmsBlogPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-blog" {...pageVariants}><CmsBlogPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/academy" element={
-                  <motion.div key="cms-academy" {...pageVariants}>
-                    <CmsAcademyPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-academy" {...pageVariants}><CmsAcademyPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/tools" element={
-                  <motion.div key="cms-tools" {...pageVariants}>
-                    <CmsToolsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-tools" {...pageVariants}><CmsToolsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/library" element={
-                  <motion.div key="cms-library" {...pageVariants}>
-                    <CmsLibraryPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-library" {...pageVariants}><CmsLibraryPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/prompts" element={
-                  <motion.div key="cms-prompts" {...pageVariants}>
-                    <CmsPromptsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-prompts" {...pageVariants}><CmsPromptsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/vault" element={
-                  <motion.div key="cms-vault" {...pageVariants}>
-                    <CmsVaultPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-vault" {...pageVariants}><CmsVaultPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/portfolio" element={
-                  <motion.div key="cms-portfolio" {...pageVariants}>
-                    <CmsPortfolioPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-portfolio" {...pageVariants}><CmsPortfolioPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/pricing" element={
-                  <motion.div key="cms-pricing" {...pageVariants}>
-                    <CmsPricingPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-pricing" {...pageVariants}><CmsPricingPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/cms/site-elements" element={
-                  <motion.div key="cms-site-elements" {...pageVariants}>
-                    <CmsSiteElements />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="cms-site-elements" {...pageVariants}><CmsSiteElements /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/erp/clients" element={
-                  <motion.div key="erp-clients" {...pageVariants}>
-                    <ErpClientsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'accountant']}>
+                    <motion.div key="erp-clients" {...pageVariants}><ErpClientsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/erp/quotations" element={
-                  <motion.div key="erp-quotations" {...pageVariants}>
-                    <ErpQuotationsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'accountant']}>
+                    <motion.div key="erp-quotations" {...pageVariants}><ErpQuotationsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/erp/invoices" element={
-                  <motion.div key="erp-invoices" {...pageVariants}>
-                    <ErpInvoicesPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'accountant']}>
+                    <motion.div key="erp-invoices" {...pageVariants}><ErpInvoicesPage /></motion.div>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/erp/expenses" element={
+                  <ProtectedRoute allowedRoles={['admin', 'accountant']}>
+                    <motion.div key="erp-expenses" {...pageVariants}><ErpExpensesPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/users" element={
-                  <motion.div key="users" {...pageVariants}>
-                    <UsersPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={[]}>
+                    <motion.div key="users" {...pageVariants}><UsersPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/website-editor" element={
-                  <motion.div key="website-editor" {...pageVariants}>
-                    <WebsiteEditor />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <motion.div key="website-editor" {...pageVariants}><WebsiteEditor /></motion.div>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/portal-activity" element={
+                  <ProtectedRoute allowedRoles={['admin', 'marketer']}>
+                    <motion.div key="portal-activity" {...pageVariants}><PortalActivityPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/settings" element={
-                  <motion.div key="settings" {...pageVariants}>
-                    <SettingsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={[]}>
+                    <motion.div key="settings" {...pageVariants}><SettingsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="/system-logs" element={
-                  <motion.div key="system-logs" {...pageVariants}>
-                    <SystemLogsPage />
-                  </motion.div>
+                  <ProtectedRoute allowedRoles={[]}>
+                    <motion.div key="system-logs" {...pageVariants}><SystemLogsPage /></motion.div>
+                  </ProtectedRoute>
                 }/>
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

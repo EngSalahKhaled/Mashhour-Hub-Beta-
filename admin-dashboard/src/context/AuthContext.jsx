@@ -7,18 +7,22 @@ export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [userRole, setUserRole] = useState(null);
+
   useEffect(() => {
     const unsub = onAuthChange(async (firebaseUser) => {
       if (firebaseUser) {
         // Automatically fetch and store token on auth change/refresh
         try {
-          const token = await firebaseUser.getIdToken(true);
-          localStorage.setItem('token', token);
+          const tokenResult = await firebaseUser.getIdTokenResult(true);
+          localStorage.setItem('token', tokenResult.token);
+          setUserRole(tokenResult.claims.role || 'superadmin'); // default to superadmin to prevent lockout if claims missing on old accounts
         } catch (err) {
           console.error('Failed to sync token:', err);
         }
       } else {
         localStorage.removeItem('token');
+        setUserRole(null);
       }
       
       setUser(firebaseUser);
@@ -39,7 +43,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, userRole, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

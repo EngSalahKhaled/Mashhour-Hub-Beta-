@@ -14,7 +14,7 @@ export default function SystemLogsPage() {
         setLoading(true);
         try {
             const token = await auth.currentUser?.getIdToken();
-            const resp = await fetch(`${API_URL}/api/logs`, {
+            const resp = await fetch(`${API_URL}/logs`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const result = await resp.json();

@@ -78,6 +78,42 @@ class EmailService {
             return false;
         }
     }
+    /**
+     * Sends a generic marketing/newsletter email
+     */
+    async sendMarketingEmail(to, subject, htmlBody) {
+        const logoUrl = 'https://www.mashhor-hub.com/assets/images/icons/logo.png';
+        const html = `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; background-color: #f9fafb; padding: 40px; color: #1f2937;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <div style="background: #07152b; padding: 30px; text-align: center;">
+                        <img src="${logoUrl}" alt="Mashhor Hub" style="height: 50px;">
+                    </div>
+                    <div style="padding: 40px;">
+                        ${htmlBody}
+                    </div>
+                    <div style="background: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #9ca3af;">
+                        &copy; ${new Date().getFullYear()} Mashhor Hub. جميع الحقوق محفوظة.<br>
+                        <a href="https://www.mashhor-hub.com/unsubscribe" style="color: #6b7280; text-decoration: underline;">إلغاء الاشتراك</a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        try {
+            await this.transporter.sendMail({
+                from: `"Mashhor Hub" <${process.env.SMTP_USER || 'info@mashhor-hub.com'}>`,
+                to,
+                subject,
+                html,
+            });
+            console.log(`[Email] Marketing email sent to ${to}`);
+            return true;
+        } catch (error) {
+            console.error('[Email] SMTP Error:', error.message);
+            return false;
+        }
+    }
 }
 
 module.exports = new EmailService();

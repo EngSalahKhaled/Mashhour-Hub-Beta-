@@ -85,6 +85,7 @@ app.use('/api/settings',  require('./routes/settings'));
 app.use('/api/media',     require('./routes/media'));
 app.use('/api/logs',      require('./routes/logs'));
 app.use('/api/influencers', require('./routes/influencers'));
+app.use('/api/marketing', require('./routes/marketing'));
 app.use('/api/services',    require('./routes/services'));
 app.use('/api/sitemap',     require('./routes/sitemap'));
 app.use('/api/auth/portal', require('./routes/portalAuth'));
@@ -103,6 +104,7 @@ app.use('/api/erp/clients',    require('./routes/erp/clients'));
 app.use('/api/erp/quotations', require('./routes/erp/quotations'));
 app.use('/api/erp/invoices',   require('./routes/erp/invoices'));
 app.use('/api/erp/payments',   require('./routes/erp/payments'));
+app.use('/api/erp/expenses',   require('./routes/erp/expenses')); // [NEW] Phase 3: Expenses
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 
@@ -112,6 +114,13 @@ app.get('/api/health', (req, res) => {
         status:      'Mashhor Hub API is running ✓',
         environment: process.env.NODE_ENV || 'development',
         timestamp:   new Date().toISOString(),
+    });
+});
+
+app.get('/api', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Welcome to Mashhor Hub API. All systems operational 🚀'
     });
 });
 

@@ -3,13 +3,13 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, Image, FileText, Settings,
-  ChevronDown, ChevronLeft, ChevronRight, LogOut, Layers, Briefcase, Globe, Receipt,
+  ChevronDown, ChevronLeft, ChevronRight, LogOut, Layers, Briefcase, Globe, Receipt, Mail, Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { navItems } from '../constants/navigation';
 import toast from 'react-hot-toast';
 
-const ICON_MAP = { LayoutDashboard, Users, Image, FileText, Settings, Layers, Briefcase, Globe, Receipt };
+const ICON_MAP = { LayoutDashboard, Users, Image, FileText, Settings, Layers, Briefcase, Globe, Receipt, Mail, Activity };
 
 function NavIcon({ name, size = 18 }) {
   const Comp = ICON_MAP[name];
@@ -39,7 +39,7 @@ const itemVariants = {
 export default function Sidebar({ isOpen, setIsOpen, dir }) {
   const [collapsed, setCollapsed]   = useState(false);
   const [openGroup, setOpenGroup]   = useState(null);
-  const { logout }                  = useAuth();
+  const { logout, userRole }        = useAuth();
   const navigate                    = useNavigate();
   const isRTL                       = dir === 'rtl';
 
@@ -76,6 +76,7 @@ export default function Sidebar({ isOpen, setIsOpen, dir }) {
           toggleGroup={toggleGroup}
           handleLogout={handleLogout}
           isRTL={isRTL}
+          userRole={userRole}
         />
       </motion.aside>
 
@@ -101,6 +102,7 @@ export default function Sidebar({ isOpen, setIsOpen, dir }) {
               toggleGroup={toggleGroup}
               handleLogout={handleLogout}
               isRTL={isRTL}
+              userRole={userRole}
               onNavClick={() => setIsOpen(false)}
             />
           </motion.aside>
@@ -110,7 +112,7 @@ export default function Sidebar({ isOpen, setIsOpen, dir }) {
   );
 }
 
-function SidebarContent({ collapsed, setCollapsed, openGroup, toggleGroup, handleLogout, isRTL, onNavClick }) {
+function SidebarContent({ collapsed, setCollapsed, openGroup, toggleGroup, handleLogout, isRTL, onNavClick, userRole }) {
   return (
     <>
       {/* Logo */}
@@ -164,7 +166,9 @@ function SidebarContent({ collapsed, setCollapsed, openGroup, toggleGroup, handl
       {/* Nav Items */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
         <ul className="space-y-1">
-          {navItems.map((item, i) => (
+          {navItems
+            .filter(item => !item.allowedRoles || item.allowedRoles.includes(userRole))
+            .map((item, i) => (
             <motion.li
               key={item.id}
               custom={i}

@@ -17,6 +17,8 @@ admin-dashboard/.env
 
 # Firebase Service Account — SENSITIVE
 api/src/config/service-account.json
+api/service-account.json
+mashhour-hub-firebase-adminsdk*.json
 
 # OS files
 .DS_Store

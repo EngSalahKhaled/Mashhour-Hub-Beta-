@@ -6,6 +6,7 @@ const validate = require('../middleware/validate');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const emailService = require('../services/emailService');
+const logPortalActivity = require('../utils/portalLogger');
 
 const COLLECTION = 'portal_users';
 
@@ -46,6 +47,9 @@ router.post('/register', registerValidation, validate, asyncHandler(async (req, 
         // 4. Automation: Send Welcome Email
         await emailService.sendWelcomeEmail(email, name, role);
 
+        // 5. Log Activity
+        await logPortalActivity(userRecord.uid, role, 'USER_REGISTERED', { email, name });
+
         res.status(201).json({ 
             success: true, 
             message: 'Registration successful! Check your email.',
@@ -70,7 +74,10 @@ router.post('/login-check', asyncHandler(async (req, res) => {
         throw new AppError('User not found in portal.', 403);
     }
 
-    res.json({ success: true, user: userDoc.data() });
+    const userData = userDoc.data();
+    await logPortalActivity(uid, userData.role, 'USER_LOGGED_IN', { email: userData.email });
+
+    res.json({ success: true, user: userData });
 }));
 
 module.exports = router;
