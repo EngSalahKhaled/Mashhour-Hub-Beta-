@@ -301,7 +301,7 @@
       ]},
       explore: { text: "استكشف", children: [
         { text: "الأعمال", href: `${arBase}portfolio/` },
-        { text: "اكتشف المؤثرين", href: `${p}discover.html` },
+        { text: "اكتشف المؤثرين", href: `${arBase}discover.html` },
         { text: "الأكاديمية", href: `${arBase}academy/` },
         { text: "Mashhor AI", href: `${arBase}services/mashhor-ai.html` },
         { text: "الباقات", href: `${arBase}pricing/` }
