@@ -55,11 +55,9 @@
 </div>
 
 <script src="../assets/js/mashhor-platform.js"></script>
+<script src="../assets/js/influencers-data.js"></script>
 <script>
 (function() {
-    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:5000' : window.location.origin;
-
     const grid = document.getElementById('showcase-grid');
     const loading = document.getElementById('showcase-loading');
 
@@ -69,21 +67,25 @@
       green: '../assets/images/verification/verified-symbol-green.svg'
     };
 
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000' : window.location.origin;
+
     function renderCard(c) {
       const initials = (c.name || 'MH').split(' ').map(w => w[0]).join('').substring(0,2);
       const imgHtml = c.logoUrl
         ? `<img src="${c.logoUrl}" alt="${c.name}">`
         : `<div class="placeholder">${initials}</div>`;
       
-      const badgeIcon = VERIFICATION_ICONS[c.verificationTier] || VERIFICATION_ICONS.blue;
+      const tier = c.verificationTier || (c.isGold ? 'gold' : c.isVerified ? 'blue' : 'green');
+      const badgeIcon = VERIFICATION_ICONS[tier] || VERIFICATION_ICONS.blue;
       const profileUrl = `../u/profile.html?username=${c.pageName}`;
 
       return `
         <div class="showcase-card">
-            <span class="sc-tier">${c.verificationTier} Tier</span>
+            <span class="sc-tier">${tier} Tier</span>
             <div class="sc-avatar">${imgHtml}</div>
             <h3 class="sc-name">${c.name} <img src="${badgeIcon}" style="width:20px;" alt="Verified"></h3>
-            <p class="sc-field">${c.field}</p>
+            <p class="sc-field">${c.field || c.category}</p>
             <p class="sc-bio">${c.longBio || c.bio || ''}</p>
             <a href="${profileUrl}" class="btn-book">View Profile</a>
         </div>
@@ -92,14 +94,19 @@
 
     async function loadShowcase() {
         try {
-            const res = await fetch(`${API_URL}/api/influencers?limit=12`);
+            const res = await fetch(`${API_BASE}/api/influencers?limit=12`);
             const data = await res.json();
-            if (data.success && data.data.length > 0) {
+            if (data.success && data.data && data.data.length > 0) {
                 grid.innerHTML = data.data.map(renderCard).join('');
                 loading.style.display = 'none';
+            } else {
+                throw new Error('No API data');
             }
         } catch (e) {
-            console.error('Showcase Load Error', e);
+            console.warn('[FALLBACK SHOWCASE]', e);
+            const fallback = window.INITIAL_INFLUENCERS || [];
+            grid.innerHTML = fallback.slice(0, 12).map(renderCard).join('');
+            loading.style.display = 'none';
         }
     }
 

@@ -195,6 +195,7 @@
     <div data-platform-footer></div>
   </div>
   <script charset="UTF-8" src="assets/js/mashhor-platform.js"></script>
+  <script src="assets/js/influencers-data.js"></script>
   <script>
   (function() {
     const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -250,19 +251,26 @@
     async function fetchCreators() {
         loading.style.display = 'block';
         grid.style.display = 'none';
+        empty.style.display = 'none';
         
         try {
             const res = await fetch(`${API_URL}/api/influencers?limit=${itemsPerPage}&page=${currentPage}&category=${activeCategory}`);
             const data = await res.json();
             
-            if (data.success) {
+            if (data.success && data.data && data.data.length > 0) {
                 allCreators = data.data;
                 renderCreators();
                 loadMoreContainer.style.display = data.hasMore ? 'block' : 'none';
+            } else {
+                throw new Error('No data from API');
             }
         } catch (e) {
-            console.error('Fetch failed', e);
-            empty.style.display = 'block';
+            console.warn('[FALLBACK LOAD]', e);
+            const fallback = window.INITIAL_INFLUENCERS || [];
+            const filtered = activeCategory === 'all' ? fallback : fallback.filter(i => i.category === activeCategory);
+            allCreators = filtered.slice(0, currentPage * itemsPerPage);
+            renderCreators();
+            loadMoreContainer.style.display = filtered.length > allCreators.length ? 'block' : 'none';
         } finally {
             loading.style.display = 'none';
         }
