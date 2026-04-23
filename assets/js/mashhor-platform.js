@@ -165,6 +165,64 @@
 
   const prefix = getPrefix();
 
+  const toCleanInternalPath = (value) => {
+    if (!value || typeof value !== "string") return value;
+
+    const trimmed = value.trim();
+    if (
+      !trimmed ||
+      /^(mailto:|tel:|javascript:|data:|#)/i.test(trimmed) ||
+      /\.(jpg|jpeg|png|webp|gif|svg|pdf|xml|txt|json|js|css|ico|woff2?|ttf|map)(\?.*)?$/i.test(trimmed)
+    ) {
+      return trimmed;
+    }
+
+    const cleanPathname = (pathname) => pathname
+      .replace(/\/index\.html$/i, "/")
+      .replace(/\.html$/i, "")
+      .replace(/\/+/g, "/");
+
+    if (/^https?:\/\//i.test(trimmed)) {
+      try {
+        const url = new URL(trimmed);
+        if (url.origin !== window.location.origin) return trimmed;
+        url.pathname = cleanPathname(url.pathname);
+        return `${url.pathname}${url.search}${url.hash}`;
+      } catch (e) {
+        return trimmed;
+      }
+    }
+
+    if (trimmed.startsWith("/")) {
+      return cleanPathname(trimmed);
+    }
+
+    return trimmed
+      .replace(/(^|\/)index\.html$/i, "$1")
+      .replace(/\.html(?=$|[?#])/i, "");
+  };
+
+  const normalizeInternalNavigation = (root = document) => {
+    root.querySelectorAll("a[href]").forEach((link) => {
+      const href = link.getAttribute("href");
+      const normalized = toCleanInternalPath(href);
+      if (normalized && normalized !== href) {
+        link.setAttribute("href", normalized);
+      }
+    });
+
+    root
+      .querySelectorAll('link[rel="canonical"], link[rel="alternate"], meta[property="og:url"], meta[name="twitter:url"]')
+      .forEach((node) => {
+        const attr = node.tagName === "META" ? "content" : "href";
+        const current = node.getAttribute(attr);
+        const normalized = toCleanInternalPath(current);
+        if (normalized && normalized !== current) {
+          node.setAttribute(attr, normalized);
+        }
+      });
+  };
+
   // ─── MAINTENANCE MODE CHECK & THEME CONFIG ───
   const fetchGlobalSettings = async () => {
     const isMaintenancePage = window.location.pathname.includes('maintenance.html');
@@ -200,6 +258,7 @@
     }
   };
   fetchGlobalSettings();
+  normalizeInternalNavigation();
 
   const brandSrc = `${prefix}assets/images/icons/logo-flat.png`;
   const currentPath = window.location.pathname.replace(/\\/g, "/");
@@ -2060,6 +2119,7 @@
         .join("");
 
       initHeroCarousels();
+      normalizeInternalNavigation(track);
     };
 
     const renderHeroMetrics = (items) => {
@@ -2131,6 +2191,7 @@
 
       if (!markup) return;
       logoTrack.innerHTML = `${markup}${markup}`;
+      normalizeInternalNavigation(logoTrack);
     };
 
     const renderProcess = (items) => {
@@ -2201,6 +2262,7 @@
         .join("");
 
       enhanceFaqAccessibility(faqStack);
+      normalizeInternalNavigation(faqStack);
     };
 
     try {
@@ -2326,11 +2388,13 @@
     document.addEventListener("DOMContentLoaded", () => {
       initGlobalTracking();
       initDynamicContent();
+      normalizeInternalNavigation();
     });
   } else {
     setTimeout(() => {
       initGlobalTracking();
       initDynamicContent();
+      normalizeInternalNavigation();
     }, 200);
   }
 
