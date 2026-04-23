@@ -6,6 +6,7 @@ const auth    = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
+const emailService = require('../services/emailService');
 
 const COLLECTION = 'leads';
 

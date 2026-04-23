@@ -3,27 +3,63 @@
   "builds": [
     {
       "src": "api/src/server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "includeFiles": "api/src/**"
+      }
     },
     {
       "src": "admin-dashboard/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist",
-        "installCommand": "npm install --legacy-peer-deps"
+        "installCommand": "npm install --legacy-peer-deps",
+        "buildCommand": "npm run build"
       }
     },
     {
-      "src": "**",
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "data/**",
       "use": "@vercel/static"
     }
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/src/server.js" },
-    { "source": "/admin/assets/(.*)", "destination": "/admin-dashboard/assets/$1" },
-    { "source": "/admin", "destination": "/admin-dashboard/entry.html" },
-    { "source": "/admin/(.*)", "destination": "/admin-dashboard/entry.html" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/$1" }
-  ]
+    { "source": "/admin/assets/(.*)", "destination": "/admin-dashboard/dist/assets/$1" },
+    { "source": "/admin", "destination": "/admin-dashboard/dist/entry.html" },
+    { "source": "/admin/(.*)", "destination": "/admin-dashboard/dist/entry.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, PATCH, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "functions": {
+    "api/src/server.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  }
 }

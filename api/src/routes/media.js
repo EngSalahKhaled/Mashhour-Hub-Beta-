@@ -26,7 +26,7 @@ router.get('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandl
 }));
 
 // ─── POST /api/media/upload (Admin — Upload File to Storage) ──────────────────
-router.post('/upload', auth, authorizeRole('superadmin', 'admin', 'editor'), upload.single('file'), asyncHandler(async (req, res) => {
+router.post('/upload', auth, authorizeRole('superadmin', 'admin', 'editor'), upload.single('file'), asyncHandler(async (req, res, next) => {
     if (!req.file) throw new AppError('No file uploaded.', 400);
 
     const blob = bucket.file(`media/${Date.now()}_${req.file.originalname}`);
@@ -35,25 +35,31 @@ router.post('/upload', auth, authorizeRole('superadmin', 'admin', 'editor'), upl
         metadata: { contentType: req.file.mimetype }
     });
 
-    blobStream.on('error', (err) => { throw new AppError(err.message, 500); });
+    blobStream.on('error', (err) => {
+        next(new AppError(`Upload failed: ${err.message}`, 500));
+    });
 
     blobStream.on('finish', async () => {
-        // Make the file public
-        await blob.makePublic();
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        try {
+            // Make the file public
+            await blob.makePublic();
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
-        const fileData = {
-            name: req.file.originalname,
-            type: req.file.mimetype.startsWith('image') ? 'image' : 'file',
-            size: req.file.size,
-            url: publicUrl,
-            storagePath: blob.name,
-            uploadedBy: req.admin.uid,
-            createdAt: new Date().toISOString(),
-        };
+            const fileData = {
+                name: req.file.originalname,
+                type: req.file.mimetype.startsWith('image') ? 'image' : 'file',
+                size: req.file.size,
+                url: publicUrl,
+                storagePath: blob.name,
+                uploadedBy: req.admin.uid,
+                createdAt: new Date().toISOString(),
+            };
 
-        const docRef = await db.collection(COLLECTION).add(fileData);
-        res.status(201).json({ success: true, id: docRef.id, file: { id: docRef.id, ...fileData } });
+            const docRef = await db.collection(COLLECTION).add(fileData);
+            res.status(201).json({ success: true, id: docRef.id, file: { id: docRef.id, ...fileData } });
+        } catch (err) {
+            next(new AppError(`Failed to save media record: ${err.message}`, 500));
+        }
     });
 
     blobStream.end(req.file.buffer);

@@ -53,10 +53,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Handle all preflight (OPTIONS) requests
 
+// ─── Rate Limiting for AI endpoints ───────────────────────────────────────────
+const aiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,             // max 10 AI requests per minute per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many AI requests. Please slow down.' },
+});
+
 // ─── API Routes ───────────────────────────────────────────────────────────────
 
-// Apply rate limiting to public form submission endpoint BEFORE the route
+// Apply rate limiting to public endpoints BEFORE the routes
 app.use('/api/leads', publicLimiter);
+app.use('/api/ai',    aiLimiter);
 
 app.use('/api/auth',      require('./routes/auth'));
 app.use('/api/leads',     require('./routes/leads'));
@@ -83,6 +93,7 @@ app.use('/api/portal/sales', require('./routes/portalSales'));
 app.use('/api/portal/apps',  require('./routes/portalApps'));
 app.use('/api/portal/academy', require('./routes/portalAcademy'));
 app.use('/api/ai',             require('./routes/ai'));
+app.use('/api/vault',          require('./routes/vault'));
 app.use('/api/portal/notifications', require('./routes/portalNotifications'));
 app.use('/api/super-admin',          require('./routes/superAdmin'));
 

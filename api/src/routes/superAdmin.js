@@ -5,9 +5,9 @@ const authMiddleware = require('../middleware/auth'); // Should check for isAdmi
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 
-// Middleware to ensure user is Super Admin
+// Middleware to ensure user is Admin or Super Admin
 const adminOnly = (req, res, next) => {
-    if (req.admin && req.admin.role === 'admin') {
+    if (req.admin && ['admin', 'superadmin'].includes(req.admin.role)) {
         next();
     } else {
         return next(new AppError('Unauthorized: Admin access only.', 403));

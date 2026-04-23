@@ -21,7 +21,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
     // 2. Fetch Dynamic Pages from Firestore
     const [blogs, services, influencers] = await Promise.all([
-        db.collection('blog').get(),
+        db.collection('blog_posts').where('status', '==', 'published').get(),
         db.collection('services').get(),
         db.collection('influencers').get()
     ]);

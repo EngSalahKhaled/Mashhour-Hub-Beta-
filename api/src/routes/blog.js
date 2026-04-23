@@ -24,6 +24,16 @@ const postValidation = [
     body('status').optional().isIn(['draft', 'published', 'archived']).withMessage('Invalid status.')
 ];
 
+// ─── GET /api/blog/admin/all (Admin — list ALL posts including drafts) ────────
+router.get('/admin/all', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION)
+        .orderBy('createdAt', 'desc')
+        .get();
+
+    const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, count: posts.length, posts });
+}));
+
 // ─── GET /api/blog (Public — list all published posts) ───────────────────────
 router.get('/', asyncHandler(async (req, res) => {
     const snapshot = await db.collection(COLLECTION)

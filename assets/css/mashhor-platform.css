@@ -4998,7 +4998,11 @@ html[lang^="en"] .search-input {
   }
 }
 
-[dir="rtl"] @keyframes fadeSlide {
+[dir="rtl"] .testimonial-slide {
+  animation-name: fadeSlideRtl;
+}
+
+@keyframes fadeSlideRtl {
   from {
     opacity: 0;
     transform: translateX(-20px);

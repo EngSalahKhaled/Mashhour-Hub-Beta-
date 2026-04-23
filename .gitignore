@@ -3,14 +3,20 @@
 # ZIP archives
 *.zip
 
-# Node modules
+# Node modules (all locations)
 node_modules/
 mashhor-backend/node_modules/
 
-# Environment files
+# Environment files — NEVER commit these
 .env
 .env.local
 .env.production
+.env.*.local
+api/.env
+admin-dashboard/.env
+
+# Firebase Service Account — SENSITIVE
+api/src/config/service-account.json
 
 # OS files
 .DS_Store
@@ -21,8 +27,16 @@ desktop.ini
 .vscode/
 .idea/
 
-# Temp
+# Temp & Dev
 tmp_archive/
 _dev_tools_backup/
 tmp_extract/
 tmp_extract_2/
+scratch/
+null
+
+# Vercel
+.vercel
+
+# Build output
+admin-dashboard/dist/

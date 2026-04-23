@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { db }  = require('../config/firebase');
+const { admin, db }  = require('../config/firebase');
 const authMiddleware = require('../middleware/auth');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
