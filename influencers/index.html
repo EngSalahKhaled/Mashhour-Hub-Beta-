@@ -1,51 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" style="overflow-x: hidden;">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Our Influencers | Mashhor Hub — Elite Creator Network</title>
-    <link rel="stylesheet" href="../assets/css/mashhor-platform.css">
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-T6ZLQZ4G');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Our Influencers | Mashhor Hub — Elite Creator Network</title>
+<link rel="stylesheet" href="../assets/css/mashhor-platform.css">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ FEATURED SHOWCASE STYLES ═══ */
+.featured-hero { text-align: center; padding: 120px 24px 60px; background: radial-gradient(circle at top, rgba(244,205,85,0.05) 0%, transparent 70%); }
+.featured-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; }
+.featured-hero p { max-width: 700px; margin: 0 auto; color: var(--muted); font-size: 1.1rem; line-height: 1.8; }
+
+.creator-showcase { max-width: 1200px; margin: 0 auto 100px; padding: 0 24px; }
+.showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+
+/* Custom Showcase Card */
+.showcase-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px 30px; text-align: center; transition: 0.4s; }
+.showcase-card:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+
+.sc-avatar { width: 120px; height: 120px; border-radius: 40px; margin: 0 auto 24px; overflow: hidden; border: 4px solid rgba(244,205,85,0.2); }
+.sc-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sc-avatar .placeholder { width: 100%; height: 100%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: #000; }
+
+.sc-tier { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin-bottom: 12px; display: block; }
+.sc-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.sc-field { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+.sc-bio { font-size: 0.85rem; line-height: 1.6; color: rgba(255,255,255,0.6); margin-bottom: 30px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+.btn-book { display: inline-block; padding: 12px 30px; border-radius: 12px; background: var(--gold); color: #000; font-weight: 700; text-decoration: none; transition: 0.3s; }
+.btn-book:hover { transform: scale(1.05); }
+</style>
 </head>
 <body>
 <div class="page-shell platform-page">
     <div data-platform-header></div>
     <main>
-        <section class="hero subhero">
-            <div class="subhero-panel">
-                <p class="eyebrow">Elite Creator Network</p>
-                <h1>Meet the influencers who <span>move markets.</span></h1>
-                <p class="lead">Our curated roster features vetted creators across Kuwait, GCC, and Egypt.</p>
-                <div class="hero-actions">
-                    <a class="button button-gold" href="../contact.html">Book a Creator</a>
-                    <a class="ghost-button" href="join.html">Join as Influencer</a>
-                </div>
-            </div>
+        <section class="featured-hero">
+            <p class="eyebrow">Elite Creator Roster</p>
+            <h1>Move Markets with <span>Top Influence.</span></h1>
+            <p>Our curated network features the most impactful voices across the GCC and Arab world. From macro-celebrities to niche micro-influencers, we connect you with the right audience.</p>
         </section>
 
-        <section class="section">
-            <div class="section-header">
-                <p class="eyebrow">Browse by Category</p>
-                <h2>Find the perfect creator for <span>your next campaign.</span></h2>
+        <section class="creator-showcase">
+            <div id="showcase-loading" style="text-align:center; padding: 50px;">
+                <div class="spinner"></div>
+                <p style="margin-top:20px; color:var(--muted)">Fetching our elite roster...</p>
             </div>
-            
-            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;">
-                <button class="tag active" data-filter="all">All</button>
-                <button class="tag" data-filter="lifestyle">Lifestyle</button>
-                <button class="tag" data-filter="tech">Tech</button>
-                <button class="tag" data-filter="beauty">Beauty</button>
-                <button class="tag" data-filter="business">Business</button>
-            </div>
-
-            <div class="grid-3" data-cms="influencer-grid">
-                <!-- Dynamic grid -->
-            </div>
+            <div class="showcase-grid" id="showcase-grid"></div>
         </section>
     </main>
     <div data-platform-footer></div>
 </div>
 
 <script src="../assets/js/mashhor-platform.js"></script>
-<script src="../assets/js/cms-bridge.js"></script>
+<script>
+(function() {
+    const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000' : window.location.origin;
+
+    const grid = document.getElementById('showcase-grid');
+    const loading = document.getElementById('showcase-loading');
+
+    const VERIFICATION_ICONS = {
+      gold: '../assets/images/verification/Verified_Badge_Gold.svg',
+      blue: '../assets/images/verification/Verified_Badge.svg',
+      green: '../assets/images/verification/verified-symbol-green.svg'
+    };
+
+    function renderCard(c) {
+      const initials = (c.name || 'MH').split(' ').map(w => w[0]).join('').substring(0,2);
+      const imgHtml = c.logoUrl
+        ? `<img src="${c.logoUrl}" alt="${c.name}">`
+        : `<div class="placeholder">${initials}</div>`;
+      
+      const badgeIcon = VERIFICATION_ICONS[c.verificationTier] || VERIFICATION_ICONS.blue;
+      const profileUrl = `../u/profile.html?username=${c.pageName}`;
+
+      return `
+        <div class="showcase-card">
+            <span class="sc-tier">${c.verificationTier} Tier</span>
+            <div class="sc-avatar">${imgHtml}</div>
+            <h3 class="sc-name">${c.name} <img src="${badgeIcon}" style="width:20px;" alt="Verified"></h3>
+            <p class="sc-field">${c.field}</p>
+            <p class="sc-bio">${c.longBio || c.bio || ''}</p>
+            <a href="${profileUrl}" class="btn-book">View Profile</a>
+        </div>
+      `;
+    }
+
+    async function loadShowcase() {
+        try {
+            const res = await fetch(`${API_URL}/api/influencers?limit=12`);
+            const data = await res.json();
+            if (data.success && data.data.length > 0) {
+                grid.innerHTML = data.data.map(renderCard).join('');
+                loading.style.display = 'none';
+            }
+        } catch (e) {
+            console.error('Showcase Load Error', e);
+        }
+    }
+
+    loadShowcase();
+})();
+</script>
 </body>
 </html>
