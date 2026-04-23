@@ -212,9 +212,11 @@ export default function CmsSiteElements() {
   const [modalItem, setModalItem] = useState(null); // null = closed, {} = new, {id:...} = edit
 
   // Live Scanner States
-  const [scanUrl, setScanUrl] = useState('https://mashhour-hub.web.app');
+  const [scanUrl, setScanUrl] = useState('https://mashhour-hub-beta.vercel.app/');
   const [scannedElement, setScannedElement] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [scannedEditableContent, setScannedEditableContent] = useState('');
+  const [scannedSaving, setScannedSaving] = useState(false);
 
   const fetchElements = async () => {
     setLoading(true);
@@ -273,12 +275,59 @@ export default function CmsSiteElements() {
           href: el.href || null,
           classList: Array.from(el.classList).join(' ')
         });
+        setScannedEditableContent(el.tagName.toLowerCase() === 'img' ? (el.src || '') : el.textContent.trim());
         toast.success(`Found element <${el.tagName.toLowerCase()}>`);
       }
     } catch (err) {
       toast.error('Failed to scan website: ' + err.message);
     } finally {
       setScanning(false);
+    }
+  };
+
+  const handleQuickSaveScanned = async () => {
+    if (!scannedElement) return;
+    setScannedSaving(true);
+    
+    // Clean up elementId
+    let elementId = search.replace(/[.#]/g, '').toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    if (elementId.length > 40) elementId = elementId.substring(0, 40); // safety length
+
+    const type = scannedElement.tagName === 'img' ? 'image' : (scannedEditableContent.length > 50 ? 'textarea' : 'text');
+    
+    const payload = {
+      elementId,
+      type,
+      content: scannedEditableContent,
+      description: `Scanned from ${scanUrl} (Auto)`,
+      selector: search
+    };
+
+    try {
+      const existing = elements.find(e => e.selector === search || e.elementId === elementId);
+      if (existing) {
+        await api.patch(`/site-elements/${existing.id}`, payload);
+        toast.success('Element updated! Refresh the website to see changes.');
+      } else {
+        await api.post('/site-elements', payload);
+        toast.success('New element created! Refresh the website to see changes.');
+      }
+      fetchElements();
+      
+      // Update visual render locally
+      setScannedElement(prev => ({
+        ...prev,
+        textContent: type !== 'image' ? scannedEditableContent : prev.textContent,
+        src: type === 'image' ? scannedEditableContent : prev.src,
+        outerHTML: prev.outerHTML.replace(
+           type === 'image' ? (prev.src || '') : prev.textContent,
+           scannedEditableContent
+        )
+      }));
+    } catch (err) {
+      toast.error('Failed to save element: ' + err.message);
+    } finally {
+      setScannedSaving(false);
     }
   };
 
@@ -381,18 +430,12 @@ export default function CmsSiteElements() {
                   </h3>
                   <div className="flex gap-2">
                     <button 
-                      onClick={() => {
-                        setModalItem({
-                          elementId: search.replace(/[.#]/g, ''),
-                          type: scannedElement.tagName === 'img' ? 'image' : (scannedElement.textContent.length > 50 ? 'textarea' : 'text'),
-                          content: scannedElement.tagName === 'img' ? scannedElement.src : scannedElement.textContent,
-                          description: `Scanned from ${scanUrl}`,
-                          selector: search
-                        });
-                      }}
-                      className="btn-primary !py-1.5 !px-3 !text-xs"
+                      onClick={handleQuickSaveScanned}
+                      disabled={scannedSaving}
+                      className="btn-primary !py-1.5 !px-3 !text-xs bg-green-600 hover:bg-green-500 border-none"
                     >
-                      <Plus size={14} className="mr-1 inline" /> Create Dynamic Element from this
+                      {scannedSaving ? <Loader2 size={14} className="animate-spin mr-1 inline" /> : <Plus size={14} className="mr-1 inline" />} 
+                      Save & Update Live Site
                     </button>
                     <button onClick={() => setScannedElement(null)} className="p-1.5 hover:bg-white/10 rounded-lg">
                       <X size={16} color={BRAND.muted} />
@@ -415,12 +458,32 @@ export default function CmsSiteElements() {
                     />
                   </div>
                   
-                  {/* Code Shape */}
-                  <div className="bg-black/60 rounded-lg p-4 border overflow-auto max-h-48" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-                    <p className="text-xs mb-2 uppercase tracking-wider" style={{ color: BRAND.muted }}>HTML Shape</p>
-                    <pre className="text-xs font-mono" style={{ color: BRAND.gold }}>
-                      {scannedElement.outerHTML}
-                    </pre>
+                  {/* Quick Edit Input */}
+                  <div className="bg-black/60 rounded-lg p-4 border flex flex-col" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+                    <p className="text-xs mb-2 uppercase tracking-wider" style={{ color: BRAND.gold }}>Quick Edit Content</p>
+                    
+                    {scannedElement.tagName === 'img' ? (
+                      <div className="flex flex-col gap-2 flex-1">
+                        <label className="text-xs text-gray-400">Image Source URL:</label>
+                        <input 
+                          type="url"
+                          value={scannedEditableContent}
+                          onChange={(e) => setScannedEditableContent(e.target.value)}
+                          className="input-field w-full text-sm font-mono"
+                          placeholder="https://..."
+                        />
+                        {scannedEditableContent && (
+                           <img src={scannedEditableContent} alt="preview" className="h-20 w-auto object-contain mt-2 rounded border border-gray-700 bg-black/50" />
+                        )}
+                      </div>
+                    ) : (
+                      <textarea
+                        value={scannedEditableContent}
+                        onChange={(e) => setScannedEditableContent(e.target.value)}
+                        className="input-field w-full text-sm flex-1 font-mono resize-none min-h-[120px]"
+                        placeholder="Enter new text content here..."
+                      />
+                    )}
                   </div>
                 </div>
               </div>
