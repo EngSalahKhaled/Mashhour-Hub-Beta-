@@ -6,7 +6,7 @@
 
 const API_BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
   ? 'http://localhost:5000/api' 
-  : 'https://mashhor-hub.com/api'; // Adjust to your production API URL
+  : 'https://mashhour-hub-beta.vercel.app/api'; // Use the Vercel backend API
 
 /**
  * Utility to automatically inject dynamic content into DOM elements.
