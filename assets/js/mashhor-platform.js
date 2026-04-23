@@ -1918,7 +1918,9 @@
   // ═════ DYNAMIC CONTENT INTEGRATION ═════
   const initDynamicContent = async () => {
     // Determine API URL (default to localhost if not specified)
-    const API_URL = 'http://localhost:5000'; // Update this to production URL on deploy
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:5000' 
+      : window.location.origin;
 
     try {
       // 1. Fetch Global Settings (Contact & Social)

@@ -4,9 +4,9 @@
  * based on the element's CSS selector or data attributes.
  */
 
-const API_BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:5000/api' 
-  : 'https://mashhour-hub-beta.vercel.app/api'; // Use the Vercel backend API
+  : `${window.location.origin}/api`; // Automatically use current production domain
 
 /**
  * Utility to automatically inject dynamic content into DOM elements.

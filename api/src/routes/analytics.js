@@ -16,10 +16,31 @@ const PROPERTY_ID = process.env.GA4_PROPERTY_ID || '0'; // User must set this
 const KEY_FILE = path.resolve(__dirname, '../config/service-account.json');
 
 let analyticsClient;
-if (fs.existsSync(KEY_FILE)) {
-    analyticsClient = new BetaAnalyticsDataClient({
-        keyFilename: KEY_FILE,
-    });
+try {
+    if (fs.existsSync(KEY_FILE)) {
+        analyticsClient = new BetaAnalyticsDataClient({
+            keyFilename: KEY_FILE,
+        });
+    } else if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+        let rawKey = process.env.FIREBASE_PRIVATE_KEY || '';
+        try { if (rawKey.trim().startsWith('"')) rawKey = JSON.parse(rawKey); } catch (e) {}
+        rawKey = rawKey.replace(/\\n/g, '\n').replace(/"/g, '').replace(/'/g, '').trim();
+        if (rawKey && !rawKey.includes('\n')) {
+            rawKey = rawKey.replace(/-----BEGIN PRIVATE KEY-----/g, '-----BEGIN PRIVATE KEY-----\n');
+            rawKey = rawKey.replace(/-----END PRIVATE KEY-----/g, '\n-----END PRIVATE KEY-----');
+            const parts = rawKey.split('\n');
+            if (parts.length === 3) { parts[1] = parts[1].replace(/\s+/g, '\n'); rawKey = parts.join('\n'); }
+        }
+
+        analyticsClient = new BetaAnalyticsDataClient({
+            credentials: {
+                client_email: process.env.FIREBASE_CLIENT_EMAIL,
+                private_key: rawKey
+            }
+        });
+    }
+} catch (e) {
+    console.error("Analytics init failed:", e.message);
 }
 
 // ─── GET /api/analytics/overview ─────────────────────────────────────────────
