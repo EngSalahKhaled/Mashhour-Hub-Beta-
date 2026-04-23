@@ -7,6 +7,7 @@ const authorizeRole = require('../middleware/role');
 const validate = require('../middleware/validate');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
+const logActivity = require('../utils/activityLogger');
 
 const COLLECTION = 'admins';
 
@@ -58,6 +59,12 @@ router.post('/', auth, authorizeRole('superadmin'), userValidation, validate, as
         };
         await db.collection(COLLECTION).doc(userRecord.uid).set(userData);
 
+        await logActivity(db, {
+            user: req.admin,
+            action: 'admin_user_created',
+            details: { uid: userRecord.uid, email, role },
+        });
+
         res.status(201).json({ success: true, uid: userRecord.uid, message: 'User created successfully.' });
     } catch (error) {
         // Handle specific Firebase Auth errors
@@ -86,6 +93,12 @@ router.delete('/:uid', auth, authorizeRole('superadmin'), asyncHandler(async (re
 
         // 2. Delete from Firestore
         await db.collection(COLLECTION).doc(uid).delete();
+
+        await logActivity(db, {
+            user: req.admin,
+            action: 'admin_user_deleted',
+            details: { uid },
+        });
 
         res.json({ success: true, message: 'User deleted successfully.' });
     } catch (error) {

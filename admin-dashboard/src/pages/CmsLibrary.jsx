@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, ExternalLink, Search, FileText, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'library_items';
 
@@ -27,8 +27,8 @@ function LibraryModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       item?.id
-        ? await updateDocument(COLLECTION, item.id, form)
-        : await addDocument(COLLECTION, form);
+        ? await api.put(`/library/${item.id}`, form)
+        : await api.post('/library', form);
       toast.success('Library item saved ✓');
       onSave();
       onClose();
@@ -100,8 +100,8 @@ export default function CmsLibrary() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/library');
+      setItems(res.data || []);
     } catch (err) {
       toast.error('Failed to load library');
     } finally {
@@ -166,7 +166,7 @@ export default function CmsLibrary() {
                     <div className="flex justify-end gap-2">
                         <a href={item.url} target="_blank" className="p-2 hover:text-white text-muted"><ExternalLink size={14} /></a>
                         <button onClick={() => { setEditing(item); setIsModal(true); }} className="p-2 hover:text-cyan-400 text-muted"><Edit2 size={14} /></button>
-                        <button onClick={async () => { if(confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); load(); } }} className="p-2 hover:text-rose-500 text-muted"><Trash2 size={14} /></button>
+                        <button onClick={async () => { if(confirm('Delete?')) { await api.delete(`/library/${item.id}`); load(); } }} className="p-2 hover:text-rose-500 text-muted"><Trash2 size={14} /></button>
                     </div>
                   </td>
                 </tr>

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'tools';
 
@@ -41,8 +41,8 @@ function ToolModal({ item, onClose, onSave }) {
       const dataToSave = { ...form, category_ar: catPair ? catPair.ar : form.category_ar };
 
       item?.id
-        ? await updateDocument(COLLECTION, item.id, dataToSave)
-        : await addDocument(COLLECTION, dataToSave);
+        ? await api.put(`/tools/${item.id}`, dataToSave)
+        : await api.post('/tools', dataToSave);
       
       toast.success(item?.id ? 'Tool updated ✓' : 'Tool added ✓');
       onSave();
@@ -122,8 +122,8 @@ export default function CmsTools() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/tools');
+      setItems(res.data || []);
     } catch (err) {
       toast.error('Failed to load tools');
     } finally {
@@ -168,7 +168,7 @@ export default function CmsTools() {
                 <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/5 rounded text-muted">{item.category}</span>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => { setEditing(item); setIsModal(true); }} className="p-1.5 hover:text-lime-400"><Edit2 size={14} /></button>
-                    <button onClick={async () => { if(confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); load(); } }} className="p-1.5 hover:text-rose-500"><Trash2 size={14} /></button>
+                    <button onClick={async () => { if(confirm('Delete?')) { await api.delete(`/tools/${item.id}`); load(); } }} className="p-1.5 hover:text-rose-500"><Trash2 size={14} /></button>
                 </div>
               </div>
               <h3 className="font-bold mb-2 flex items-center gap-2">

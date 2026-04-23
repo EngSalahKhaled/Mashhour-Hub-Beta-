@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { History, Search, RefreshCw, Filter, ShieldCheck, AlertCircle, Info } from 'lucide-react';
-import { auth } from '../services/firebase';
-
-const API_URL = 'http://localhost:5000';
+import { api } from '../services/api';
 
 export default function SystemLogsPage() {
     const [logs, setLogs] = useState([]);
@@ -13,11 +11,7 @@ export default function SystemLogsPage() {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const token = await auth.currentUser?.getIdToken();
-            const resp = await fetch(`${API_URL}/logs`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const result = await resp.json();
+            const result = await api.get('/logs');
             if (result.success) setLogs(result.data);
         } catch (e) { console.error(e); }
         finally { setLoading(false); }

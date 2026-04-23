@@ -1224,62 +1224,79 @@
   /* ═══════════════════════════════════════════════════
      HERO CAROUSEL
      ═══════════════════════════════════════════════════ */
-  document.querySelectorAll(".hero-carousel").forEach((carousel) => {
-    const track = carousel.querySelector(".hero-carousel-track");
-    const slides = carousel.querySelectorAll(".hero-slide");
-    if (!track || slides.length === 0) return;
+  const initHeroCarousels = () => {
+    document.querySelectorAll(".hero-carousel").forEach((carousel) => {
+      const track = carousel.querySelector(".hero-carousel-track");
+      const slides = carousel.querySelectorAll(".hero-slide");
+      if (!track || slides.length === 0) return;
 
-    let currentIdx = 0;
+      if (carousel.dataset.carouselIntervalId) {
+        window.clearInterval(Number(carousel.dataset.carouselIntervalId));
+        delete carousel.dataset.carouselIntervalId;
+      }
 
-    // Create UI
-    const prevBtn = document.createElement("button");
-    prevBtn.className = "hero-carousel-prev";
-    prevBtn.setAttribute("aria-label", isArabic ? "السابق" : "Previous");
-    prevBtn.innerHTML = isArabic ? "➔" : "←"; // Simple arrows for now
+      carousel
+        .querySelectorAll(
+          ".hero-carousel-prev, .hero-carousel-next, .hero-carousel-dots",
+        )
+        .forEach((el) => el.remove());
 
-    const nextBtn = document.createElement("button");
-    nextBtn.className = "hero-carousel-next";
-    nextBtn.setAttribute("aria-label", isArabic ? "التالي" : "Next");
-    nextBtn.innerHTML = isArabic ? "←" : "➔";
+      track.style.transform = "translateX(0%)";
 
-    const dotsContainer = document.createElement("div");
-    dotsContainer.className = "hero-carousel-dots";
+      let currentIdx = 0;
 
-    slides.forEach((_, i) => {
-      const dot = document.createElement("div");
-      dot.className = "carousel-dot" + (i === 0 ? " active" : "");
-      dot.addEventListener("click", () => goToSlide(i));
-      dotsContainer.appendChild(dot);
-    });
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "hero-carousel-prev";
+      prevBtn.setAttribute("aria-label", isArabic ? "السابق" : "Previous");
+      prevBtn.innerHTML = isArabic ? "➔" : "←";
 
-    carousel.appendChild(prevBtn);
-    carousel.appendChild(nextBtn);
-    carousel.appendChild(dotsContainer);
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "hero-carousel-next";
+      nextBtn.setAttribute("aria-label", isArabic ? "التالي" : "Next");
+      nextBtn.innerHTML = isArabic ? "←" : "➔";
 
-    const updateDots = () => {
-      dotsContainer.querySelectorAll(".carousel-dot").forEach((dot, i) => {
-        dot.classList.toggle("active", i === currentIdx);
+      const dotsContainer = document.createElement("div");
+      dotsContainer.className = "hero-carousel-dots";
+
+      const updateDots = () => {
+        dotsContainer.querySelectorAll(".carousel-dot").forEach((dot, i) => {
+          dot.classList.toggle("active", i === currentIdx);
+        });
+      };
+
+      const goToSlide = (idx) => {
+        if (idx < 0) idx = slides.length - 1;
+        if (idx >= slides.length) idx = 0;
+        currentIdx = idx;
+
+        const offset = isRTL ? currentIdx * 100 : -(currentIdx * 100);
+        track.style.transform = `translateX(${offset}%)`;
+        updateDots();
+      };
+
+      slides.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+        dot.addEventListener("click", () => goToSlide(i));
+        dotsContainer.appendChild(dot);
       });
-    };
 
-    const goToSlide = (idx) => {
-      if (idx < 0) idx = slides.length - 1;
-      if (idx >= slides.length) idx = 0;
-      currentIdx = idx;
+      carousel.appendChild(prevBtn);
+      carousel.appendChild(nextBtn);
+      carousel.appendChild(dotsContainer);
 
-      const offset = isRTL ? currentIdx * 100 : -(currentIdx * 100);
-      track.style.transform = `translateX(${offset}%)`;
-      updateDots();
-    };
+      prevBtn.addEventListener("click", () => goToSlide(currentIdx - 1));
+      nextBtn.addEventListener("click", () => goToSlide(currentIdx + 1));
 
-    prevBtn.addEventListener("click", () => goToSlide(currentIdx - 1));
-    nextBtn.addEventListener("click", () => goToSlide(currentIdx + 1));
+      const intervalId = window.setInterval(() => {
+        goToSlide(currentIdx + 1);
+      }, 6000);
 
-    // Auto Play
-    setInterval(() => {
-      goToSlide(currentIdx + 1);
-    }, 6000);
-  });
+      carousel.dataset.carouselIntervalId = String(intervalId);
+    });
+  };
+
+  initHeroCarousels();
 
   /* ═══════════════════════════════════════════════════
      CONTACT FORM — TYPE TOGGLE
@@ -1303,17 +1320,6 @@
       });
     });
   }
-
-  /* ═══════════════════════════════════════════════════
-     FAQ ACCORDION ACCESSIBILITY
-     ═══════════════════════════════════════════════════ */
-  document.querySelectorAll(".faq-item").forEach((item) => {
-    const summary = item.querySelector("summary");
-    if (summary) {
-      summary.setAttribute("role", "button");
-      summary.setAttribute("tabindex", "0");
-    }
-  });
 
   /* ═══════════════════════════════════════════════════
      LAZY IMAGE FADE
@@ -1929,6 +1935,18 @@
     });
   };
 
+  const enhanceFaqAccessibility = (scope = document) => {
+    scope.querySelectorAll(".faq-item").forEach((item) => {
+      const summary = item.querySelector("summary");
+      if (summary) {
+        summary.setAttribute("role", "button");
+        summary.setAttribute("tabindex", "0");
+      }
+    });
+  };
+
+  enhanceFaqAccessibility();
+
   // ═════ DYNAMIC CONTENT INTEGRATION ═════
   const initDynamicContent = async () => {
     // Determine API URL (default to localhost if not specified)
@@ -1936,10 +1954,258 @@
       ? 'http://localhost:5000' 
       : window.location.origin;
 
+    const fetchJson = async (url) => {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return response.json();
+    };
+
+    const escapeHtml = (value) =>
+      String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const resolveSiteUrl = (value) => {
+      if (!value) return "";
+      const str = String(value).trim();
+      if (!str) return "";
+      if (/^(https?:|mailto:|tel:|#|data:)/i.test(str)) return str;
+      if (str.startsWith("/")) return str;
+      return `${prefix}${str.replace(/^\.?\//, "")}`;
+    };
+
+    const getLocalizedValue = (item, key) => {
+      const arKey = `${key}Ar`;
+      if (isArabic) return item[arKey] || item[key] || "";
+      return item[key] || item[arKey] || "";
+    };
+
+    const toVisibleItems = (items) =>
+      items
+        .filter((item) => item && item.visible !== false)
+        .sort((a, b) => {
+          const num = (value, fallback) =>
+            Number.isFinite(Number(value)) ? Number(value) : fallback;
+          const orderDiff =
+            num(a.order, num(a.position, 9999)) -
+            num(b.order, num(b.position, 9999));
+          if (orderDiff !== 0) return orderDiff;
+          return String(a.createdAt || "").localeCompare(String(b.createdAt || ""));
+        });
+
+    const fetchCollection = async (collection) => {
+      const data = await fetchJson(
+        `${API_URL}/api/site-content/${collection.replace(/_/g, "-")}`,
+      );
+      return Array.isArray(data.data) ? data.data : [];
+    };
+
+    const renderAnnouncement = (items) => {
+      const announcementEl = document.querySelector(".announcement");
+      const announcement = items[0];
+      if (!announcementEl || !announcement) return;
+
+      const text =
+        getLocalizedValue(announcement, "text") ||
+        getLocalizedValue(announcement, "title");
+      if (!text) return;
+
+      const href = resolveSiteUrl(announcement.linkUrl);
+      announcementEl.innerHTML = href
+        ? `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>`
+        : escapeHtml(text);
+    };
+
+    const renderHeroSlides = (items) => {
+      const track = document.querySelector(".hero-carousel-track");
+      if (!track || !items.length) return;
+
+      track.innerHTML = items
+        .map((item) => {
+          const title = getLocalizedValue(item, "title");
+          const subtitle =
+            getLocalizedValue(item, "subtitle") ||
+            getLocalizedValue(item, "description");
+          const label = getLocalizedValue(item, "label");
+          const imageUrl = resolveSiteUrl(item.imageUrl);
+          const linkUrl = resolveSiteUrl(item.linkUrl) || "#";
+          if (!title || !imageUrl) return "";
+
+          return `
+          <div class="hero-slide">
+            <a href="${escapeHtml(linkUrl)}" style="display:block; width:100%; height:100%;">
+              <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}" fetchpriority="low" style="object-fit: cover;" loading="lazy">
+              <div class="hero-slide-overlay">
+                ${
+                  label
+                    ? `<span class="mini-label" style="color:var(--gold); margin-bottom:8px; display:inline-block;">${escapeHtml(label)}</span>`
+                    : ""
+                }
+                <h3 class="hero-slide-title">${escapeHtml(title)}</h3>
+                ${
+                  subtitle
+                    ? `<p style="color: var(--muted); margin: 0;">${escapeHtml(subtitle)}</p>`
+                    : ""
+                }
+              </div>
+            </a>
+          </div>`;
+        })
+        .filter(Boolean)
+        .join("");
+
+      initHeroCarousels();
+    };
+
+    const renderHeroMetrics = (items) => {
+      const metricsRow = document.querySelector(".hero .metrics-row");
+      if (!metricsRow || !items.length) return;
+
+      metricsRow.innerHTML = items
+        .map((item) => {
+          const number = item.number || item.value || "";
+          const label = getLocalizedValue(item, "label");
+          if (!number && !label) return "";
+
+          return `
+          <div class="metric">
+            <strong>${escapeHtml(number)}</strong>
+            <span>${escapeHtml(label)}</span>
+          </div>`;
+        })
+        .filter(Boolean)
+        .join("");
+    };
+
+    const renderServices = (items) => {
+      const servicesGrid = document.querySelector('[data-cms="services-list"]');
+      if (!servicesGrid || !items.length) return;
+
+      servicesGrid.innerHTML = items
+        .map((item) => {
+          const title = getLocalizedValue(item, "title");
+          const description = getLocalizedValue(item, "description");
+          const icon = item.icon || "⚙️";
+          const linkUrl = resolveSiteUrl(item.linkUrl) || "#";
+          if (!title || !description) return "";
+
+          return `
+          <article class="service-icon-card">
+            <div class="svc-icon">${escapeHtml(icon)}</div>
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(description)}</p>
+            <a class="text-link" href="${escapeHtml(linkUrl)}">${
+              isArabic ? "عرض التفاصيل ←" : "View Details →"
+            }</a>
+          </article>`;
+        })
+        .filter(Boolean)
+        .join("");
+    };
+
+    const renderClientLogos = (items) => {
+      const logoTrack = document.querySelector("[data-logo-carousel]");
+      if (!logoTrack || !items.length) return;
+
+      const markup = items
+        .map((item) => {
+          const title = getLocalizedValue(item, "title") || "Client";
+          const imageUrl = resolveSiteUrl(item.imageUrl);
+          const linkUrl = resolveSiteUrl(item.linkUrl);
+          if (!imageUrl) return "";
+
+          const logo = `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}" loading="lazy">`;
+          return `<div class="client-logo-item">${
+            linkUrl
+              ? `<a href="${escapeHtml(linkUrl)}" aria-label="${escapeHtml(title)}">${logo}</a>`
+              : logo
+          }</div>`;
+        })
+        .filter(Boolean)
+        .join("");
+
+      if (!markup) return;
+      logoTrack.innerHTML = `${markup}${markup}`;
+    };
+
+    const renderProcess = (items) => {
+      const processWrap = document.querySelector(".process-section .process-timeline-wrap");
+      if (!processWrap || !items.length) return;
+
+      processWrap.innerHTML = items
+        .map((item, index) => {
+          const title = getLocalizedValue(item, "title");
+          const description = getLocalizedValue(item, "description");
+          const icon = item.icon || "•";
+          if (!title || !description) return "";
+
+          return `
+          <div class="p-step">
+            <div class="p-step-icon"><span aria-hidden="true" style="font-size:1.25rem;line-height:1;">${escapeHtml(icon)}</span></div>
+            <div class="p-step-content">
+              <h3>${escapeHtml(`${index + 1}. ${title}`)}</h3>
+              <p>${escapeHtml(description)}</p>
+            </div>
+          </div>`;
+        })
+        .filter(Boolean)
+        .join("");
+    };
+
+    const ensureHomeFaqSection = () => {
+      let section = document.querySelector("[data-home-faq-section]");
+      if (section) return section;
+
+      const processSection = document.querySelector(".process-section");
+      const nextSection = document.querySelector(".distinct-services");
+      if (!processSection || !processSection.parentElement) return null;
+
+      section = document.createElement("section");
+      section.className = "section";
+      section.setAttribute("data-home-faq-section", "true");
+      section.innerHTML = `
+        <div class="section-header">
+          <p class="eyebrow">${isArabic ? "الأسئلة الشائعة" : "Frequently Asked Questions"}</p>
+          <h2>${isArabic ? 'إجابات سريعة على <span>أهم الأسئلة.</span>' : 'Quick answers to <span>common questions.</span>'}</h2>
+        </div>
+        <div class="faq-stack" data-cms="home-faqs"></div>
+      `;
+
+      processSection.parentElement.insertBefore(section, nextSection || processSection.nextSibling);
+      return section;
+    };
+
+    const renderFaqs = (items) => {
+      const faqSection = ensureHomeFaqSection();
+      const faqStack = faqSection?.querySelector('[data-cms="home-faqs"]');
+      if (!faqStack || !items.length) return;
+
+      faqStack.innerHTML = items
+        .map((item, index) => {
+          const question = getLocalizedValue(item, "question");
+          const answer = getLocalizedValue(item, "answer");
+          if (!question || !answer) return "";
+
+          return `
+          <details class="faq-item reveal"${index === 0 ? " open" : ""}>
+            <summary>${escapeHtml(question)}</summary>
+            <p>${escapeHtml(answer)}</p>
+          </details>`;
+        })
+        .filter(Boolean)
+        .join("");
+
+      enhanceFaqAccessibility(faqStack);
+    };
+
     try {
       // 1. Fetch Global Settings (Contact & Social)
-      const settingsRes = await fetch(`${API_URL}/api/settings`);
-      const settingsData = await settingsRes.json();
+      const settingsData = await fetchJson(`${API_URL}/api/settings`);
 
       if (settingsData.success && settingsData.settings) {
         const s = settingsData.settings;
@@ -1990,8 +2256,7 @@
       else if (currentPath.includes('/sitemap.html')) pageId = 'sitemap';
 
       if (pageId) {
-        const pageRes = await fetch(`${API_URL}/api/settings/pages/${pageId}`);
-        const pageData = await pageRes.json();
+        const pageData = await fetchJson(`${API_URL}/api/settings/pages/${pageId}`);
 
         if (pageData.success && pageData.page) {
           const content = isArabic ? pageData.page.contentAr : pageData.page.contentEn;
@@ -2007,8 +2272,7 @@
 
       // 3. Fetch Portfolio if on Portfolio page
       if (currentPath.includes('/portfolio/')) {
-        const portfolioRes = await fetch(`${API_URL}/api/portfolio`);
-        const portfolioData = await portfolioRes.json();
+        const portfolioData = await fetchJson(`${API_URL}/api/portfolio`);
         if (portfolioData.success && portfolioData.items) {
           const grid = document.querySelector('.portfolio-grid');
           if (grid) {
@@ -2016,6 +2280,41 @@
             // grid.innerHTML = portfolioData.items.map(item => renderPortfolioCard(item)).join('');
           }
         }
+      }
+
+      // 4. Home CMS sections
+      const isHomePage =
+        currentPath === "/" ||
+        currentPath.endsWith("/index.html") ||
+        currentPath.endsWith("/ar/") ||
+        currentPath.endsWith("/ar/index.html");
+
+      if (isHomePage) {
+        const [
+          announcementItems,
+          heroItems,
+          metricItems,
+          serviceItems,
+          clientItems,
+          processItems,
+          faqItems,
+        ] = await Promise.all([
+          fetchCollection("site_announcements").catch(() => []),
+          fetchCollection("site_hero").catch(() => []),
+          fetchCollection("site_metrics").catch(() => []),
+          fetchCollection("site_services").catch(() => []),
+          fetchCollection("site_clients").catch(() => []),
+          fetchCollection("site_process").catch(() => []),
+          fetchCollection("site_faqs").catch(() => []),
+        ]);
+
+        renderAnnouncement(toVisibleItems(announcementItems));
+        renderHeroSlides(toVisibleItems(heroItems));
+        renderHeroMetrics(toVisibleItems(metricItems));
+        renderServices(toVisibleItems(serviceItems));
+        renderClientLogos(toVisibleItems(clientItems));
+        renderProcess(toVisibleItems(processItems));
+        renderFaqs(toVisibleItems(faqItems));
       }
 
     } catch (err) {

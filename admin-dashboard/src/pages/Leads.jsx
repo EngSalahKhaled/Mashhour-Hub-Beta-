@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Search, Loader2, Users, Mail, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, updateDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 // CRM Collection Tabs
 const CRM_TABS = [
@@ -19,7 +19,7 @@ const STATUS_STYLES = {
   closed:    { cls: 'chip-closed',    label: 'Closed'    },
 };
 
-function StatusDropdown({ leadId, current, onChange }) {
+function StatusDropdown({ leadId, collection, current, onChange }) {
   const [open, setOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
 
@@ -28,7 +28,7 @@ function StatusDropdown({ leadId, current, onChange }) {
     if (status === current) return;
     setUpdating(true);
     try {
-      await updateDocument(COLLECTION, leadId, { status });
+      await api.patch(`/leads/${leadId}`, { status, collection });
       onChange(leadId, status);
       toast.success(`Status → ${STATUS_STYLES[status].label}`);
     } catch (err) {
@@ -107,7 +107,10 @@ export default function LeadsPage() {
 
   const load = async (col) => {
     setLoading(true);
-    try { setLeads(await getCollection(col || currentTab.collection)); }
+    try { 
+      const res = await api.get(col === 'leads' ? '/leads' : `/leads/${col}`);
+      setLeads(res.data || res.leads || res.subscribers || res.influencers || []); 
+    }
     catch { setLeads([]); }
     finally { setLoading(false); }
   };
@@ -265,6 +268,7 @@ export default function LeadsPage() {
                   <td>
                     <StatusDropdown
                       leadId={lead.id}
+                      collection={currentTab.collection}
                       current={lead.status || 'new'}
                       onChange={updateStatus}
                     />

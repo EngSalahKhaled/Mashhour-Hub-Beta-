@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -29,8 +29,8 @@ function BlogModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       item?.id
-        ? await updateDocument(COLLECTION, item.id, form)
-        : await addDocument(COLLECTION, form);
+        ? await api.put(`/blog/${item.id}`, form)
+        : await api.post('/blog', form);
       toast.success(item?.id ? 'Blog post updated ✓' : 'Blog post created ✓');
       onSave();
       onClose();
@@ -195,8 +195,8 @@ export default function CmsBlog() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/blog/admin/all');
+      setItems(res.posts || res.data || []);
     } catch (err) {
       toast.error('Failed to load blog posts');
     } finally {
@@ -219,7 +219,7 @@ export default function CmsBlog() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     try {
-      await deleteDocument(COLLECTION, id);
+      await api.delete(`/blog/${id}`);
       toast.success('Post deleted');
       load();
     } catch (err) {

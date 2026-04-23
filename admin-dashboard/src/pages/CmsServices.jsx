@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Bold, Italic, List } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'services';
 
@@ -79,10 +79,10 @@ function CmsModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       if (item?.id) {
-        await updateDocument(COLLECTION, item.id, form);
+        await api.put(`/services/${item.id}`, form);
         toast.success('Service updated ✓');
       } else {
-        await addDocument(COLLECTION, form);
+        await api.post('/services', form);
         toast.success('Service created ✓');
       }
       onSave();
@@ -284,7 +284,10 @@ export default function CmsServicesPage() {
 
   const load = async () => {
     setLoading(true);
-    try { setItems(await getCollection(COLLECTION)); }
+    try { 
+      const res = await api.get('/services');
+      setItems(res.data || []); 
+    }
     catch { setItems([]); }
     finally { setLoading(false); }
   };
@@ -294,7 +297,7 @@ export default function CmsServicesPage() {
   const handleDelete = async (id) => {
     if (!confirm('Delete this service?')) return;
     try {
-      await deleteDocument(COLLECTION, id);
+      await api.delete(`/services/${id}`);
       setItems((prev) => prev.filter((i) => i.id !== id));
       toast.success('Deleted');
     } catch (err) {

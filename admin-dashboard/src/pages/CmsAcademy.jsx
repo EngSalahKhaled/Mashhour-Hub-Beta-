@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -29,8 +29,8 @@ function AcademyModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       item?.id
-        ? await updateDocument(COLLECTION, item.id, form)
-        : await addDocument(COLLECTION, form);
+        ? await api.put(`/academy/${item.id}`, form)
+        : await api.post('/academy', form);
       toast.success(item?.id ? 'Course updated ✓' : 'Course created ✓');
       onSave();
       onClose();
@@ -207,8 +207,8 @@ export default function CmsAcademy() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/academy/admin/all');
+      setItems(res.data || res.courses || []);
     } catch (err) {
       toast.error('Failed to load courses');
     } finally {
@@ -231,7 +231,7 @@ export default function CmsAcademy() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this course?')) return;
     try {
-      await deleteDocument(COLLECTION, id);
+      await api.delete(`/academy/${id}`);
       toast.success('Course deleted');
       load();
     } catch (err) {

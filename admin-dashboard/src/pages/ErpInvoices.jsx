@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Search, FileText, DollarSign, CreditCard, CheckCircle, Printer, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'erp_invoices';
 const CLIENTS_COL = 'erp_clients';
@@ -41,7 +41,7 @@ function InvoiceModal({ item, clients, onClose, onSave }) {
       const data = { ...form, subtotal, tax, total,
         invoiceNumber: item?.invoiceNumber || `INV-${Date.now().toString(36).toUpperCase()}`,
       };
-      item?.id ? await updateDocument(COLLECTION, item.id, data) : await addDocument(COLLECTION, data);
+      item?.id ? await api.put(`/erp/invoices/${item.id}`, data) : await api.post('/erp/invoices', data);
       toast.success(item?.id ? 'Invoice updated ✓' : 'Invoice created ✓');
       onSave(); onClose();
     } catch (err) { toast.error('Save failed'); } finally { setSaving(false); }
@@ -232,8 +232,8 @@ export default function ErpInvoices() {
 
   const load = async () => {
     try { setLoading(true);
-      const [inv, cl] = await Promise.all([getCollection(COLLECTION), getCollection(CLIENTS_COL)]);
-      setItems(inv); setClients(cl);
+      const [invRes, clRes] = await Promise.all([api.get('/erp/invoices'), api.get('/erp/clients')]);
+      setItems(invRes.data || []); setClients(clRes.data || []);
     } catch { toast.error('Failed to load'); } finally { setLoading(false); }
   };
   useEffect(() => { load(); }, []);
@@ -306,7 +306,7 @@ export default function ErpInvoices() {
                       <div className="flex gap-1">
                         <button onClick={() => setPrinting(item)} className="p-2 rounded-lg hover:bg-white/5 transition-colors" title="Print" style={{ color: 'var(--text-secondary)' }}><Printer size={15} /></button>
                         <button onClick={() => { setEditing(item); setIsModal(true); }} className="p-2 rounded-lg hover:bg-white/5 transition-colors" style={{ color: 'var(--text-secondary)' }}><Edit2 size={15} /></button>
-                        <button onClick={async () => { if (window.confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); toast.success('Deleted'); load(); }}} className="p-2 rounded-lg hover:bg-rose-500/10 transition-colors" style={{ color: '#f43f5e' }}><Trash2 size={15} /></button>
+                        <button onClick={async () => { if (window.confirm('Delete?')) { await api.delete(`/erp/invoices/${item.id}`); toast.success('Deleted'); load(); }}} className="p-2 rounded-lg hover:bg-rose-500/10 transition-colors" style={{ color: '#f43f5e' }}><Trash2 size={15} /></button>
                       </div>
                     </td>
                   </tr>

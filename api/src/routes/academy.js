@@ -26,6 +26,15 @@ const courseValidation = [
     body('status').optional().isIn(['draft', 'published', 'archived']).withMessage('Invalid status.')
 ];
 
+// ─── GET /api/academy/admin/all (Admin — list ALL courses including drafts) ──
+router.get('/admin/all', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION)
+        .orderBy('createdAt', 'desc')
+        .get();
+    const courses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, count: courses.length, data: courses });
+}));
+
 // ─── GET /api/academy (Public — list all published courses) ───────────────────────
 router.get('/', asyncHandler(async (req, res) => {
     const snapshot = await db.collection(COLLECTION)

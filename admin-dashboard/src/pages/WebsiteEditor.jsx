@@ -7,7 +7,7 @@ import {
   Globe, Palette, Info,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -127,6 +127,46 @@ const WEBSITE_SECTIONS = [
     collection: 'site_settings',
     color: '#10b981',
   },
+  {
+    id: 'clients',
+    label: 'Client Logos',
+    labelAr: 'لوجوهات العملاء',
+    icon: '🏢',
+    description: 'Logo carousel for trusted brands',
+    fields: ['title', 'imageUrl', 'linkUrl'],
+    collection: 'site_clients',
+    color: '#5de6b1',
+  },
+  {
+    id: 'process',
+    label: 'Our Process',
+    labelAr: 'منهجيتنا',
+    icon: '🔄',
+    description: 'Steps in our proven growth process',
+    fields: ['title', 'description', 'icon'],
+    collection: 'site_process',
+    color: '#36daf5',
+  },
+  {
+    id: 'faqs',
+    label: 'FAQs',
+    labelAr: 'الأسئلة الشائعة',
+    icon: '❓',
+    description: 'Frequently asked questions',
+    fields: ['question', 'answer', 'category'],
+    collection: 'site_faqs',
+    color: '#f4cd55',
+  },
+  {
+    id: 'values',
+    label: 'Company Values',
+    labelAr: 'قيم الشركة',
+    icon: '💎',
+    description: 'Core values and principles',
+    fields: ['title', 'description', 'icon'],
+    collection: 'site_values',
+    color: '#2a7fe7',
+  },
 ];
 
 // Field labels
@@ -183,6 +223,13 @@ const FIELD_META = {
   seoDescription: { label: 'Meta Description', type: 'textarea', placeholder: 'Brief site summary' },
   seoKeywords:{ label: 'Meta Keywords',     type: 'text',     placeholder: 'marketing, agency, kuwait' },
   ogImage:    { label: 'OG Share Image URL', type: 'image',    placeholder: 'https://…' },
+
+  // FAQs
+  question:   { label: 'Question (EN)',     type: 'text',     placeholder: 'What is...?'           },
+  questionAr: { label: 'Question (AR)',     type: 'text',     placeholder: 'ما هو...؟'             },
+  answer:     { label: 'Answer (EN)',       type: 'textarea', placeholder: 'The answer is...'      },
+  answerAr:   { label: 'Answer (AR)',       type: 'textarea', placeholder: 'الإجابة هي...'          },
+  category:   { label: 'Category',          type: 'text',     placeholder: 'e.g. Pricing'          },
 };
 
 // ─── Brand Preview Badge ──────────────────────────────────────────────────────
@@ -229,6 +276,8 @@ function ItemModal({ section, item, onClose, onSave }) {
   // Auto-add Arabic variants
   if (allFields.includes('title'))       allFields.splice(allFields.indexOf('title') + 1, 0, 'titleAr');
   if (allFields.includes('description')) allFields.splice(allFields.indexOf('description') + 1, 0, 'descriptionAr');
+  if (allFields.includes('question'))    allFields.splice(allFields.indexOf('question') + 1, 0, 'questionAr');
+  if (allFields.includes('answer'))      allFields.splice(allFields.indexOf('answer') + 1, 0, 'answerAr');
 
   const emptyForm = allFields.reduce((a, k) => ({ ...a, [k]: '' }), {});
   const [form,    setForm]    = useState(item ? { ...emptyForm, ...item } : emptyForm);
@@ -243,9 +292,10 @@ function ItemModal({ section, item, onClose, onSave }) {
     setSaving(true);
     try {
       const payload = { ...form, visible, sectionId: section.id };
+      const endpoint = `/site-content/${section.collection.replace(/_/g, '-')}`;
       item?.id
-        ? await updateDocument(section.collection, item.id, payload)
-        : await addDocument(section.collection, payload);
+        ? await api.put(`${endpoint}/${item.id}`, payload)
+        : await api.post(endpoint, payload);
       toast.success(item?.id ? 'Updated ✓' : 'Added ✓');
       onSave();
       onClose();
@@ -534,19 +584,25 @@ function ItemModal({ section, item, onClose, onSave }) {
                   {form.subtitle && (
                     <p className="text-sm mb-2" style={{ color: BRAND.cyan }}>{form.subtitle}</p>
                   )}
-                  {(form.description || form.quote || form.text) && (
+                  {(form.description || form.quote || form.text || form.question) && (
                     <p className="text-sm" style={{ color: BRAND.muted, lineHeight: 1.7 }}>
-                      {form.description || form.quote || form.text}
+                      {form.description || form.quote || form.text || form.question}
                     </p>
                   )}
-                  {(form.descriptionAr) && (
+                  {(form.descriptionAr || form.questionAr) && (
                     <p
                       className="text-sm mt-2"
                       style={{ color: BRAND.muted, lineHeight: 1.7, fontFamily: 'Cairo, sans-serif' }}
                       dir="rtl"
                     >
-                      {form.descriptionAr}
+                      {form.descriptionAr || form.questionAr}
                     </p>
+                  )}
+                  {form.answer && (
+                    <div className="mt-4 p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                       <p className="text-sm" style={{ color: BRAND.text }}>{form.answer}</p>
+                       {form.answerAr && <p className="text-sm mt-2" style={{ color: BRAND.muted, fontFamily: 'Cairo, sans-serif' }} dir="rtl">{form.answerAr}</p>}
+                    </div>
                   )}
                   {(form.number || form.results) && (
                     <p className="text-2xl font-bold mt-3" style={{ color: BRAND.cyan }}>
@@ -651,7 +707,11 @@ function SectionPanel({ section }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setItems(await getCollection(section.collection)); }
+    try {
+      const endpoint = `/site-content/${section.collection.replace(/_/g, '-')}`;
+      const res = await api.get(endpoint);
+      setItems(res.data || []);
+    }
     catch { setItems([]); }
     finally { setLoading(false); }
   }, [section.collection]);
@@ -663,7 +723,8 @@ function SectionPanel({ section }) {
   const handleDelete = async (id, title) => {
     if (!confirm(`Delete "${title || 'this item'}"?`)) return;
     try {
-      await deleteDocument(section.collection, id);
+      const endpoint = `/site-content/${section.collection.replace(/_/g, '-')}`;
+      await api.delete(`${endpoint}/${id}`);
       setItems((p) => p.filter((i) => i.id !== id));
       toast.success('Deleted');
     } catch (err) { toast.error(err.message); }
@@ -671,7 +732,8 @@ function SectionPanel({ section }) {
 
   const toggleVisible = async (item) => {
     try {
-      await updateDocument(section.collection, item.id, { visible: !item.visible });
+      const endpoint = `/site-content/${section.collection.replace(/_/g, '-')}`;
+      await api.patch(`${endpoint}/${item.id}`, { visible: !item.visible });
       setItems((p) => p.map((i) => i.id === item.id ? { ...i, visible: !i.visible } : i));
       toast.success(item.visible ? 'Hidden from website' : 'Now visible on website');
     } catch (err) { toast.error(err.message); }

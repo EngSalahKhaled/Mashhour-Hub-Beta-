@@ -39,12 +39,59 @@ const publicLimiter = rateLimit({
 //
 // If unset, all origins are allowed — acceptable for development only.
 
+const defaultOrigins = [
+    'https://mashhor-hub.com',
+    'https://www.mashhor-hub.com',
+    'http://localhost:3000',
+    'http://localhost:4173',
+    'http://localhost:5000',
+    'http://localhost:5173',
+];
+
 const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-    : '*';
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+    : defaultOrigins;
+
+const normalizeOrigin = (origin) => {
+    try {
+        return new URL(origin).origin;
+    } catch {
+        return origin;
+    }
+};
+
+const isAllowedOrigin = (origin) => {
+    const normalized = normalizeOrigin(origin);
+    return allowedOrigins.some((allowed) => {
+        if (allowed === '*') return true;
+        if (allowed === normalized) return true;
+
+        // Allow simple subdomain wildcards like https://*.vercel.app
+        if (allowed.includes('*')) {
+            const escaped = allowed
+                .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+                .replace(/\*/g, '.*');
+            return new RegExp(`^${escaped}$`).test(normalized);
+        }
+
+        return false;
+    });
+};
 
 const corsOptions = {
-    origin: '*',
+    origin(origin, callback) {
+        if (!origin) return callback(null, true);
+
+        if (process.env.NODE_ENV !== 'production' && !process.env.CORS_ORIGIN) {
+            return callback(null, true);
+        }
+
+        if (isAllowedOrigin(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200,
@@ -85,6 +132,7 @@ app.use('/api/settings',  require('./routes/settings'));
 app.use('/api/media',     require('./routes/media'));
 app.use('/api/logs',      require('./routes/logs'));
 app.use('/api/influencers', require('./routes/influencers'));
+app.use('/api/case-studies', require('./routes/caseStudies'));
 app.use('/api/marketing', require('./routes/marketing'));
 app.use('/api/services',    require('./routes/services'));
 app.use('/api/sitemap',     require('./routes/sitemap'));
@@ -98,6 +146,7 @@ app.use('/api/ai',             require('./routes/ai'));
 app.use('/api/vault',          require('./routes/vault'));
 app.use('/api/portal/notifications', require('./routes/portalNotifications'));
 app.use('/api/super-admin',          require('./routes/superAdmin'));
+app.use('/api/site-content',        require('./routes/siteSections'));
 
 // ERP Modules
 app.use('/api/erp/clients',    require('./routes/erp/clients'));

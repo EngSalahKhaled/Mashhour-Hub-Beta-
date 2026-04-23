@@ -5,15 +5,23 @@ import App from './App.jsx'
 
 // Global Error Handler for Debugging the White Screen
 window.onerror = function (message, source, lineno, colno, error) {
+  const isDev = import.meta.env.DEV;
   document.body.innerHTML = `
-    <div style="padding: 20px; background: #222; color: #ff5555; font-family: monospace;">
-      <h3>Fatal Application Error</h3>
-      <p><strong>Message:</strong> ${message}</p>
-      <p><strong>Source:</strong> ${source}:${lineno}:${colno}</p>
-      <details>
-        <summary>Stack Trace</summary>
-        <pre>${error?.stack || 'No stack trace'}</pre>
-      </details>
+    <div style="padding: 20px; background: #0f172a; color: #f8fafc; font-family: Inter, sans-serif; min-height: 100vh;">
+      <h3 style="margin-bottom: 12px; color: #f87171;">Application Error</h3>
+      <p style="margin: 0 0 8px;">The dashboard encountered an unexpected error.</p>
+      <p style="margin: 0 0 16px; color: #94a3b8;">Please refresh the page or sign in again. If the issue continues, contact the administrator.</p>
+      ${
+        isDev
+          ? `<details>
+              <summary style="cursor:pointer;">Developer details</summary>
+              <pre style="white-space: pre-wrap; margin-top: 12px;"><strong>Message:</strong> ${message}
+<strong>Source:</strong> ${source}:${lineno}:${colno}
+
+${error?.stack || 'No stack trace'}</pre>
+            </details>`
+          : ''
+      }
     </div>
   `;
 };

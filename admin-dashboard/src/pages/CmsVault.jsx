@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, ShieldCheck, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'vault';
 
@@ -85,7 +85,7 @@ function VaultModal({ item, onClose, onSave }) {
                    if (!form.title.trim() || !form.text.trim()) return toast.error('Title and Text are required');
                    setSaving(true);
                    try {
-                     item?.id ? await updateDocument(COLLECTION, item.id, form) : await addDocument(COLLECTION, form);
+                     item?.id ? await api.put(`/vault/${item.id}`, form) : await api.post('/vault', form);
                      toast.success('Vault synced ✓'); onSave(); onClose();
                    } catch(e) { toast.error('Error saving'); } finally { setSaving(false); }
                 }} disabled={saving} className="btn-primary !bg-lime-500 !text-black">
@@ -106,7 +106,11 @@ export default function CmsVault() {
   const [search, setSearch] = useState('');
 
   const load = async () => {
-    try { setLoading(true); const data = await getCollection(COLLECTION); setItems(data); }
+    try { 
+      setLoading(true); 
+      const res = await api.get('/vault'); 
+      setItems(res.data || []); 
+    }
     catch(e) { toast.error('Failed to load Vault'); } finally { setLoading(false); }
   };
 
@@ -147,7 +151,7 @@ export default function CmsVault() {
             <div key={item.id} className="card p-6 border-white/5 hover:border-lime-500/30 transition-all group relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                  <button onClick={() => { setEditing(item); setIsModal(true); }} className="p-2 bg-white/5 rounded-lg hover:text-lime-400"><Edit2 size={16} /></button>
-                 <button onClick={async () => { if(confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); load(); } }} className="p-2 bg-white/5 rounded-lg hover:text-rose-500"><Trash2 size={16} /></button>
+                 <button onClick={async () => { if(confirm('Delete?')) { await api.delete(`/vault/${item.id}`); load(); } }} className="p-2 bg-white/5 rounded-lg hover:text-rose-500"><Trash2 size={16} /></button>
               </div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-lime-500/10 text-lime-400 rounded">{item.cat}</span>

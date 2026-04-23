@@ -23,6 +23,15 @@ const portfolioValidation = [
     body('status').optional().isIn(['draft', 'published', 'archived']).withMessage('Invalid status.')
 ];
 
+// ─── GET /api/portfolio/admin/all (Admin — list ALL items including drafts) ──
+router.get('/admin/all', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
+    const snapshot = await db.collection(COLLECTION)
+        .orderBy('createdAt', 'desc')
+        .get();
+    const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, count: items.length, data: items });
+}));
+
 // ─── GET /api/portfolio (Public — list all published items) ──────────────────
 router.get('/', asyncHandler(async (req, res) => {
     const snapshot = await db.collection(COLLECTION)

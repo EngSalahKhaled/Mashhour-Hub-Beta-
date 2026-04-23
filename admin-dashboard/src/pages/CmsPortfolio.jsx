@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Image as ImageIcon, LayoutGrid } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'portfolio_items';
 
@@ -74,7 +74,7 @@ function PortfolioModal({ item, onClose, onSave }) {
                     if(!form.title || !form.image) return toast.error('Title and Image required');
                     setSaving(true);
                     try {
-                        item?.id ? await updateDocument(COLLECTION, item.id, form) : await addDocument(COLLECTION, form);
+                        item?.id ? await api.put(`/portfolio/${item.id}`, form) : await api.post('/portfolio', form);
                         toast.success('Portfolio updated ✓'); onSave(); onClose();
                     } catch(e) { toast.error('Failed'); } finally { setSaving(false); }
                 }} disabled={saving} className="btn-primary">
@@ -95,7 +95,11 @@ export default function CmsPortfolio() {
   const [filter, setFilter] = useState('all');
 
   const load = async () => {
-    try { setLoading(true); const data = await getCollection(COLLECTION); setItems(data); }
+    try { 
+      setLoading(true); 
+      const res = await api.get('/portfolio/admin/all'); 
+      setItems(res.data || []); 
+    }
     catch(e) { toast.error('Failed to load'); } finally { setLoading(false); }
   };
 
@@ -135,7 +139,7 @@ export default function CmsPortfolio() {
                     <h4 className="text-xs font-bold leading-tight line-clamp-2">{item.title}</h4>
                     <div className="flex gap-2 mt-3">
                         <button onClick={() => { setEditing(item); setIsModal(true); }} className="px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-[10px] backdrop-blur-sm">Edit</button>
-                        <button onClick={async () => { if(confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); load(); } }} className="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 rounded text-[10px] backdrop-blur-sm">Delete</button>
+                        <button onClick={async () => { if(confirm('Delete?')) { await api.delete(`/portfolio/${item.id}`); load(); } }} className="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 rounded text-[10px] backdrop-blur-sm">Delete</button>
                     </div>
                 </div>
             </div>

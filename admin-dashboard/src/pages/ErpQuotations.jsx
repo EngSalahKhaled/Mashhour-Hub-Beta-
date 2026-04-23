@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Search, FileText, DollarSign, Clock, CheckCircle, XCircle, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'erp_quotations';
 const CLIENTS_COLLECTION = 'erp_clients';
@@ -49,8 +49,8 @@ function QuotationModal({ item, clients, onClose, onSave }) {
         quoteNumber: item?.quoteNumber || `Q-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
       };
       item?.id
-        ? await updateDocument(COLLECTION, item.id, data)
-        : await addDocument(COLLECTION, data);
+        ? await api.put(`/erp/quotations/${item.id}`, data)
+        : await api.post('/erp/quotations', data);
       toast.success(item?.id ? 'Quotation updated ✓' : 'Quotation created ✓');
       onSave();
       onClose();
@@ -221,12 +221,12 @@ export default function ErpQuotations() {
   const load = async () => {
     try {
       setLoading(true);
-      const [quotations, clientList] = await Promise.all([
-        getCollection(COLLECTION),
-        getCollection(CLIENTS_COLLECTION),
+      const [quotRes, clientRes] = await Promise.all([
+        api.get('/erp/quotations'),
+        api.get('/erp/clients'),
       ]);
-      setItems(quotations);
-      setClients(clientList);
+      setItems(quotRes.data || []);
+      setClients(clientRes.data || []);
     } catch (err) {
       toast.error('Failed to load data');
     } finally {
@@ -242,7 +242,7 @@ export default function ErpQuotations() {
   const handleCreate = ()     => { setEditing(null); setIsModal(true); };
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this quotation?')) return;
-    try { await deleteDocument(COLLECTION, id); toast.success('Deleted'); load(); }
+    try { await api.delete(`/erp/quotations/${id}`); toast.success('Deleted'); load(); }
     catch { toast.error('Delete failed'); }
   };
 

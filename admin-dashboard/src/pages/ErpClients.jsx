@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Search, Users, Mail, Phone, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'erp_clients';
 
@@ -34,8 +34,8 @@ function ClientModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       item?.id
-        ? await updateDocument(COLLECTION, item.id, form)
-        : await addDocument(COLLECTION, form);
+        ? await api.put(`/erp/clients/${item.id}`, form)
+        : await api.post('/erp/clients', form);
       toast.success(item?.id ? 'Client updated ✓' : 'Client created ✓');
       onSave();
       onClose();
@@ -163,8 +163,8 @@ export default function ErpClients() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/erp/clients');
+      setItems(res.data || []);
     } catch (err) {
       toast.error('Failed to load clients');
     } finally {
@@ -179,7 +179,7 @@ export default function ErpClients() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this client? This cannot be undone.')) return;
     try {
-      await deleteDocument(COLLECTION, id);
+      await api.delete(`/erp/clients/${id}`);
       toast.success('Client deleted');
       load();
     } catch (err) {

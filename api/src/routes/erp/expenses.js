@@ -32,6 +32,16 @@ router.get('/', auth, authorizeRole('superadmin', 'admin', 'accountant'), asyncH
     res.json({ success: true, count: expenses.length, totalAmount, expenses });
 }));
 
+// ─── GET /api/erp/expenses/:id ────────────────────────────────────────────
+router.get('/:id', auth, authorizeRole('superadmin', 'admin', 'accountant'), asyncHandler(async (req, res) => {
+    if (!db) throw new AppError('Database connection is not initialized.', 500);
+
+    const docSnap = await db.collection(COLLECTION).doc(req.params.id).get();
+    if (!docSnap.exists) throw new AppError('Expense not found', 404);
+
+    res.json({ success: true, data: { id: docSnap.id, ...docSnap.data() } });
+}));
+
 // ─── POST /api/erp/expenses ───────────────────────────────────────────────
 router.post('/', auth, authorizeRole('superadmin', 'admin', 'accountant'), expenseValidation, validate, asyncHandler(async (req, res) => {
     if (!db) throw new AppError('Database connection is not initialized.', 500);
@@ -40,11 +50,26 @@ router.post('/', auth, authorizeRole('superadmin', 'admin', 'accountant'), expen
         ...req.body,
         amount: parseFloat(req.body.amount),
         createdBy: req.admin.uid,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     };
 
     const docRef = await db.collection(COLLECTION).add(expenseData);
     res.status(201).json({ success: true, id: docRef.id, message: 'Expense added successfully.' });
+}));
+
+// ─── PUT /api/erp/expenses/:id ─────────────────────────────────────────────
+router.put('/:id', auth, authorizeRole('superadmin', 'admin', 'accountant'), expenseValidation, validate, asyncHandler(async (req, res) => {
+    if (!db) throw new AppError('Database connection is not initialized.', 500);
+
+    const updates = {
+        ...req.body,
+        amount: parseFloat(req.body.amount),
+        updatedAt: new Date().toISOString()
+    };
+
+    await db.collection(COLLECTION).doc(req.params.id).update(updates);
+    res.json({ success: true, message: 'Expense updated successfully.' });
 }));
 
 // ─── DELETE /api/erp/expenses/:id ─────────────────────────────────────────

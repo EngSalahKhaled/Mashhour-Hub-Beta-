@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Layout, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'prompts';
 
@@ -17,6 +17,24 @@ function PromptModal({ item, onClose, onSave }) {
     language: 'en'
   });
   const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!form.title.trim() || !form.text.trim()) return toast.error('Title and Prompt text are required');
+    setSaving(true);
+    try {
+      item?.id
+        ? await api.put(`/prompts/${item.id}`, form)
+        : await api.post('/prompts', form);
+      
+      toast.success(item?.id ? 'Prompt updated ✓' : 'Prompt added ✓');
+      onSave();
+      onClose();
+    } catch (err) {
+      toast.error('Save failed: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const set = (k) => (v) =>
     setForm((p) => ({ ...p, [k]: typeof v === 'string' ? v : v.target?.value ?? v }));
@@ -89,8 +107,8 @@ export default function CmsPrompts() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await getCollection(COLLECTION);
-      setItems(data);
+      const res = await api.get('/prompts');
+      setItems(res.data || []);
     } catch (err) {
       toast.error('Failed to load prompts');
     } finally {
@@ -134,7 +152,7 @@ export default function CmsPrompts() {
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => { setEditing(item); setIsModal(true); }} className="p-1 hover:text-white"><Edit2 size={14} /></button>
-                    <button onClick={async () => { if(confirm('Delete?')) { await deleteDocument(COLLECTION, item.id); load(); } }} className="p-1 hover:text-rose-500"><Trash2 size={14} /></button>
+                    <button onClick={async () => { if(confirm('Delete?')) { await api.delete(`/prompts/${item.id}`); load(); } }} className="p-1 hover:text-rose-500"><Trash2 size={14} /></button>
                 </div>
               </div>
               <h3 className="font-bold mb-3 line-clamp-2">{item.title}</h3>

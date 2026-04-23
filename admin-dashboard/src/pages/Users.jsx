@@ -3,17 +3,10 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Trash2, Shield, User } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getAuth } from 'firebase/auth';
+import { api } from '../services/api';
 import ConfirmModal from '../components/ConfirmModal';
 
-// Helper to get auth token
-const getAuthToken = async () => {
-  const user = getAuth().currentUser;
-  if (!user) throw new Error('Not authenticated');
-  return await user.getIdToken();
-};
 
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 function UserModal({ onClose, onSave }) {
@@ -31,22 +24,7 @@ function UserModal({ onClose, onSave }) {
     
     setSaving(true);
     try {
-      const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
-      
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `API Error: ${res.status} ${res.statusText}`);
-      }
-
-      const data = await res.json();
+      const data = await api.post('/users', form);
       if (!data.success) throw new Error(data.message);
       
       toast.success('Admin user created successfully ✓');
@@ -124,17 +102,8 @@ export default function Users() {
   const load = async () => {
     try {
       setLoading(true);
-      const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/users`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const data = await api.get('/users');
       
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `API Error: ${res.status} ${res.statusText}`);
-      }
-
-      const data = await res.json();
       if (data.success) {
         setUsers(data.users);
       } else {
@@ -157,12 +126,7 @@ export default function Users() {
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const token = await getAuthToken();
-      const res = await fetch(`${API_URL}/users/${deleteTarget}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const data = await api.delete(`/users/${deleteTarget}`);
       if (!data.success) throw new Error(data.message);
       
       toast.success('User deleted successfully ✓');

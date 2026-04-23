@@ -4,18 +4,17 @@ const { db }  = require('../config/firebase');
 const auth    = require('../middleware/auth');
 const authorizeRole = require('../middleware/role');
 const asyncHandler = require('../utils/asyncHandler');
-const AppError = require('../utils/AppError');
 
-const COLLECTION = 'services';
+const COLLECTION = 'case-studies';
 
-// ─── GET /api/services (Public) ───────────────────────────────────────────────
+// ─── GET /api/case-studies (Public) ───────────────────────────────────────────
 router.get('/', asyncHandler(async (req, res) => {
-    const snapshot = await db.collection(COLLECTION).orderBy('createdAt', 'desc').get();
+    const snapshot = await db.collection(COLLECTION).orderBy('title', 'asc').get();
     const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json({ success: true, data: list });
 }));
 
-// ─── POST /api/services (Admin) ──────────────────────────────────────────────
+// ─── POST /api/case-studies (Admin) ──────────────────────────────────────────
 router.post('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
     const data = {
         ...req.body,
@@ -23,20 +22,20 @@ router.post('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHand
         updatedAt: new Date().toISOString()
     };
     const docRef = await db.collection(COLLECTION).add(data);
-    res.status(201).json({ success: true, id: docRef.id, message: 'Service created.' });
+    res.status(201).json({ success: true, id: docRef.id, message: 'Case study created.' });
 }));
 
-// ─── PUT /api/services/:id (Admin) ───────────────────────────────────────────
+// ─── PUT /api/case-studies/:id (Admin) ─────────────────────────────────────────
 router.put('/:id', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
     const updates = { ...req.body, updatedAt: new Date().toISOString() };
     await db.collection(COLLECTION).doc(req.params.id).update(updates);
-    res.json({ success: true, message: 'Service updated.' });
+    res.json({ success: true, message: 'Case study updated.' });
 }));
 
-// ─── DELETE /api/services/:id (Admin) ────────────────────────────────────────
+// ─── DELETE /api/case-studies/:id (Admin) ──────────────────────────────────────
 router.delete('/:id', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
     await db.collection(COLLECTION).doc(req.params.id).delete();
-    res.json({ success: true, message: 'Service deleted.' });
+    res.json({ success: true, message: 'Case study deleted.' });
 }));
 
 module.exports = router;

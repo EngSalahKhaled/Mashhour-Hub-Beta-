@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthChange, loginWithEmail, logoutUser } from '../services/firebase';
 
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -16,9 +18,34 @@ export function AuthProvider({ children }) {
         try {
           const tokenResult = await firebaseUser.getIdTokenResult(true);
           localStorage.setItem('token', tokenResult.token);
-          setUserRole(tokenResult.claims.role || 'superadmin'); // default to superadmin to prevent lockout if claims missing on old accounts
+
+          const claimRole = tokenResult.claims.role || null;
+          let resolvedRole = claimRole;
+
+          if (!resolvedRole) {
+            try {
+              const response = await fetch(`${API_BASE}/auth/me`, {
+                headers: {
+                  Authorization: `Bearer ${tokenResult.token}`,
+                },
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                resolvedRole =
+                  data?.user?.role ||
+                  data?.user?.customClaims?.role ||
+                  null;
+              }
+            } catch (error) {
+              console.error('Failed to resolve role from API:', error);
+            }
+          }
+
+          setUserRole(resolvedRole);
         } catch (err) {
           console.error('Failed to sync token:', err);
+          setUserRole(null);
         }
       } else {
         localStorage.removeItem('token');

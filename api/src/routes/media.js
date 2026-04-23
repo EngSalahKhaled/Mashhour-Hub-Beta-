@@ -6,13 +6,35 @@ const auth = require('../middleware/auth');
 const authorizeRole = require('../middleware/role');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
+const logActivity = require('../utils/activityLogger');
 
 const COLLECTION = 'media_library';
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = new Set([
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/svg+xml',
+    'application/pdf',
+]);
+
+const sanitizeFileName = (value = 'file') =>
+    String(value)
+        .replace(/[^a-zA-Z0-9._-]/g, '_')
+        .replace(/_+/g, '_')
+        .slice(-120);
 
 // Configure Multer (Memory Storage)
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    limits: { fileSize: MAX_FILE_SIZE },
+    fileFilter: (req, file, cb) => {
+        if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+            return cb(new AppError('Unsupported file type. Allowed: JPG, PNG, WEBP, GIF, SVG, PDF.', 400));
+        }
+        cb(null, true);
+    }
 });
 
 // ─── GET /api/media (Admin — list all media) ──────────────────────────────────
@@ -29,7 +51,10 @@ router.get('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandl
 router.post('/upload', auth, authorizeRole('superadmin', 'admin', 'editor'), upload.single('file'), asyncHandler(async (req, res, next) => {
     if (!req.file) throw new AppError('No file uploaded.', 400);
 
-    const blob = bucket.file(`media/${Date.now()}_${req.file.originalname}`);
+    if (!bucket) throw new AppError('Storage bucket is not configured.', 500);
+
+    const safeFileName = sanitizeFileName(req.file.originalname);
+    const blob = bucket.file(`media/${Date.now()}_${safeFileName}`);
     const blobStream = blob.createWriteStream({
         resumable: false,
         metadata: { contentType: req.file.mimetype }
@@ -56,6 +81,11 @@ router.post('/upload', auth, authorizeRole('superadmin', 'admin', 'editor'), upl
             };
 
             const docRef = await db.collection(COLLECTION).add(fileData);
+            await logActivity(db, {
+                user: req.admin,
+                action: 'media_uploaded',
+                details: { documentId: docRef.id, name: fileData.name, type: fileData.type },
+            });
             res.status(201).json({ success: true, id: docRef.id, file: { id: docRef.id, ...fileData } });
         } catch (err) {
             next(new AppError(`Failed to save media record: ${err.message}`, 500));
@@ -70,9 +100,20 @@ router.post('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHand
     const { name, url, base64, type, size } = req.body;
     if (!url && !base64) throw new AppError('URL or Base64 required.', 400);
     if (!name) throw new AppError('File name required.', 400);
+    if (url) {
+        try {
+            const parsed = new URL(url);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+                throw new AppError('Only HTTP(S) URLs are allowed.', 400);
+            }
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError('Invalid media URL.', 400);
+        }
+    }
 
     const fileData = {
-        name,
+        name: sanitizeFileName(name),
         type: type || 'image',
         size: size || 0,
         url: url || null,
@@ -82,6 +123,11 @@ router.post('/', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHand
     };
 
     const docRef = await db.collection(COLLECTION).add(fileData);
+    await logActivity(db, {
+        user: req.admin,
+        action: 'media_created',
+        details: { documentId: docRef.id, name: fileData.name, type: fileData.type },
+    });
     res.status(201).json({ success: true, id: docRef.id, file: { id: docRef.id, ...fileData } });
 }));
 
@@ -104,6 +150,11 @@ router.delete('/:id', auth, authorizeRole('superadmin', 'admin', 'editor'), asyn
     }
 
     await docRef.delete();
+    await logActivity(db, {
+        user: req.admin,
+        action: 'media_deleted',
+        details: { documentId: req.params.id, name: data.name || null },
+    });
     res.json({ success: true, message: 'Media deleted successfully.' });
 }));
 

@@ -7,10 +7,9 @@ import {
   Users, Briefcase, Layers, Mail,
   TrendingUp, TrendingDown, ArrowRight,
 } from 'lucide-react';
-import { getCollection } from '../services/firebase';
-import { auth } from '../services/firebase';
+import { api } from '../services/api';
 
-const API_URL = (window.MashhorAPI && window.MashhorAPI.API_BASE) || 'http://localhost:5000/api';
+
 const INFLUENCERS_COLLECTION = 'influencers';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -110,32 +109,25 @@ export default function OverviewPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const token = await auth.currentUser?.getIdToken() || '';
-        const [leads, subscribers, influencers, services, analytics, invoicesRes, expensesRes] = await Promise.allSettled([
-          getCollection('leads'),
-          getCollection('subscribers'),
-          getCollection(INFLUENCERS_COLLECTION),
-          getCollection('services'),
-          fetch(`${API_URL}/analytics/overview`, {
-              headers: { 'Authorization': `Bearer ${token}` }
-          }).then(r => r.json()),
-          fetch(`${API_URL}/erp/invoices`, {
-              headers: { 'Authorization': `Bearer ${token}` }
-          }).then(r => r.json()),
-          fetch(`${API_URL}/erp/expenses`, {
-              headers: { 'Authorization': `Bearer ${token}` }
-          }).then(r => r.json())
+        const [leadsRes, subsRes, inflRes, svcRes, anaRes, invRes, expRes] = await Promise.allSettled([
+          api.get('/leads'),
+          api.get('/leads/subscribers'),
+          api.get('/leads/influencers'),
+          api.get('/services'),
+          api.get('/analytics/overview'),
+          api.get('/erp/invoices'),
+          api.get('/erp/expenses')
         ]);
 
-        const leadsData = leads.status === 'fulfilled' ? leads.value : [];
-        const subsData = subscribers.status === 'fulfilled' ? subscribers.value : [];
-        const inflData = influencers.status === 'fulfilled' ? influencers.value : [];
-        const svcData = services.status === 'fulfilled' ? services.value : [];
-        const anaData = analytics.status === 'fulfilled' ? analytics.value : { success: false };
+        const leadsData = leadsRes.status === 'fulfilled' ? (leadsRes.value.data || leadsRes.value.leads || []) : [];
+        const subsData  = subsRes.status === 'fulfilled'  ? (subsRes.value.data || subsRes.value.subscribers || []) : [];
+        const inflData  = inflRes.status === 'fulfilled'  ? (inflRes.value.data || inflRes.value.influencers || []) : [];
+        const svcData   = svcRes.status  === 'fulfilled'  ? (svcRes.value.data || svcRes.value.services || []) : [];
+        const anaData   = anaRes.status  === 'fulfilled'  ? anaRes.value : { success: false };
         
         // Financials
-        const invData = invoicesRes.status === 'fulfilled' && invoicesRes.value.success ? invoicesRes.value.invoices : [];
-        const expData = expensesRes.status === 'fulfilled' && expensesRes.value.success ? expensesRes.value.expenses : [];
+        const invData = invRes.status === 'fulfilled' && invRes.value.success ? (invRes.value.invoices || invRes.value.data || []) : [];
+        const expData = expRes.status === 'fulfilled' && expRes.value.success ? (expRes.value.expenses || expRes.value.data || []) : [];
         
         const totalRevenue = invData.filter(i => i.status === 'paid').reduce((sum, i) => sum + parseFloat(i.total || 0), 0);
         const totalExpenses = expData.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);

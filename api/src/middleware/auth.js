@@ -1,4 +1,24 @@
 const { admin } = require('../config/firebase');
+const { db } = require('../config/firebase');
+
+const ADMIN_COLLECTION = 'admins';
+
+const resolveRole = async (decodedToken) => {
+    if (decodedToken.role) return decodedToken.role;
+
+    if (!db || !decodedToken.uid) return null;
+
+    try {
+        const adminDoc = await db.collection(ADMIN_COLLECTION).doc(decodedToken.uid).get();
+        if (adminDoc.exists && adminDoc.data()?.role) {
+            return adminDoc.data().role;
+        }
+    } catch (error) {
+        console.error('[AUTH ROLE FALLBACK ERROR]', error.message);
+    }
+
+    return null;
+};
 
 /**
  * Firebase Auth Token Verification Middleware
@@ -24,12 +44,13 @@ module.exports = async (req, res, next) => {
 
         const idToken = authHeader.split(' ')[1];
         const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const resolvedRole = await resolveRole(decodedToken);
 
         // Attach decoded Firebase user to request
         req.admin = {
             uid:   decodedToken.uid,
             email: decodedToken.email,
-            role:  decodedToken.role || 'admin', // set custom claims via Admin SDK if needed
+            role:  resolvedRole,
         };
 
         next();

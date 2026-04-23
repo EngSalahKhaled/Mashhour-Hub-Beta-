@@ -34,6 +34,7 @@ router.get('/me', authMiddleware, asyncHandler(async (req, res) => {
             photoURL:     userRecord.photoURL || null,
             emailVerified: userRecord.emailVerified,
             customClaims: userRecord.customClaims || {},
+            role: req.admin.role || null,
         },
     });
 }));

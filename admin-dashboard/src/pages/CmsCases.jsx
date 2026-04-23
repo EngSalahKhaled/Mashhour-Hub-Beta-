@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Plus, Edit2, Trash2, Bold, Italic, List } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, updateDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 
 const COLLECTION = 'case-studies';
 
@@ -69,8 +69,8 @@ function CaseModal({ item, onClose, onSave }) {
     setSaving(true);
     try {
       item?.id
-        ? await updateDocument(COLLECTION, item.id, form)
-        : await addDocument(COLLECTION, form);
+        ? await api.put(`/case-studies/${item.id}`, form)
+        : await api.post('/case-studies', form);
       toast.success(item?.id ? 'Case study updated ✓' : 'Case study created ✓');
       onSave();
       onClose();
@@ -268,7 +268,10 @@ export default function CmsCasesPage() {
 
   const load = async () => {
     setLoading(true);
-    try { setItems(await getCollection(COLLECTION)); }
+    try { 
+      const res = await api.get('/case-studies');
+      setItems(res.data || []); 
+    }
     catch { setItems([]); }
     finally { setLoading(false); }
   };
@@ -278,7 +281,7 @@ export default function CmsCasesPage() {
   const handleDelete = async (id) => {
     if (!confirm('Delete this case study?')) return;
     try {
-      await deleteDocument(COLLECTION, id);
+      await api.delete(`/case-studies/${id}`);
       setItems((p) => p.filter((i) => i.id !== id));
       toast.success('Deleted');
     } catch (err) {

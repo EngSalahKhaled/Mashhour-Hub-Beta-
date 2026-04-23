@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Activity, Clock, User, FileText, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+import { api } from '../services/api';
+
 export default function PortalActivityPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,12 +12,8 @@ export default function PortalActivityPage() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/logs/portal`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (res.ok) {
+        const data = await api.get('/logs/portal');
+        if (data.success) {
           setLogs(data.data);
         } else {
           toast.error(data.message || 'Error fetching portal activity');

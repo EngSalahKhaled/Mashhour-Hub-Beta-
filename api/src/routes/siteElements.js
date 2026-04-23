@@ -45,9 +45,27 @@ router.get('/', asyncHandler(async (req, res) => {
 router.get('/fetch-html', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
     const { url } = req.query;
     if (!url) throw new AppError('URL is required', 400);
+
+    let targetUrl;
+    try {
+        targetUrl = new URL(url);
+    } catch {
+        throw new AppError('Invalid URL.', 400);
+    }
+
+    const allowedHosts = new Set([
+        'mashhor-hub.com',
+        'www.mashhor-hub.com',
+        'localhost',
+        '127.0.0.1',
+    ]);
+
+    if (!allowedHosts.has(targetUrl.hostname)) {
+        throw new AppError('Only approved site hosts can be fetched.', 403);
+    }
     
     try {
-        const response = await fetch(url);
+        const response = await fetch(targetUrl.toString());
         const html = await response.text();
         res.send(html);
     } catch (err) {

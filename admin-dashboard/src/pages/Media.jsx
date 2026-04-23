@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Trash2, Copy, Loader2, Image, Link2, X, Search, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getCollection, addDocument, deleteDocument } from '../services/firebase';
+import { api } from '../services/api';
 import ConfirmModal from '../components/ConfirmModal';
 
 const COLLECTION = 'media_library';
@@ -20,7 +20,7 @@ export default function MediaPage() {
   const fileRef = useRef(null);
 
   const load = async () => {
-    try { setLoading(true); const data = await getCollection(COLLECTION); setItems(data); }
+    try { setLoading(true); const res = await api.get('/media'); setItems(res.data || []); }
     catch { toast.error('Failed to load media'); }
     finally { setLoading(false); }
   };
@@ -31,7 +31,7 @@ export default function MediaPage() {
     if (!urlInput.trim()) return toast.error('Enter a URL');
     setUploading(true);
     try {
-      await addDocument(COLLECTION, {
+      await api.post('/media', {
         name: nameInput || urlInput.split('/').pop() || 'media',
         url: urlInput, base64: null,
         type: urlInput.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i) ? 'image' : 'file',
@@ -53,23 +53,15 @@ export default function MediaPage() {
 
     setUploading(true);
     try {
-      const token = localStorage.getItem('token');
-      const apiBase = window.MashhorAPI?.API_BASE || 'http://localhost:5000/api';
-      
-      const response = await fetch(`${apiBase}/media/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
+      const response = await api.post('/media/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      const result = await response.json();
-      if (result.success) {
+      if (response.success) {
         toast.success('File uploaded to Storage ✓');
         load();
       } else {
-        toast.error(result.message || 'Upload failed');
+        toast.error(response.message || 'Upload failed');
       }
     } catch (err) {
       toast.error('Upload failed: ' + err.message);
@@ -86,22 +78,13 @@ export default function MediaPage() {
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     try { 
-      const token = localStorage.getItem('token');
-      const apiBase = window.MashhorAPI?.API_BASE || 'http://localhost:5000/api';
-      
-      const response = await fetch(`${apiBase}/media/${deleteTarget}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/media/${deleteTarget}`);
 
-      const result = await response.json();
-      if (result.success) {
+      if (response.success) {
         toast.success('Deleted from Storage ✓');
         load();
       } else {
-        toast.error(result.message || 'Delete failed');
+        toast.error(response.message || 'Delete failed');
       }
     } catch (err) {
       toast.error('Delete failed: ' + err.message);

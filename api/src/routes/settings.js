@@ -5,6 +5,8 @@ const auth = require('../middleware/auth');
 const authorizeRole = require('../middleware/role');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
+const logActivity = require('../utils/activityLogger');
+const { sanitizeSettingsPayload, sanitizeSitePayload } = require('../utils/contentSanitizer');
 
 // ─── GET /api/settings (Public — get global settings) ──────────────────────────
 router.get('/', asyncHandler(async (req, res) => {
@@ -21,7 +23,7 @@ router.get('/', asyncHandler(async (req, res) => {
 // ─── PUT /api/settings/:id (Admin — update global settings) ───────────────────
 router.put('/:id', auth, authorizeRole('superadmin', 'admin'), asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const updates = { ...req.body, updatedAt: new Date().toISOString() };
+    const updates = { ...sanitizeSettingsPayload(req.body), updatedAt: new Date().toISOString() };
     
     // Check if doc exists
     const docRef = db.collection('site_settings').doc(id);
@@ -33,7 +35,12 @@ router.put('/:id', auth, authorizeRole('superadmin', 'admin'), asyncHandler(asyn
     } else {
         await docRef.update(updates);
     }
-    
+
+    await logActivity(db, {
+        user: req.admin,
+        action: 'settings_updated',
+        details: { documentId: id },
+    });
     res.json({ success: true, message: 'Settings updated successfully.' });
 }));
 
@@ -55,7 +62,7 @@ router.get('/pages/:pageId', asyncHandler(async (req, res) => {
 // ─── PUT /api/settings/pages/:pageId (Admin — update page content) ─────────────
 router.put('/pages/:pageId', auth, authorizeRole('superadmin', 'admin', 'editor'), asyncHandler(async (req, res) => {
     const { pageId } = req.params;
-    const updates = { ...req.body, updatedAt: new Date().toISOString() };
+    const updates = { ...sanitizeSitePayload('site_pages', req.body), updatedAt: new Date().toISOString() };
     
     const snapshot = await db.collection('site_pages').where('pageId', '==', pageId).limit(1).get();
     
@@ -70,7 +77,12 @@ router.put('/pages/:pageId', auth, authorizeRole('superadmin', 'admin', 'editor'
         // Update it
         await snapshot.docs[0].ref.update(updates);
     }
-    
+
+    await logActivity(db, {
+        user: req.admin,
+        action: 'page_content_updated',
+        details: { pageId },
+    });
     res.json({ success: true, message: 'Page updated successfully.' });
 }));
 
@@ -85,7 +97,12 @@ router.post('/maintenance', auth, authorizeRole('superadmin'), asyncHandler(asyn
     // We assume the global settings document has id 'global'
     const docRef = db.collection('site_settings').doc('global');
     await docRef.set({ maintenanceMode: enabled, updatedAt: new Date().toISOString() }, { merge: true });
-    
+
+    await logActivity(db, {
+        user: req.admin,
+        action: 'maintenance_mode_changed',
+        details: { enabled },
+    });
     res.json({ success: true, message: `Maintenance mode ${enabled ? 'enabled' : 'disabled'}.` });
 }));
 
@@ -96,7 +113,12 @@ router.post('/clear-cache', auth, authorizeRole('superadmin', 'admin'), asyncHan
     
     const docRef = db.collection('site_settings').doc('global');
     await docRef.set({ cacheVersion: newCacheVersion, updatedAt: new Date().toISOString() }, { merge: true });
-    
+
+    await logActivity(db, {
+        user: req.admin,
+        action: 'cache_cleared',
+        details: { cacheVersion: newCacheVersion },
+    });
     res.json({ 
         success: true, 
         message: 'Cache successfully cleared.', 
