@@ -32,7 +32,7 @@ router.get('/', asyncHandler(async (req, res) => {
     let query = db.collection(COLLECTION);
     if (type) query = query.where('type', '==', type);
 
-    const snapshot = await query.orderBy('elementId', 'asc').get();
+    const snapshot = await query.get();
     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     res.json({ success: true, count: data.length, data });
